@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brennstoffzelle – Lösungsübersicht (Lehrkraft)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #2c3e50;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #c0392b;
+            text-align: center;
+        }
+        .warning {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #c0392b;
+            color: white;
+        }
+        tr:nth-child(even) { background: #f8f9fa; }
+        tr:hover { background: #fff3cd; }
+        .eta-good { color: #27ae60; font-weight: bold; }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 14px;
+            background: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover { background: #a93226; }
+        .detail-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e74c3c;
+        }
+        .detail-section h2 { color: #c0392b; }
+        .student-detail {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        .student-detail.visible { display: block; }
+        .calc-step {
+            font-family: 'Courier New', monospace;
+            background: #ecf0f1;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="warning">⚠️ NUR FÜR LEHRKRÄFTE – NICHT AN SCHÜLER WEITERGEBEN ⚠️</div>
+        
+        <h1>Lösungsübersicht: PEM-Brennstoffzelle</h1>
+        
+        <table id="overviewTable">
+            <thead>
+                <tr>
+                    <th>Nr.</th>
+                    <th>Code</th>
+                    <th>ΔV [mL]</th>
+                    <th>t [s]</th>
+                    <th>ϑ [°C]</th>
+                    <th>p [hPa]</th>
+                    <th>Ū [V]</th>
+                    <th>Ī [mA]</th>
+                    <th>η<sub>E</sub> [%]</th>
+                    <th>η<sub>F</sub> [%]</th>
+                    <th>P<sub>max</sub> [mW]</th>
+                </tr>
+            </thead>
+            <tbody id="overviewBody"></tbody>
+        </table>
+        
+        <div class="buttons">
+            <button onclick="generateOverviewPDF()">Übersicht als PDF</button>
+            <button onclick="toggleDetails()">Detailrechnungen anzeigen</button>
+        </div>
+        
+        <div class="detail-section" id="detailSection" style="display:none;">
+            <h2>Detaillierte Musterlösungen</h2>
+            <div id="detailsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Hilfsfunktion: Punkt zu Komma
+        function komma(num, decimals = 2) {
+            return num.toFixed(decimals).replace('.', ',');
+        }
+        
+        function kommaSI(num) {
+            const exp = Math.floor(Math.log10(Math.abs(num)));
+            const mantisse = num / Math.pow(10, exp);
+            return komma(mantisse) + '·10<sup>' + exp + '</sup>';
+        }
+        
+        function kommaSI_pdf(num) {
+            const exp = Math.floor(Math.log10(Math.abs(num)));
+            const mantisse = num / Math.pow(10, exp);
+            return komma(mantisse) + '×10^' + exp;
+        }
+        
+        // Gleicher Pseudozufallsgenerator wie bei SuS
+        function seededRandom(seed) {
+            const x = Math.sin(seed * 9999) * 10000;
+            return x - Math.floor(x);
+        }
+        
+        function generateData(nr) {
+            const seed = nr * 137 + 42;
+            
+            const u0Base = 0.92;
+            const u0Var = (seededRandom(seed) - 0.5) * 0.06;
+            const u0 = u0Base + u0Var;
+            
+            const currents = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
+            
+            const baseVoltages = [0.90, 0.85, 0.83, 0.82, 0.80, 0.78, 0.75, 0.68, 0.58, 0.42];
+            const voltages = baseVoltages.map((v, i) => {
+                const variation = (seededRandom(seed + i * 7) - 0.5) * 0.04;
+                return Math.round((v + variation + u0Var * 0.5) * 100) / 100;
+            });
+            
+            const vStartBase = 12.0;
+            const vStartVar = (seededRandom(seed + 100) - 0.5) * 2;
+            const vStart = Math.round((vStartBase + vStartVar) * 100) / 100;
+            
+            const deltaVBase = 0.15;
+            const deltaVVar = (seededRandom(seed + 200) - 0.5) * 0.06;
+            const deltaV = Math.round((deltaVBase + deltaVVar) * 1000) / 1000;
+            const vEnde = Math.round((vStart - deltaV) * 100) / 100;
+            
+            const zeitBase = 480;
+            const zeitVar = Math.round((seededRandom(seed + 300) - 0.5) * 60);
+            const zeit = zeitBase + zeitVar;
+            
+            // Temperatur und Luftdruck mit Variation
+            const tempBase = 22;
+            const tempVar = Math.round((seededRandom(seed + 400) - 0.5) * 6);
+            const temperatur = tempBase + tempVar;
+            
+            const druckBase = 1013;
+            const druckVar = Math.round((seededRandom(seed + 500) - 0.5) * 30);
+            const druck = druckBase + druckVar;
+            
+            const code = `BZ-${String.fromCharCode(64 + nr)}${nr}`;
+            
+            return {
+                nr, code, u0: Math.round(u0 * 100) / 100,
+                currents, voltages, vStart, vEnde, zeit, temperatur, druck
+            };
+        }
+        
+        function calculateSolution(data) {
+            const deltaV = Math.round((data.vStart - data.vEnde) * 1000) / 1000;
+            const deltaV_SI = deltaV * 1e-6;
+            const H_O = 12.745e6;
+            const E_H2 = deltaV_SI * H_O;
+            
+            const avgU = data.voltages.reduce((a, b) => a + b, 0) / data.voltages.length;
+            const avgI = data.currents.reduce((a, b) => a + b, 0) / data.currents.length;
+            const avgI_SI = avgI * 1e-3;
+            const E_el = avgU * avgI_SI * data.zeit;
+            
+            const eta_E = (E_el / E_H2) * 100;
+            
+            // Faraday-Wirkungsgrad
+            const R = 8.314;
+            const F = 96485;
+            const z = 2;
+            const T = data.temperatur + 273;
+            const p = data.druck * 100;
+            const n_H2 = (p * deltaV_SI) / (R * T);
+            const Q_theo = n_H2 * z * F;
+            const Q_real = avgI_SI * data.zeit;
+            const eta_F = (Q_real / Q_theo) * 100;
+            
+            // Leistungen berechnen
+            const powers = data.voltages.map((v, i) => v * data.currents[i]);
+            const pMax = Math.max(...powers);
+            const pMaxIdx = powers.indexOf(pMax);
+            
+            return {
+                deltaV, deltaV_SI, E_H2,
+                avgU: Math.round(avgU * 1000) / 1000,
+                avgI: Math.round(avgI * 1000) / 1000,
+                avgI_SI, E_el,
+                eta_E: Math.round(eta_E * 10) / 10,
+                n_H2, Q_theo, Q_real,
+                eta_F: Math.round(eta_F * 10) / 10,
+                T, p,
+                powers,
+                pMax: Math.round(pMax * 1000) / 1000,
+                pMaxI: data.currents[pMaxIdx]
+            };
+        }
+        
+        // Alle Daten generieren
+        const allData = [];
+        const allSolutions = [];
+        
+        for (let i = 1; i <= 17; i++) {
+            const data = generateData(i);
+            const solution = calculateSolution(data);
+            allData.push(data);
+            allSolutions.push(solution);
+        }
+        
+        // Übersichtstabelle füllen
+        const tbody = document.getElementById('overviewBody');
+        for (let i = 0; i < 17; i++) {
+            const d = allData[i];
+            const s = allSolutions[i];
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${d.nr}</td>
+                <td><strong>${d.code}</strong></td>
+                <td>${komma(s.deltaV, 3)}</td>
+                <td>${d.zeit}</td>
+                <td>${d.temperatur}</td>
+                <td>${d.druck}</td>
+                <td>${komma(s.avgU, 3)}</td>
+                <td>${komma(s.avgI, 3)}</td>
+                <td class="eta-good">${komma(s.eta_E, 1)}</td>
+                <td class="eta-good">${komma(s.eta_F, 1)}</td>
+                <td>${komma(s.pMax, 3)}</td>
+            `;
+            tbody.appendChild(row);
+        }
+        
+        // Detailrechnungen generieren
+        const detailsContainer = document.getElementById('detailsContainer');
+        for (let i = 0; i < 17; i++) {
+            const d = allData[i];
+            const s = allSolutions[i];
+            
+            const div = document.createElement('div');
+            div.className = 'student-detail';
+            div.innerHTML = `
+                <h3>${d.code} (Listennummer ${d.nr})</h3>
+                
+                <h4>Teil 1: Energetischer Wirkungsgrad</h4>
+                
+                <p><strong>a) Verbrauchtes Wasserstoffvolumen:</strong></p>
+                <div class="calc-step">ΔV = ${komma(d.vStart)} mL − ${komma(d.vEnde)} mL = ${komma(s.deltaV, 3)} mL = ${kommaSI(s.deltaV_SI)} m³</div>
+                
+                <p><strong>b) Chemische Energie:</strong></p>
+                <div class="calc-step">E_H₂ = ${kommaSI(s.deltaV_SI)} m³ × 12,745×10<sup>6</sup> J/m³ = ${komma(s.E_H2, 3)} J</div>
+                
+                <p><strong>c) Elektrische Energie:</strong></p>
+                <div class="calc-step">Ū = ${komma(s.avgU, 3)} V</div>
+                <div class="calc-step">Ī = ${komma(s.avgI, 3)} mA = ${kommaSI(s.avgI_SI)} A</div>
+                <div class="calc-step">E_el = ${komma(s.avgU, 3)} V × ${kommaSI(s.avgI_SI)} A × ${d.zeit} s = ${komma(s.E_el, 4)} J</div>
+                
+                <p><strong>d) Energetischer Wirkungsgrad:</strong></p>
+                <div class="calc-step">η_E = ${komma(s.E_el, 4)} J / ${komma(s.E_H2, 3)} J = ${komma(s.eta_E/100, 3)} = <strong>${komma(s.eta_E, 1)} %</strong></div>
+                
+                <h4>Teil 2: Faraday-Wirkungsgrad</h4>
+                
+                <p><strong>e) Stoffmenge Wasserstoff:</strong></p>
+                <div class="calc-step">T = ${d.temperatur} °C + 273 = ${s.T} K</div>
+                <div class="calc-step">p = ${d.druck} hPa = ${s.p} Pa</div>
+                <div class="calc-step">n_H₂ = (p·ΔV)/(R·T) = (${s.p} Pa × ${kommaSI(s.deltaV_SI)} m³) / (8,314 J/(mol·K) × ${s.T} K) = ${kommaSI(s.n_H2)} mol</div>
+                
+                <p><strong>f) Theoretische Ladung:</strong></p>
+                <div class="calc-step">Q_theo = n_H₂ × z × F = ${kommaSI(s.n_H2)} mol × 2 × 96485 C/mol = ${komma(s.Q_theo, 4)} C</div>
+                
+                <p><strong>g) Reale Ladung:</strong></p>
+                <div class="calc-step">Q_real = Ī × t = ${kommaSI(s.avgI_SI)} A × ${d.zeit} s = ${komma(s.Q_real, 4)} C</div>
+                
+                <p><strong>h) Faraday-Wirkungsgrad:</strong></p>
+                <div class="calc-step">η_F = Q_real / Q_theo = ${komma(s.Q_real, 4)} C / ${komma(s.Q_theo, 4)} C = ${komma(s.eta_F/100, 3)} = <strong>${komma(s.eta_F, 1)} %</strong></div>
+                
+                <h4>Maximale Leistung</h4>
+                <div class="calc-step">P_max = ${komma(s.pMax, 3)} mW bei I = ${komma(s.pMaxI)} mA</div>
+                
+                <p><strong>Leistungswerte (zur Kontrolle):</strong></p>
+                <div class="calc-step">${s.powers.map((p, idx) => `P${idx+1}=${komma(p, 3)}`).join(' | ')}</div>
+            `;
+            detailsContainer.appendChild(div);
+        }
+        
+        function toggleDetails() {
+            const section = document.getElementById('detailSection');
+            const details = document.querySelectorAll('.student-detail');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                details.forEach(d => d.classList.add('visible'));
+            } else {
+                section.style.display = 'none';
+                details.forEach(d => d.classList.remove('visible'));
+            }
+        }
+        
+        function generateOverviewPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+            
+            doc.setFontSize(16);
+            doc.setTextColor(192, 57, 43);
+            doc.text('MUSTERLÖSUNG – Brennstoffzelle Wirkungsgrade', 148, 15, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            
+            const tableData = allData.map((d, i) => {
+                const s = allSolutions[i];
+                return [
+                    d.nr, d.code,
+                    komma(s.deltaV, 3),
+                    d.zeit, d.temperatur, d.druck,
+                    komma(s.avgU, 3), komma(s.avgI, 3),
+                    komma(s.eta_E, 1) + ' %',
+                    komma(s.eta_F, 1) + ' %',
+                    komma(s.pMax, 3)
+                ];
+            });
+            
+            doc.autoTable({
+                startY: 25,
+                head: [['Nr.', 'Code', 'ΔV', 't', 'ϑ', 'p', 'Ū', 'Ī', 'η_E', 'η_F', 'P_max']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: { fillColor: [192, 57, 43] },
+                styles: { fontSize: 8 }
+            });
+            
+            doc.save('Brennstoffzelle_Loesungen_Uebersicht.pdf');
+        }
+    </script>
+</body>
+</html>
