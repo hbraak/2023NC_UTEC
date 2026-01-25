@@ -252,16 +252,19 @@
                 return Math.round((v + variation + u0Var * 0.5) * 100) / 100;
             });
             
-            // Volumen mit Variation (so dass η ≈ 45-58%)
+            // Volumen mit Variation
+            // Berechnung: Für η_E ≈ 43% und η_F ≈ 95% brauchen wir ΔV ≈ 0.017 mL
+            // E_el ≈ 0.727V * 0.275mA * 480s ≈ 0.096 J
+            // Für η_F = 95%: ΔV = Q_real * R * T / (η_F * p * z * F) ≈ 1.7e-8 m³ = 0.017 mL
             const vStartBase = 12.0;
             const vStartVar = (seededRandom(seed + 100) - 0.5) * 2; // ±1 mL
             const vStart = Math.round((vStartBase + vStartVar) * 100) / 100;
             
-            // deltaV so wählen, dass Wirkungsgrad im Bereich 45-58% liegt
-            const deltaVBase = 0.15;
-            const deltaVVar = (seededRandom(seed + 200) - 0.5) * 0.06; // ±0.03 mL
-            const deltaV = Math.round((deltaVBase + deltaVVar) * 1000) / 1000;
-            const vEnde = Math.round((vStart - deltaV) * 100) / 100;
+            // deltaV so wählen, dass η_E ≈ 40-50% und η_F ≈ 90-99%
+            const deltaVBase = 0.017;
+            const deltaVVar = (seededRandom(seed + 200) - 0.5) * 0.006; // ±0.003 mL
+            const deltaV = Math.round((deltaVBase + deltaVVar) * 10000) / 10000;
+            const vEnde = Math.round((vStart - deltaV) * 10000) / 10000;
             
             // Zeit mit Variation
             const zeitBase = 480;
@@ -334,7 +337,7 @@
             
             document.getElementById('vStart').textContent = komma(data.vStart) + ' mL';
             document.getElementById('vStartSI').innerHTML = kommaSI(data.vStart * 1e-6) + ' m³';
-            document.getElementById('vEnde').textContent = komma(data.vEnde) + ' mL';
+            document.getElementById('vEnde').textContent = komma(data.vEnde, 3) + ' mL';
             document.getElementById('vEndeSI').innerHTML = kommaSI(data.vEnde * 1e-6) + ' m³';
             document.getElementById('zeit').textContent = data.zeit + ' s';
             document.getElementById('zeitSI').textContent = data.zeit + ' s';
@@ -393,7 +396,7 @@
                 head: [['Messgröße', 'Wert', 'In SI-Einheit']],
                 body: [
                     ['Startvolumen V_Start', komma(data.vStart) + ' mL', kommaSI_pdf(data.vStart * 1e-6) + ' m³'],
-                    ['Endvolumen V_Ende', komma(data.vEnde) + ' mL', kommaSI_pdf(data.vEnde * 1e-6) + ' m³'],
+                    ['Endvolumen V_Ende', komma(data.vEnde, 3) + ' mL', kommaSI_pdf(data.vEnde * 1e-6) + ' m³'],
                     ['Gesamtzeit t', data.zeit + ' s', data.zeit + ' s'],
                     ['Temperatur T', data.temperatur + ' °C', (data.temperatur + 273) + ' K'],
                     ['Luftdruck p', data.druck + ' hPa', komma(data.druck * 100) + ' Pa']

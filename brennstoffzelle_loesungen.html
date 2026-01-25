@@ -164,14 +164,15 @@
                 return Math.round((v + variation + u0Var * 0.5) * 100) / 100;
             });
             
+            // Volumen mit Variation (so dass η_E ≈ 40-50% und η_F ≈ 90-99%)
             const vStartBase = 12.0;
             const vStartVar = (seededRandom(seed + 100) - 0.5) * 2;
             const vStart = Math.round((vStartBase + vStartVar) * 100) / 100;
             
-            const deltaVBase = 0.15;
-            const deltaVVar = (seededRandom(seed + 200) - 0.5) * 0.06;
-            const deltaV = Math.round((deltaVBase + deltaVVar) * 1000) / 1000;
-            const vEnde = Math.round((vStart - deltaV) * 100) / 100;
+            const deltaVBase = 0.017;
+            const deltaVVar = (seededRandom(seed + 200) - 0.5) * 0.006;
+            const deltaV = Math.round((deltaVBase + deltaVVar) * 10000) / 10000;
+            const vEnde = Math.round((vStart - deltaV) * 10000) / 10000;
             
             const zeitBase = 480;
             const zeitVar = Math.round((seededRandom(seed + 300) - 0.5) * 60);
