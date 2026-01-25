@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEM-Brennstoffzelle – Messdaten</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .input-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        label {
+            font-weight: 600;
+            color: #34495e;
+        }
+        select {
+            padding: 10px 20px;
+            font-size: 18px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+        }
+        select:focus {
+            outline: none;
+            border-color: #2980b9;
+        }
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #219a52;
+        }
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .data-section {
+            display: none;
+        }
+        .data-section.visible {
+            display: block;
+        }
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        .info-box h3 {
+            margin: 0 0 10px 0;
+            color: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .volume-table {
+            width: auto;
+            margin: 20px auto;
+        }
+        .volume-table th {
+            background: #9b59b6;
+        }
+        .code-badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .hinweis {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .hinweis strong {
+            color: #856404;
+        }
+        @media print {
+            body { background: white; }
+            .no-print { display: none; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PEM-Brennstoffzelle</h1>
+        <p class="subtitle">Personalisierte Messdaten für die Hausarbeit</p>
+        
+        <div class="input-section no-print">
+            <label for="listennummer">Ihre Listennummer:</label>
+            <select id="listennummer">
+                <option value="">– bitte wählen –</option>
+                <script>
+                    for(let i = 1; i <= 17; i++) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+            <button id="generateBtn" disabled>Messdaten anzeigen</button>
+        </div>
+        
+        <div id="dataSection" class="data-section">
+            <h2>Ihre Messdaten <span id="codeBadge" class="code-badge"></span></h2>
+            
+            <div class="info-box">
+                <h3>Volumenmessung</h3>
+                <table class="volume-table">
+                    <tr>
+                        <th>Messgröße</th>
+                        <th>Wert</th>
+                        <th>In SI-Einheit</th>
+                    </tr>
+                    <tr>
+                        <td>Startvolumen V<sub>Start</sub></td>
+                        <td id="vStart"></td>
+                        <td id="vStartSI"></td>
+                    </tr>
+                    <tr>
+                        <td>Endvolumen V<sub>Ende</sub></td>
+                        <td id="vEnde"></td>
+                        <td id="vEndeSI"></td>
+                    </tr>
+                    <tr>
+                        <td>Gesamtzeit t</td>
+                        <td id="zeit"></td>
+                        <td id="zeitSI"></td>
+                    </tr>
+                    <tr>
+                        <td>Temperatur ϑ</td>
+                        <td id="temperatur"></td>
+                        <td id="temperaturSI"></td>
+                    </tr>
+                    <tr>
+                        <td>Luftdruck p</td>
+                        <td id="druck"></td>
+                        <td id="druckSI"></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="info-box">
+                <h3>Messwerte der Kennlinie</h3>
+                <p><strong>Leerlaufspannung:</strong> U<sub>0</sub> = <span id="u0"></span> V</p>
+                <table id="messwerteTable">
+                    <thead>
+                        <tr>
+                            <th>Nr.</th>
+                            <th>Spannung U in V</th>
+                            <th>Strom I in mA</th>
+                            <th>Leistung P in mW</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messwerteBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="hinweis">
+                <strong>Hinweis:</strong> Dies sind Ihre persönlichen Messdaten (Code: <span id="codeHinweis"></span>). 
+                Tragen Sie diesen Code auf Ihrer Abgabe ein. Die Leistungsspalte ist von Ihnen zu berechnen.
+            </div>
+            
+            <div class="input-section no-print" style="margin-top: 20px;">
+                <button id="pdfBtn">Als PDF speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pseudozufallsgenerator mit Seed
+        function seededRandom(seed) {
+            const x = Math.sin(seed * 9999) * 10000;
+            return x - Math.floor(x);
+        }
+        
+        // Generiert Messdaten basierend auf Listennummer
+        function generateData(nr) {
+            const seed = nr * 137 + 42;
+            
+            // Basiswerte mit Variation
+            const u0Base = 0.92;
+            const u0Var = (seededRandom(seed) - 0.5) * 0.06; // ±0.03V
+            const u0 = u0Base + u0Var;
+            
+            // Stromwerte (fest)
+            const currents = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
+            
+            // Spannungswerte mit individueller Variation
+            const baseVoltages = [0.90, 0.85, 0.83, 0.82, 0.80, 0.78, 0.75, 0.68, 0.58, 0.42];
+            const voltages = baseVoltages.map((v, i) => {
+                const variation = (seededRandom(seed + i * 7) - 0.5) * 0.04;
+                return Math.round((v + variation + u0Var * 0.5) * 100) / 100;
+            });
+            
+            // Volumen mit Variation (so dass η ≈ 45-58%)
+            const vStartBase = 12.0;
+            const vStartVar = (seededRandom(seed + 100) - 0.5) * 2; // ±1 mL
+            const vStart = Math.round((vStartBase + vStartVar) * 100) / 100;
+            
+            // deltaV so wählen, dass Wirkungsgrad im Bereich 45-58% liegt
+            const deltaVBase = 0.15;
+            const deltaVVar = (seededRandom(seed + 200) - 0.5) * 0.06; // ±0.03 mL
+            const deltaV = Math.round((deltaVBase + deltaVVar) * 1000) / 1000;
+            const vEnde = Math.round((vStart - deltaV) * 100) / 100;
+            
+            // Zeit mit Variation
+            const zeitBase = 480;
+            const zeitVar = Math.round((seededRandom(seed + 300) - 0.5) * 60); // ±30s
+            const zeit = zeitBase + zeitVar;
+            
+            // Temperatur und Luftdruck mit Variation
+            const tempBase = 22;
+            const tempVar = Math.round((seededRandom(seed + 400) - 0.5) * 6); // ±3°C
+            const temperatur = tempBase + tempVar;
+            
+            const druckBase = 1013;
+            const druckVar = Math.round((seededRandom(seed + 500) - 0.5) * 30); // ±15 hPa
+            const druck = druckBase + druckVar;
+            
+            // Code generieren
+            const code = `BZ-${String.fromCharCode(64 + nr)}${nr}`;
+            
+            return {
+                nr: nr,
+                code: code,
+                u0: Math.round(u0 * 100) / 100,
+                currents: currents,
+                voltages: voltages,
+                vStart: vStart,
+                vEnde: vEnde,
+                zeit: zeit,
+                temperatur: temperatur,
+                druck: druck
+            };
+        }
+        
+        // Berechnet Wirkungsgrad für Lösungsübersicht
+        function calculateEta(data) {
+            const deltaV = data.vStart - data.vEnde; // mL
+            const deltaV_SI = deltaV * 1e-6; // m³
+            const H_O = 12.745e6; // J/m³
+            const E_H2 = deltaV_SI * H_O;
+            
+            const avgU = data.voltages.reduce((a, b) => a + b, 0) / data.voltages.length;
+            const avgI = data.currents.reduce((a, b) => a + b, 0) / data.currents.length * 1e-3; // A
+            const E_el = avgU * avgI * data.zeit;
+            
+            const eta = (E_el / E_H2) * 100;
+            return Math.round(eta * 10) / 10;
+        }
+        
+        // Hilfsfunktion: Punkt zu Komma
+        function komma(num, decimals = 2) {
+            return num.toFixed(decimals).replace('.', ',');
+        }
+        
+        function kommaSI(num) {
+            const exp = Math.floor(Math.log10(Math.abs(num)));
+            const mantisse = num / Math.pow(10, exp);
+            return komma(mantisse) + '·10<sup>' + exp + '</sup>';
+        }
+        
+        function kommaSI_pdf(num) {
+            const exp = Math.floor(Math.log10(Math.abs(num)));
+            const mantisse = num / Math.pow(10, exp);
+            return komma(mantisse) + '×10^' + exp;
+        }
+        
+        // UI aktualisieren
+        function updateUI(data) {
+            document.getElementById('codeBadge').textContent = data.code;
+            document.getElementById('codeHinweis').textContent = data.code;
+            document.getElementById('u0').textContent = komma(data.u0);
+            
+            document.getElementById('vStart').textContent = komma(data.vStart) + ' mL';
+            document.getElementById('vStartSI').innerHTML = kommaSI(data.vStart * 1e-6) + ' m³';
+            document.getElementById('vEnde').textContent = komma(data.vEnde) + ' mL';
+            document.getElementById('vEndeSI').innerHTML = kommaSI(data.vEnde * 1e-6) + ' m³';
+            document.getElementById('zeit').textContent = data.zeit + ' s';
+            document.getElementById('zeitSI').textContent = data.zeit + ' s';
+            document.getElementById('temperatur').textContent = data.temperatur + ' °C';
+            document.getElementById('temperaturSI').textContent = (data.temperatur + 273) + ' K';
+            document.getElementById('druck').textContent = data.druck + ' hPa';
+            document.getElementById('druckSI').textContent = komma(data.druck * 100) + ' Pa';
+            
+            const tbody = document.getElementById('messwerteBody');
+            tbody.innerHTML = '';
+            
+            for (let i = 0; i < 10; i++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td>${komma(data.voltages[i])}</td>
+                    <td>${komma(data.currents[i])}</td>
+                    <td></td>
+                `;
+                tbody.appendChild(row);
+            }
+            
+            document.getElementById('dataSection').classList.add('visible');
+        }
+        
+        // PDF generieren
+        function generatePDF(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(10);
+            doc.text('Lore-Lorentz-Schule', 20, 15);
+            doc.text('Physik – UTEC 13NC', 105, 15, { align: 'center' });
+            doc.text(new Date().toLocaleDateString('de-DE'), 190, 15, { align: 'right' });
+            
+            doc.setLineWidth(0.5);
+            doc.line(20, 18, 190, 18);
+            
+            // Titel
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('Hausarbeit: PEM-Brennstoffzelle – Messdaten', 105, 30, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Datensatz: ${data.code}`, 105, 40, { align: 'center' });
+            
+            // Volumenmessung
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('Volumenmessung', 20, 55);
+            
+            doc.autoTable({
+                startY: 60,
+                head: [['Messgröße', 'Wert', 'In SI-Einheit']],
+                body: [
+                    ['Startvolumen V_Start', komma(data.vStart) + ' mL', kommaSI_pdf(data.vStart * 1e-6) + ' m³'],
+                    ['Endvolumen V_Ende', komma(data.vEnde) + ' mL', kommaSI_pdf(data.vEnde * 1e-6) + ' m³'],
+                    ['Gesamtzeit t', data.zeit + ' s', data.zeit + ' s'],
+                    ['Temperatur T', data.temperatur + ' °C', (data.temperatur + 273) + ' K'],
+                    ['Luftdruck p', data.druck + ' hPa', komma(data.druck * 100) + ' Pa']
+                ],
+                theme: 'grid',
+                headStyles: { fillColor: [155, 89, 182] },
+                margin: { left: 40, right: 40 }
+            });
+            
+            // Kennlinie
+            doc.setFont(undefined, 'bold');
+            doc.text('Messwerte der Kennlinie', 20, doc.lastAutoTable.finalY + 15);
+            
+            doc.setFont(undefined, 'normal');
+            doc.text('Leerlaufspannung: U0 = ' + komma(data.u0) + ' V', 20, doc.lastAutoTable.finalY + 23);
+            
+            const tableData = data.voltages.map((v, i) => [
+                i + 1,
+                komma(data.voltages[i]),
+                komma(data.currents[i]),
+                ''
+            ]);
+            
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 28,
+                head: [['Nr.', 'Spannung U in V', 'Strom I in mA', 'Leistung P in mW']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: { fillColor: [52, 152, 219] },
+                columnStyles: {
+                    0: { cellWidth: 20 },
+                    1: { cellWidth: 45 },
+                    2: { cellWidth: 45 },
+                    3: { cellWidth: 50 }
+                },
+                margin: { left: 25, right: 25 }
+            });
+            
+            // Hinweis
+            const hinweisY = doc.lastAutoTable.finalY + 15;
+            doc.setFillColor(255, 243, 205);
+            doc.rect(20, hinweisY - 5, 170, 20, 'F');
+            doc.setFontSize(10);
+            doc.text(`Hinweis: Dies sind Ihre persönlichen Messdaten (Code: ${data.code}).`, 25, hinweisY + 2);
+            doc.text('Tragen Sie diesen Code auf Ihrer Abgabe ein.', 25, hinweisY + 9);
+            
+            // Name-Feld
+            doc.setFontSize(11);
+            doc.text('Name: ___________________________', 20, hinweisY + 30);
+            doc.text('Abgabe: nächste Unterrichtsstunde', 120, hinweisY + 30);
+            
+            doc.save(`Brennstoffzelle_Messdaten_${data.code}.pdf`);
+        }
+        
+        // Event Listeners
+        const select = document.getElementById('listennummer');
+        const generateBtn = document.getElementById('generateBtn');
+        const pdfBtn = document.getElementById('pdfBtn');
+        let currentData = null;
+        
+        select.addEventListener('change', function() {
+            generateBtn.disabled = !this.value;
+        });
+        
+        generateBtn.addEventListener('click', function() {
+            const nr = parseInt(select.value);
+            currentData = generateData(nr);
+            updateUI(currentData);
+        });
+        
+        pdfBtn.addEventListener('click', function() {
+            if (currentData) {
+                generatePDF(currentData);
+            }
+        });
+    </script>
+</body>
+</html>
