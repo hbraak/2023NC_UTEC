@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aluminium-Recycling — Interaktiv</title>
+<style>
+  :root {
+    --primary: #2e7d32;
+    --primary-light: #4caf50;
+    --accent: #ff9800;
+    --danger: #c62828;
+    --bg: #f5f5f5;
+    --card: #ffffff;
+    --text: #212121;
+    --text-light: #616161;
+    --radius: 12px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h1 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 8px;
+    font-size: 1.8em;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 30px;
+    font-size: 0.95em;
+  }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .card h2 {
+    color: var(--primary);
+    margin-bottom: 16px;
+    font-size: 1.3em;
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 8px;
+  }
+  .card h3 {
+    color: var(--text);
+    margin: 16px 0 8px;
+    font-size: 1.05em;
+  }
+
+  /* === Energierechner === */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .calc-box {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid var(--danger);
+  }
+  .calc-box.secondary {
+    border-left-color: var(--primary);
+  }
+  .calc-box h3 {
+    margin-top: 0;
+    font-size: 1em;
+  }
+  .big-number {
+    font-size: 2em;
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .calc-box .big-number { color: var(--danger); }
+  .calc-box.secondary .big-number { color: var(--primary); }
+  .unit { font-size: 0.5em; color: var(--text-light); }
+
+  .slider-group {
+    margin: 16px 0;
+  }
+  .slider-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slider-row input[type=range] {
+    flex: 1;
+    accent-color: var(--primary);
+  }
+  .slider-val {
+    min-width: 80px;
+    font-weight: 700;
+    text-align: right;
+  }
+  .result-bar {
+    margin-top: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 8px;
+    text-align: center;
+  }
+  .result-bar .big-number {
+    color: var(--primary);
+    font-size: 1.6em;
+  }
+  .comparison-bar {
+    display: flex;
+    height: 32px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .bar-primary {
+    background: var(--danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8em;
+    font-weight: 600;
+    transition: width 0.5s;
+  }
+  .bar-secondary {
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8em;
+    font-weight: 600;
+    transition: width 0.5s;
+  }
+
+  /* === Drag & Drop === */
+  .dnd-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 16px 0;
+  }
+  .dnd-zone {
+    min-width: 200px;
+    min-height: 140px;
+    border: 2px dashed #bbb;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    flex: 1;
+    transition: all 0.2s;
+  }
+  .dnd-zone.over {
+    border-color: var(--primary);
+    background: #e8f5e9;
+  }
+  .dnd-zone h3 {
+    margin: 0 0 8px;
+    font-size: 0.95em;
+    color: var(--primary);
+  }
+  .dnd-zone .icon { font-size: 1.8em; margin-bottom: 4px; }
+  .material-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px 0;
+  }
+  .mat-chip {
+    padding: 8px 14px;
+    background: #e3f2fd;
+    border-radius: 20px;
+    cursor: grab;
+    font-size: 0.9em;
+    font-weight: 500;
+    user-select: none;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .mat-chip:active { cursor: grabbing; }
+  .mat-chip.correct {
+    background: #c8e6c9;
+    border-color: var(--primary);
+  }
+  .mat-chip.wrong {
+    background: #ffcdd2;
+    border-color: var(--danger);
+    animation: shake 0.4s;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .dnd-placed {
+    padding: 4px 10px;
+    margin: 4px;
+    display: inline-block;
+    border-radius: 12px;
+    font-size: 0.85em;
+    background: #c8e6c9;
+  }
+  .btn {
+    display: inline-block;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+  .btn-primary:hover { background: #1b5e20; }
+  .btn-accent {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-accent:hover { background: #e65100; }
+  .btn-reset {
+    background: #eee;
+    color: var(--text);
+  }
+
+  /* === Quiz === */
+  .quiz-q {
+    margin: 16px 0;
+    padding: 16px;
+    background: #fafafa;
+    border-radius: 8px;
+  }
+  .quiz-q p {
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .quiz-options label {
+    display: block;
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .quiz-options label:hover {
+    background: #e8f5e9;
+  }
+  .quiz-options input {
+    margin-right: 8px;
+  }
+  .quiz-options label.q-correct {
+    background: #c8e6c9;
+    font-weight: 600;
+  }
+  .quiz-options label.q-wrong {
+    background: #ffcdd2;
+  }
+  .quiz-feedback {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: #e8f5e9; color: #2e7d32; }
+  .quiz-feedback.wrong { background: #fce4ec; color: #c62828; }
+  .score-display {
+    text-align: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 8px;
+    margin-top: 16px;
+    display: none;
+  }
+  .score-display .big-number { color: var(--primary); }
+
+  /* === Footer === */
+  footer {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.8em;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #ddd;
+  }
+
+  @media (max-width: 600px) {
+    .calc-grid { grid-template-columns: 1fr; }
+    .dnd-container { flex-direction: column; }
+    body { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>♻️ Aluminium-Recycling</h1>
+<p class="subtitle">Lore-Lorentz-Schule — UTEC 12NC — 18.03.2026</p>
+
+<!-- ==================== TEIL 1: ENERGIERECHNER ==================== -->
+<div class="card">
+  <h2>⚡ Teil 1: Energiebilanz-Rechner</h2>
+  <p>Primäraluminium wird durch Schmelzflusselektrolyse (Hall-Héroult-Verfahren) bei ca. 950 °C hergestellt. Sekundäraluminium entsteht durch Einschmelzen von Aluschrott bei ca. 660 °C.</p>
+
+  <div class="calc-grid">
+    <div class="calc-box">
+      <h3>🏭 Primäraluminium</h3>
+      <div class="big-number">15,0 <span class="unit">kWh/kg</span></div>
+      <p style="font-size:0.85em;color:var(--text-light)">Bauxit → Aluminiumoxid → Elektrolyse</p>
+    </div>
+    <div class="calc-box secondary">
+      <h3>♻️ Sekundäraluminium</h3>
+      <div class="big-number">0,7 <span class="unit">kWh/kg</span></div>
+      <p style="font-size:0.85em;color:var(--text-light)">Schrott → Sortierung → Einschmelzen</p>
+    </div>
+  </div>
+
+  <div class="comparison-bar">
+    <div class="bar-primary" id="barPrimary" style="width:95.3%">Primär: 15,0 kWh</div>
+    <div class="bar-secondary" id="barSecondary" style="width:4.7%">0,7</div>
+  </div>
+  <p style="text-align:center;font-size:0.85em;color:var(--text-light)">→ <strong>95,3 % Energieeinsparung</strong> durch Recycling</p>
+
+  <div class="slider-group">
+    <label>Aluminium-Menge: <span id="massVal">1.000</span> kg</label>
+    <div class="slider-row">
+      <span>100 kg</span>
+      <input type="range" id="massSlider" min="100" max="100000" step="100" value="1000">
+      <span>100 t</span>
+    </div>
+  </div>
+
+  <div class="slider-group">
+    <label>CO₂-Emissionsfaktor Strom: <span id="co2Val">400</span> g CO₂/kWh</label>
+    <div class="slider-row">
+      <span>50</span>
+      <input type="range" id="co2Slider" min="50" max="800" step="10" value="400">
+      <span>800</span>
+    </div>
+    <p style="font-size:0.8em;color:var(--text-light);margin-top:4px">Deutschland ~400 g/kWh | Norwegen (Wasserkraft) ~20 g/kWh | Polen (Kohle) ~700 g/kWh</p>
+  </div>
+
+  <div class="result-bar">
+    <p><strong>Ergebnis bei <span id="resMass">1.000</span> kg Aluminium:</strong></p>
+    <table style="width:100%;margin:8px 0;text-align:center;">
+      <tr>
+        <td>Energie Primär</td>
+        <td>Energie Sekundär</td>
+        <td><strong>Einsparung</strong></td>
+      </tr>
+      <tr style="font-size:1.2em;font-weight:700;">
+        <td style="color:var(--danger)" id="resPrimE">15.000 kWh</td>
+        <td style="color:var(--primary)" id="resSecE">700 kWh</td>
+        <td style="color:var(--primary)" id="resSaveE">14.300 kWh</td>
+      </tr>
+    </table>
+    <p style="margin-top:8px;">CO₂-Einsparung: <span class="big-number" id="resCO2">5,7 t</span></p>
+    <p style="font-size:0.85em;color:var(--text-light)" id="resAnalogy">Das entspricht ca. 38.000 km Autofahrt (150 g CO₂/km).</p>
+  </div>
+</div>
+
+<!-- ==================== TEIL 2: DRAG & DROP ==================== -->
+<div class="card">
+  <h2>🧲 Teil 2: Trennverfahren zuordnen</h2>
+  <p>Ordnen Sie die Materialien dem richtigen Trennverfahren zu. Ziehen Sie die Chips in die passende Zone!</p>
+
+  <div class="material-pool" id="materialPool">
+    <!-- Chips werden per JS erzeugt -->
+  </div>
+
+  <div class="dnd-container">
+    <div class="dnd-zone" id="zone-magnet" data-zone="magnet">
+      <div class="icon">🧲</div>
+      <h3>Magnetabscheider</h3>
+      <p style="font-size:0.8em;color:var(--text-light)">Ferromagnetische Metalle</p>
+      <div class="placed-items"></div>
+    </div>
+    <div class="dnd-zone" id="zone-wirbelstrom" data-zone="wirbelstrom">
+      <div class="icon">⚡</div>
+      <h3>Wirbelstrom&shy;abscheider</h3>
+      <p style="font-size:0.8em;color:var(--text-light)">Nicht-ferromagn. Metalle</p>
+      <div class="placed-items"></div>
+    </div>
+    <div class="dnd-zone" id="zone-dichte" data-zone="dichte">
+      <div class="icon">⚖️</div>
+      <h3>Dichte&shy;sortierung</h3>
+      <p style="font-size:0.8em;color:var(--text-light)">Schwimm-Sink / Windsichtung</p>
+      <div class="placed-items"></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:12px;">
+    <span id="dndScore" style="font-weight:600;"></span>
+    <br><br>
+    <button class="btn btn-reset" onclick="resetDnD()">🔄 Zurücksetzen</button>
+  </div>
+</div>
+
+<!-- ==================== TEIL 3: QUIZ ==================== -->
+<div class="card">
+  <h2>📝 Teil 3: Quiz — Kreislaufwirtschaft & Recycling</h2>
+
+  <div class="quiz-q" id="q1">
+    <p>1. Welche Reihenfolge gibt die Abfallhierarchie nach dem Kreislaufwirtschaftsgesetz (KrWG) vor?</p>
+    <div class="quiz-options">
+      <label><input type="radio" name="q1" value="a"> Verwertung → Vermeidung → Beseitigung → Recycling → Vorbereitung zur Wiederverwendung</label>
+      <label><input type="radio" name="q1" value="b"> Vermeidung → Vorbereitung zur Wiederverwendung → Recycling → Sonstige Verwertung → Beseitigung</label>
+      <label><input type="radio" name="q1" value="c"> Recycling → Vermeidung → Verwertung → Wiederverwendung → Beseitigung</label>
+      <label><input type="radio" name="q1" value="d"> Beseitigung → Recycling → Verwertung → Vermeidung → Wiederverwendung</label>
+    </div>
+    <div class="quiz-feedback" id="fb1"></div>
+  </div>
+
+  <div class="quiz-q" id="q2">
+    <p>2. Warum spart Aluminium-Recycling so viel Energie?</p>
+    <div class="quiz-options">
+      <label><input type="radio" name="q2" value="a"> Weil das Recycling in billigeren Ländern stattfindet</label>
+      <label><input type="radio" name="q2" value="b"> Weil die energieaufwendige Schmelzflusselektrolyse entfällt — das Metall muss nur eingeschmolzen werden</label>
+      <label><input type="radio" name="q2" value="c"> Weil recyceltes Aluminium einen niedrigeren Schmelzpunkt hat</label>
+      <label><input type="radio" name="q2" value="d"> Weil beim Recycling weniger Arbeiter benötigt werden</label>
+    </div>
+    <div class="quiz-feedback" id="fb2"></div>
+  </div>
+
+  <div class="quiz-q" id="q3">
+    <p>3. Ein Wirbelstromabscheider funktioniert nach dem Prinzip der…</p>
+    <div class="quiz-options">
+      <label><input type="radio" name="q3" value="a"> Gravitation (schwere Teile fallen schneller)</label>
+      <label><input type="radio" name="q3" value="b"> Elektromagnetischen Induktion (Lenz'sche Regel → abstoßende Wirbelströme)</label>
+      <label><input type="radio" name="q3" value="c"> Elektrostatischen Aufladung (Reibungselektrizität)</label>
+      <label><input type="radio" name="q3" value="d"> Magnetischen Anziehung (wie ein Hufeisenmagnet)</label>
+    </div>
+    <div class="quiz-feedback" id="fb3"></div>
+  </div>
+
+  <div class="quiz-q" id="q4">
+    <p>4. Was ist das größte Problem beim Aluminium-Recycling in der Praxis?</p>
+    <div class="quiz-options">
+      <label><input type="radio" name="q4" value="a"> Aluminium verliert beim Einschmelzen seine Festigkeit</label>
+      <label><input type="radio" name="q4" value="b"> Verschiedene Alu-Legierungen vermischen sich → Downcycling statt echtem Recycling</label>
+      <label><input type="radio" name="q4" value="c"> Es gibt weltweit nicht genug Aluschrott</label>
+      <label><input type="radio" name="q4" value="d"> Recycling-Aluminium ist teurer als Primäraluminium</label>
+    </div>
+    <div class="quiz-feedback" id="fb4"></div>
+  </div>
+
+  <div class="quiz-q" id="q5">
+    <p>5. In welchem Land wird besonders viel Primäraluminium hergestellt — und warum?</p>
+    <div class="quiz-options">
+      <label><input type="radio" name="q5" value="a"> Deutschland — wegen der guten Infrastruktur</label>
+      <label><input type="radio" name="q5" value="b"> China — wegen günstiger Kohle und Wasserkraft</label>
+      <label><input type="radio" name="q5" value="c"> Norwegen — wegen günstiger Wasserkraft und niedrigem CO₂-Fußabdruck</label>
+      <label><input type="radio" name="q5" value="d"> Sowohl b als auch c — aber aus unterschiedlichen Gründen</label>
+    </div>
+    <div class="quiz-feedback" id="fb5"></div>
+  </div>
+
+  <div style="text-align:center;margin-top:16px;">
+    <button class="btn btn-primary" onclick="checkQuiz()">✅ Auswerten</button>
+    <button class="btn btn-reset" onclick="resetQuiz()" style="margin-left:8px;">🔄 Zurücksetzen</button>
+  </div>
+
+  <div class="score-display" id="quizScore"></div>
+</div>
+
+<!-- ==================== VIDEOS ==================== -->
+<div class="card">
+  <h2>🎬 Videos zum Wirbelstromabscheider</h2>
+  <div style="margin:12px 0;">
+    <p><strong>Goudsmit Magnetics</strong> — Wirbelstromabscheider für Nichteisenmetalle</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;margin:8px 0;">
+      <iframe src="https://www.youtube.com/embed/YIl10U_sLsI" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:8px;" allowfullscreen></iframe>
+    </div>
+  </div>
+  <div style="margin:12px 0;">
+    <p><strong>WDR Maschinenhalle</strong> — Wirbelstromverfahren in einer Sortieranlage</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;margin:8px 0;">
+      <iframe src="https://www.youtube.com/embed/ieTESAYPDrY" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:8px;" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<footer>
+  UTEC 12NC — Aluminium-Recycling — Lore-Lorentz-Schule 2026
+</footer>
+
+<script>
+// ==================== ENERGIERECHNER ====================
+const massSlider = document.getElementById('massSlider');
+const co2Slider = document.getElementById('co2Slider');
+
+function fmt(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(1).replace('.',',') + ' Mio.';
+  return n.toLocaleString('de-DE');
+}
+
+function updateCalc() {
+  const mass = +massSlider.value;
+  const co2Factor = +co2Slider.value;
+
+  document.getElementById('massVal').textContent = fmt(mass);
+  document.getElementById('co2Val').textContent = co2Factor;
+
+  const ePrim = mass * 15.0;
+  const eSec = mass * 0.7;
+  const eSave = ePrim - eSec;
+  const co2Save = eSave * co2Factor / 1e6; // Tonnen
+
+  document.getElementById('resMass').textContent = fmt(mass);
+  document.getElementById('resPrimE').textContent = fmt(Math.round(ePrim)) + ' kWh';
+  document.getElementById('resSecE').textContent = fmt(Math.round(eSec)) + ' kWh';
+  document.getElementById('resSaveE').textContent = fmt(Math.round(eSave)) + ' kWh';
+  document.getElementById('resCO2').textContent = co2Save.toFixed(1).replace('.',',') + ' t CO₂';
+
+  const km = Math.round(co2Save * 1e6 / 150);
+  document.getElementById('resAnalogy').textContent =
+    'Das entspricht ca. ' + fmt(km) + ' km Autofahrt (150 g CO₂/km).';
+}
+massSlider.addEventListener('input', updateCalc);
+co2Slider.addEventListener('input', updateCalc);
+
+// ==================== DRAG & DROP ====================
+const materials = [
+  { name: 'Eisenschrott', zone: 'magnet' },
+  { name: 'Stahldosen', zone: 'magnet' },
+  { name: 'Nickel', zone: 'magnet' },
+  { name: 'Aluminium', zone: 'wirbelstrom' },
+  { name: 'Kupferkabel', zone: 'wirbelstrom' },
+  { name: 'Messingteile', zone: 'wirbelstrom' },
+  { name: 'Kunststoff', zone: 'dichte' },
+  { name: 'Glas', zone: 'dichte' },
+  { name: 'Papier/Pappe', zone: 'dichte' },
+];
+
+let dndCorrect = 0;
+let dndTotal = 0;
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function createChips() {
+  const pool = document.getElementById('materialPool');
+  pool.innerHTML = '';
+  shuffleArray([...materials]).forEach(m => {
+    const chip = document.createElement('div');
+    chip.className = 'mat-chip';
+    chip.textContent = m.name;
+    chip.draggable = true;
+    chip.dataset.zone = m.zone;
+    chip.dataset.name = m.name;
+    chip.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', JSON.stringify({ name: m.name, zone: m.zone }));
+    });
+    // Touch support
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('correct')) return;
+      chip.style.outline = '3px solid var(--accent)';
+      document.querySelectorAll('.dnd-zone').forEach(z => {
+        z.onclick = () => {
+          handleDrop(z, m.name, m.zone, chip);
+          document.querySelectorAll('.dnd-zone').forEach(zz => zz.onclick = null);
+        };
+      });
+    });
+    pool.appendChild(chip);
+  });
+}
+
+function handleDrop(zone, name, correctZone, chip) {
+  dndTotal++;
+  if (zone.dataset.zone === correctZone) {
+    dndCorrect++;
+    chip.classList.add('correct');
+    chip.style.outline = '';
+    chip.draggable = false;
+    const placed = document.createElement('span');
+    placed.className = 'dnd-placed';
+    placed.textContent = name;
+    zone.querySelector('.placed-items').appendChild(placed);
+  } else {
+    chip.classList.add('wrong');
+    chip.style.outline = '';
+    setTimeout(() => chip.classList.remove('wrong'), 600);
+  }
+  document.getElementById('dndScore').textContent =
+    dndCorrect + ' von ' + materials.length + ' richtig zugeordnet' +
+    (dndTotal > dndCorrect ? ' (Versuche: ' + dndTotal + ')' : '');
+}
+
+// Drag events on zones
+document.querySelectorAll('.dnd-zone').forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('over');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('over');
+    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+    const chip = document.querySelector(`.mat-chip[data-name="${data.name}"]`);
+    if (chip && !chip.classList.contains('correct')) {
+      handleDrop(zone, data.name, data.zone, chip);
+    }
+  });
+});
+
+function resetDnD() {
+  dndCorrect = 0;
+  dndTotal = 0;
+  document.getElementById('dndScore').textContent = '';
+  document.querySelectorAll('.placed-items').forEach(pi => pi.innerHTML = '');
+  createChips();
+}
+
+createChips();
+
+// ==================== QUIZ ====================
+const answers = {
+  q1: { correct: 'b', explain: 'Die Abfallhierarchie nach § 6 KrWG: Vermeidung → Vorbereitung zur Wiederverwendung → Recycling → Sonstige Verwertung (z. B. energetisch) → Beseitigung.' },
+  q2: { correct: 'b', explain: 'Bei der Primärherstellung braucht man die Schmelzflusselektrolyse bei ~950 °C (extrem energieintensiv). Beim Recycling wird das Aluminium nur bei ~660 °C eingeschmolzen — die Elektrolyse entfällt komplett.' },
+  q3: { correct: 'b', explain: 'Der schnell rotierende Magnetrotor induziert Wirbelströme im leitfähigen Metall. Nach der Lenz\'schen Regel erzeugen diese ein Gegenfeld → das Metall wird abgestoßen und von der Förderbahn abgelenkt.' },
+  q4: { correct: 'b', explain: 'Beim Einschmelzen vermischen sich verschiedene Legierungen (z. B. Guss- und Knetlegierungen). Das Ergebnis hat oft schlechtere Eigenschaften → Downcycling. Sortenreine Sammlung ist daher entscheidend.' },
+  q5: { correct: 'd', explain: 'China ist der größte Produzent (billige Energie, v. a. Kohle + Wasserkraft). Norwegen/Island nutzen günstige Wasserkraft/Geothermie mit niedrigem CO₂-Fußabdruck. Beide produzieren viel — aus verschiedenen Gründen.' },
+};
+
+function checkQuiz() {
+  let score = 0;
+  const total = Object.keys(answers).length;
+
+  for (const [qid, ans] of Object.entries(answers)) {
+    const selected = document.querySelector(`input[name="${qid}"]:checked`);
+    const fb = document.getElementById('fb' + qid.slice(1));
+
+    if (!selected) {
+      fb.className = 'quiz-feedback show wrong';
+      fb.textContent = '⚠️ Bitte wählen Sie eine Antwort aus.';
+      continue;
+    }
+
+    const labels = document.querySelectorAll(`#${qid} .quiz-options label`);
+    labels.forEach(l => {
+      const inp = l.querySelector('input');
+      if (inp.value === ans.correct) l.classList.add('q-correct');
+      else if (inp.checked) l.classList.add('q-wrong');
+      inp.disabled = true;
+    });
+
+    if (selected.value === ans.correct) {
+      score++;
+      fb.className = 'quiz-feedback show correct';
+      fb.textContent = '✅ Richtig! ' + ans.explain;
+    } else {
+      fb.className = 'quiz-feedback show wrong';
+      fb.textContent = '❌ Leider falsch. ' + ans.explain;
+    }
+  }
+
+  const scoreDiv = document.getElementById('quizScore');
+  scoreDiv.style.display = 'block';
+  const pct = Math.round(score / total * 100);
+  const emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '📚';
+  scoreDiv.innerHTML = `${emoji} <span class="big-number">${score} / ${total}</span> richtig (${pct} %)`;
+}
+
+function resetQuiz() {
+  for (const qid of Object.keys(answers)) {
+    document.querySelectorAll(`#${qid} input`).forEach(inp => {
+      inp.checked = false;
+      inp.disabled = false;
+    });
+    document.querySelectorAll(`#${qid} label`).forEach(l => {
+      l.classList.remove('q-correct', 'q-wrong');
+    });
+    const fb = document.getElementById('fb' + qid.slice(1));
+    fb.className = 'quiz-feedback';
+    fb.textContent = '';
+  }
+  document.getElementById('quizScore').style.display = 'none';
+}
+</script>
+</body>
+</html>
