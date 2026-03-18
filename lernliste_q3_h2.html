@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernliste Klausur Q3 – UTEC 13NC</title>
+<style>
+  :root {
+    --accent: #2563eb;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+    --green: #16a34a;
+    --yellow: #ca8a04;
+    --red: #dc2626;
+    --done: #d1fae5;
+    --done-border: #6ee7b7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid var(--accent);
+  }
+  header h1 { font-size: 1.6rem; color: var(--accent); }
+  header p { color: var(--muted); margin-top: 0.3rem; }
+
+  /* Progress bar */
+  .progress-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .progress-header span { font-weight: 600; font-size: 0.95rem; }
+  .progress-header .pct { color: var(--accent); font-size: 1.3rem; font-weight: 700; }
+  .progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 6px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+  .progress-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .info-box {
+    background: #eff6ff;
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0 8px 8px 0;
+  }
+  .info-box strong { color: var(--accent); }
+
+  /* Sections */
+  section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+  }
+  .section-header:hover { background: #f8fafc; }
+  .section-header h2 {
+    font-size: 1.1rem;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .section-header .badge {
+    background: var(--accent);
+    color: white;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .section-header .section-progress {
+    font-size: 0.8rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .section-header .arrow {
+    transition: transform 0.3s;
+    font-size: 1.2rem;
+    color: var(--muted);
+  }
+  .section-header.collapsed .arrow { transform: rotate(-90deg); }
+  .section-body {
+    padding: 0 1.5rem 1.2rem;
+    transition: max-height 0.4s ease, opacity 0.3s;
+    overflow: hidden;
+  }
+  .section-body.hidden {
+    max-height: 0 !important;
+    padding: 0 1.5rem;
+    opacity: 0;
+  }
+
+  /* Checklist items */
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f1f5f9;
+    transition: opacity 0.3s, background 0.3s;
+    border-radius: 4px;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item.done {
+    opacity: 0.55;
+  }
+  .check-item.done .item-text { text-decoration: line-through; }
+  .check-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--green);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .item-text { flex: 1; }
+  .item-text b { color: var(--text); }
+
+  /* Priority stars */
+  .prio {
+    font-size: 0.7rem;
+    margin-left: 0.4rem;
+    white-space: nowrap;
+  }
+  .prio-high { color: var(--red); }
+  .prio-med { color: var(--yellow); }
+  .prio-low { color: var(--green); }
+
+  .formula {
+    background: #f1f5f9;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'Cambria Math', 'Latin Modern Math', Georgia, serif;
+    font-style: italic;
+    white-space: nowrap;
+    font-size: 0.95em;
+  }
+  .tip {
+    background: #fefce8;
+    border-left: 4px solid var(--yellow);
+    padding: 0.8rem 1rem;
+    margin-top: 0.8rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+  }
+  .tip::before { content: '💡 '; }
+
+  /* Self-test toggle */
+  .self-test {
+    background: #f0fdf4;
+    border: 1px solid var(--done-border);
+    border-radius: 8px;
+    margin-top: 0.8rem;
+    overflow: hidden;
+  }
+  .self-test summary {
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--green);
+    user-select: none;
+  }
+  .self-test summary:hover { background: #dcfce7; }
+  .self-test .answer {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    border-top: 1px solid var(--done-border);
+  }
+
+  /* Reset button */
+  .reset-btn {
+    display: block;
+    margin: 1rem auto;
+    padding: 0.5rem 1.5rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    body { padding: 0; }
+    section { break-inside: avoid; }
+    .check-item input[type="checkbox"] { appearance: none; border: 2px solid #999; border-radius: 3px; }
+    .self-test .answer { display: block !important; }
+    .reset-btn { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📋 Lernliste Klausur Q3 – UTEC 13 NC</h1>
+  <p>Umweltschutztechnik | Schuljahr 2025/26 | Lore-Lorentz-Schule</p>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-container">
+  <div class="progress-header">
+    <span>Lernfortschritt</span>
+    <span class="pct" id="pct">0 %</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="bar"></div></div>
+  <div class="progress-details">
+    <span id="done-count">0 von 0 Themen</span>
+    <span id="streak"></span>
+  </div>
+</div>
+
+
+
+<!-- ===== AUFGABE 1 ===== -->
+<section>
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2>📌 Aufgabe 1: Kohlenstoff- vs. Wasserstoff-Energiewirtschaft <span class="badge">10 P</span></h2>
+    <div style="display:flex;align-items:center;gap:0.8rem">
+      <span class="section-progress" data-section="a1"></span>
+      <span class="arrow">▼</span>
+    </div>
+  </div>
+  <div class="section-body" data-section="a1">
+    <div class="check-item"><input type="checkbox" data-id="a1-1"><div class="item-text">Kohlenstoff-Kreislauf erklären: fossile Rohstoffe → Verbrennung → CO₂ → Treibhauseffekt <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a1-2"><div class="item-text">Wasserstoff-Kreislauf erklären: erneuerbare Energie → Elektrolyse → H₂ → Brennstoffzelle → Strom + H₂O <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a1-3"><div class="item-text">Unterschied: offener Kreislauf (Kohlenstoff, endlich) vs. geschlossener Kreislauf (Wasserstoff, erneuerbar) <span class="prio prio-med">★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a1-4"><div class="item-text">Emissionen vergleichen: CO₂, SO₂, Feinstaub (Kohlenstoff) vs. H₂O (Wasserstoff) <span class="prio prio-med">★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a1-5"><div class="item-text">Voraussetzungen für die Wasserstoffwirtschaft benennen können <span class="prio prio-low">★</span></div></div>
+
+    <details class="self-test">
+      <summary>🧪 Selbsttest: Können Sie das?</summary>
+      <div class="answer">
+        <p><b>Frage:</b> Warum ist der Kohlenstoff-Kreislauf kein echter geschlossener Kreislauf?</p>
+        <p><b>Antwort:</b> Weil fossile Brennstoffe über Jahrmillionen entstanden sind und nicht in menschlichen Zeiträumen regeneriert werden. Das freigesetzte CO₂ verbleibt in der Atmosphäre → Treibhauseffekt. Beim Wasserstoff-Kreislauf entsteht nur H₂O, das wieder für die Elektrolyse verwendet werden kann.</p>
+      </div>
+    </details>
+    <div class="tip">Üben Sie, das Schaubild aus dem AB „Energiekreisläufe" (30.01.) frei zu beschreiben.</div>
+  </div>
+</section>
+
+<!-- ===== AUFGABE 2 ===== -->
+<section>
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2>📌 Aufgabe 2: Erörterung zu einem aktuellen Artikel <span class="badge">20 P</span></h2>
+    <div style="display:flex;align-items:center;gap:0.8rem">
+      <span class="section-progress" data-section="a2"></span>
+      <span class="arrow">▼</span>
+    </div>
+  </div>
+  <div class="section-body" data-section="a2">
+    <div class="check-item"><input type="checkbox" data-id="a2-1"><div class="item-text">Aufbau einer Erörterung beherrschen: These → Pro-Argumente → Contra-Argumente → begründetes Fazit <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a2-2"><div class="item-text">Rolle von Wasserstoff in der Energiewende: Chancen und Grenzen sachlich abwägen können <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a2-3"><div class="item-text">Verschiedene Speichertechnologien kennen und vergleichen: Batterien, Wasserstoff, Power-to-Gas, Pumpspeicher <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a2-4"><div class="item-text"><b>Vielseitigkeit von Wasserstoff:</b> Einsatz nicht nur zur Stromerzeugung, sondern auch in Mobilität (LKW, Busse), Industrie (Stahl, Chemie) und Wärmeversorgung <span class="prio prio-med">★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a2-5"><div class="item-text">Langzeitspeicherung (saisonal, Wochen) vs. Kurzzeitspeicherung (Stunden, Tag/Nacht) — wofür eignet sich was? <span class="prio prio-med">★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a2-6"><div class="item-text">Wirtschaftlichkeit: Kosten der Wasserstofferzeugung, Infrastrukturbedarf, staatliche Förderung <span class="prio prio-med">★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a2-7"><div class="item-text">Argumente aus einem Text herausarbeiten und mit eigenem Fachwissen verknüpfen <span class="prio prio-low">★</span></div></div>
+
+    <details class="self-test">
+      <summary>🧪 Selbsttest: Können Sie das?</summary>
+      <div class="answer">
+        <p><b>Frage:</b> Nennen Sie je zwei Vorteile von Batteriespeichern und von Wasserstoff als Energiespeicher.</p>
+        <p><b>Antwort:</b><br>
+        <b>Batterien:</b> Hoher Wirkungsgrad (~90 %), schnelle Reaktionszeit, gut für Tagesschwankungen.<br>
+        <b>Wasserstoff:</b> Große Energiemengen speicherbar (saisonal), vielseitig einsetzbar (Mobilität, Industrie, Wärme), transportierbar über Pipelines.</p>
+      </div>
+    </details>
+    <div class="tip">Ein aktueller Artikel wird als Beilage gestellt. Eigenes Fachwissen (Wirkungsgrade, Speichertechnologien, Einsatzbereiche von H₂) bringt die volle Punktzahl!</div>
+  </div>
+</section>
+
+<!-- ===== AUFGABE 3 ===== -->
+<section>
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2>📌 Aufgabe 3: Elektrolyseur <span class="badge">26 P</span></h2>
+    <div style="display:flex;align-items:center;gap:0.8rem">
+      <span class="section-progress" data-section="a3"></span>
+      <span class="arrow">▼</span>
+    </div>
+  </div>
+  <div class="section-body" data-section="a3">
+    <div class="check-item"><input type="checkbox" data-id="a3-1"><div class="item-text"><b>Schema PEM-Elektrolyseur</b> zeichnen und beschriften: Anode, Kathode, PEM-Membran, Wasserzufuhr, H₂-/O₂-Ausgang, Stromquelle <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a3-2"><div class="item-text"><b>Reaktionsgleichungen:</b><br>
+      Anode: <span class="formula">2 H₂O → O₂ + 4 H⁺ + 4 e⁻</span><br>
+      Kathode: <span class="formula">4 H⁺ + 4 e⁻ → 2 H₂</span><br>
+      Gesamt: <span class="formula">2 H₂O → 2 H₂ + O₂</span> <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a3-3"><div class="item-text"><b>Versuchsaufbau Kennlinie:</b> Spannungsquelle (regelbar) + Amperemeter (in Reihe) + Voltmeter (parallel zum Elektrolyseur) <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a3-4"><div class="item-text"><b>Kennlinie erläutern:</b> Zersetzungsspannung (~1,5 V), Überspannung, ohmscher Bereich (linear steigend) <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a3-5"><div class="item-text"><b>Wirkungsgrade berechnen:</b><br>
+      <span class="formula">η<sub>Energie</sub> = (H₀ · V<sub>H₂</sub>) / (U · I · t)</span><br>
+      <span class="formula">η<sub>Faraday</sub> = (V<sub>exp</sub> · z · F) / (V<sub>m</sub> · I · t)</span> <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a3-6"><div class="item-text">Wirkungsgrade einordnen: η<sub>Faraday</sub> typisch 85–98 %, η<sub>Energie</sub> typisch 60–80 % <span class="prio prio-med">★★</span></div></div>
+
+    <details class="self-test">
+      <summary>🧪 Selbsttest: Rechnung</summary>
+      <div class="answer">
+        <p><b>Übung:</b> U = 7,2 V, I = 2,5 A, t = 146,1 s, V<sub>exp</sub> = 42,0 ml. Berechnen Sie η<sub>Energie</sub> und η<sub>Faraday</sub>.</p>
+        <p><b>Lösung:</b><br>
+        E<sub>el</sub> = 7,2 · 2,5 · 146,1 = 2629,8 J<br>
+        E<sub>chem</sub> = 12,745 · 10⁶ · 42,0 · 10⁻⁶ = 535,3 J<br>
+        <b>η<sub>Energie</sub> = 535,3 / 2629,8 ≈ 20,4 %</b><br><br>
+        V<sub>theo</sub> = (V<sub>m</sub> · I · t) / (z · F) = (22,414 · 2,5 · 146,1) / (2 · 96485) = 0,04243 l = 42,43 ml<br>
+        <b>η<sub>Faraday</sub> = 42,0 / 42,43 ≈ 99,0 %</b><br><br>
+        → Fast der gesamte Strom erzeugt H₂ (η<sub>F</sub> ≈ 99 %), aber der Großteil der Energie geht als Wärme verloren (η<sub>E</sub> ≈ 20 %).</p>
+      </div>
+    </details>
+    <div class="tip">Rechnen Sie das Beispiel vom 08.01. (AB Elektrolyseur-Auswertung) nochmal komplett durch – die Klausuraufgabe ist analog aufgebaut!</div>
+  </div>
+</section>
+
+<!-- ===== AUFGABE 4 ===== -->
+<section>
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2>📌 Aufgabe 4: PEM-Brennstoffzelle <span class="badge">24 P</span></h2>
+    <div style="display:flex;align-items:center;gap:0.8rem">
+      <span class="section-progress" data-section="a4"></span>
+      <span class="arrow">▼</span>
+    </div>
+  </div>
+  <div class="section-body" data-section="a4">
+    <div class="check-item"><input type="checkbox" data-id="a4-1"><div class="item-text"><b>Aufbau BZ</b> beschriften: Anode (H₂), Kathode (O₂), PEM-Membran, Katalysator, Bipolarplatten, Verbraucher <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a4-2"><div class="item-text"><b>Funktionsprinzip + Reaktionsgleichung:</b><br>
+      Anode: <span class="formula">2 H₂ → 4 H⁺ + 4 e⁻</span><br>
+      Kathode: <span class="formula">O₂ + 4 H⁺ + 4 e⁻ → 2 H₂O</span><br>
+      Gesamt: <span class="formula">2 H₂ + O₂ → 2 H₂O</span> (+ Strom + Wärme) <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a4-3"><div class="item-text"><b>Schaltplan BZ-Kennlinie:</b> BZ als Spannungsquelle + variabler Lastwiderstand + Voltmeter (parallel) + Amperemeter (in Reihe) <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a4-4"><div class="item-text"><b>U-I-Kennlinie + Leistungskurve</b> aus Messdaten erstellen: Achsen beschriften, Maßstab wählen, P = U · I berechnen, MPP markieren <span class="prio prio-high">★★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a4-5"><div class="item-text">Typischen Verlauf der BZ-Kennlinie kennen: Aktivierungsverluste → ohmscher Bereich → Stofftransportlimitierung <span class="prio prio-med">★★</span></div></div>
+    <div class="check-item"><input type="checkbox" data-id="a4-6"><div class="item-text">Vergleich Elektrolyseur ↔ Brennstoffzelle: Umkehrprozesse <span class="prio prio-low">★</span></div></div>
+
+    <details class="self-test">
+      <summary>🧪 Selbsttest: Können Sie das?</summary>
+      <div class="answer">
+        <p><b>Frage:</b> Warum sinkt die Spannung einer Brennstoffzelle bei steigendem Strom?</p>
+        <p><b>Antwort:</b> Drei Verlustmechanismen:<br>
+        1. <b>Aktivierungsverluste</b> (bei kleinen Strömen): Energie wird benötigt, um die chemische Reaktion zu starten.<br>
+        2. <b>Ohmsche Verluste</b> (mittlerer Bereich): Innenwiderstand der Membran und Elektroden → U sinkt linear mit I.<br>
+        3. <b>Stofftransportlimitierung</b> (bei hohen Strömen): H₂/O₂ können nicht schnell genug nachgeliefert werden → Spannung bricht stark ein.</p>
+      </div>
+    </details>
+    <div class="tip">Üben Sie das Diagramm-Zeichnen von Hand! Häufiger Fehler: Leistungskurve vergessen oder MPP nicht markiert. → Beamer-Folien vom 30.01. anschauen.</div>
+  </div>
+</section>
+
+<!-- ===== FORMELN ===== -->
+<section>
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2>📐 Wichtige Formeln (werden auch auf dem Klausurblatt stehen)</h2>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="section-body">
+    <div class="check-item"><input type="checkbox" data-id="f-1"><div class="item-text"><span class="formula">V<sub>m</sub> = 22,414 l/mol</span> — Molares Volumen (Normalbedingungen)</div></div>
+    <div class="check-item"><input type="checkbox" data-id="f-2"><div class="item-text"><span class="formula">H₀ = 12,745 · 10⁶ J/m³ = 285,8 kJ/mol</span> — Brennwert Wasserstoff</div></div>
+    <div class="check-item"><input type="checkbox" data-id="f-3"><div class="item-text"><span class="formula">F = 96 485 C/mol</span> — Faraday-Konstante</div></div>
+    <div class="check-item"><input type="checkbox" data-id="f-4"><div class="item-text"><span class="formula">z = 2</span> — Anzahl übertragener Elektronen pro H₂-Molekül</div></div>
+    <div class="check-item"><input type="checkbox" data-id="f-5"><div class="item-text"><span class="formula">P = U · I</span> — Elektrische Leistung</div></div>
+    <div class="check-item"><input type="checkbox" data-id="f-6"><div class="item-text"><span class="formula">η = P<sub>nutz</sub> / P<sub>zu</sub></span> — Wirkungsgrad allgemein</div></div>
+  </div>
+</section>
+
+<button class="reset-btn" onclick="resetAll()">🗑️ Fortschritt zurücksetzen</button>
+
+<footer>
+  UTEC 13 NC – Q3/2025/26 | Lore-Lorentz-Schule Düsseldorf | Viel Erfolg! 🍀
+</footer>
+
+<script>
+const STORAGE_KEY = 'utec13nc-q3-lernliste';
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('input[data-id]');
+  const checked = document.querySelectorAll('input[data-id]:checked');
+  const total = all.length;
+  const done = checked.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  document.getElementById('pct').textContent = pct + ' %';
+  document.getElementById('bar').style.width = pct + '%';
+  document.getElementById('done-count').textContent = done + ' von ' + total + ' Themen';
+
+  // Motivational streak
+  const streak = document.getElementById('streak');
+  if (pct === 100) streak.textContent = '🎉 Alles geschafft!';
+  else if (pct >= 75) streak.textContent = '🔥 Fast geschafft!';
+  else if (pct >= 50) streak.textContent = '💪 Gute Hälfte!';
+  else if (pct > 0) streak.textContent = '📖 Weiter so!';
+  else streak.textContent = '';
+
+  // Per-section progress
+  document.querySelectorAll('.section-progress').forEach(el => {
+    const sec = el.dataset.section;
+    if (!sec) return;
+    const body = document.querySelector(`.section-body[data-section="${sec}"]`);
+    if (!body) return;
+    const sAll = body.querySelectorAll('input[data-id]');
+    const sChecked = body.querySelectorAll('input[data-id]:checked');
+    el.textContent = sChecked.length + '/' + sAll.length;
+    if (sAll.length && sChecked.length === sAll.length) {
+      el.style.color = 'var(--green)';
+      el.textContent += ' ✓';
+    } else {
+      el.style.color = 'var(--muted)';
+    }
+  });
+}
+
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.arrow');
+  body.classList.toggle('hidden');
+  header.classList.toggle('collapsed');
+}
+
+function resetAll() {
+  if (!confirm('Fortschritt wirklich zurücksetzen?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  document.querySelectorAll('input[data-id]').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.check-item').classList.remove('done');
+  });
+  updateProgress();
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  const state = loadState();
+
+  document.querySelectorAll('input[data-id]').forEach(cb => {
+    const id = cb.dataset.id;
+    if (state[id]) {
+      cb.checked = true;
+      cb.closest('.check-item').classList.add('done');
+    }
+    cb.addEventListener('change', () => {
+      const s = loadState();
+      s[cb.dataset.id] = cb.checked;
+      saveState(s);
+      cb.closest('.check-item').classList.toggle('done', cb.checked);
+      updateProgress();
+    });
+  });
+
+  updateProgress();
+});
+</script>
+
+</body>
+</html>
