@@ -1187,14 +1187,15 @@ footer {
     <h3>🛡️ Abschirmung im Vergleich</h3>
     <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">Welche Strahlung wird von welchem Material gestoppt?</p>
 
-    <table class="shield-table">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+    <table class="shield-table" style="min-width:0;width:100%;table-layout:fixed;">
       <thead>
         <tr>
           <th>Strahlung</th>
-          <th><span class="mat-icon">📄</span><span class="mat-label">Papier</span></th>
-          <th><span class="mat-icon">🪶</span><span class="mat-label">Aluminium</span></th>
-          <th><span class="mat-icon">🧱</span><span class="mat-label">Blei</span></th>
-          <th><span class="mat-icon">💧</span><span class="mat-label">Wasser/Paraffin</span></th>
+          <th><span class="mat-label">Papier</span></th>
+          <th><span class="mat-label">Aluminium</span></th>
+          <th><span class="mat-label">Blei</span></th>
+          <th><span class="mat-label">Wasser</span></th>
         </tr>
       </thead>
       <tbody>
@@ -1228,6 +1229,7 @@ footer {
         </tr>
       </tbody>
     </table>
+    </div>
 
     <div class="info-box" style="margin-top:1rem;">
       <strong>Lesebeispiel:</strong> Alpha-Strahlung (α) wird bereits von einem Blatt Papier gestoppt. Gamma-Strahlung durchdringt Papier und Aluminium, wird aber durch Blei <em>exponentiell</em> abgeschwächt — nie zu 100&thinsp;%. Man spricht von der <strong>Halbwertsdicke</strong> (Materialdicke, die die Intensität halbiert). Neutronenstrahlung durchdringt auch Blei, wird aber von wasserstoffreichen Materialien (Wasser, Paraffin) effektiv gebremst.
