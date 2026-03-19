@@ -479,6 +479,197 @@ footer {
   font-size: 0.8rem;
 }
 
+/* Inner Tabs (Section 2) */
+.inner-tabs-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e0e0e0;
+  margin: 1rem 0 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.inner-tab-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.7rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.inner-tab-btn:hover { color: var(--primary); background: var(--primary-bg); }
+.inner-tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.inner-tab-content { display: none; animation: fadeIn 0.4s ease; }
+.inner-tab-content.active { display: block; }
+
+/* Video Cards */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.2rem;
+  margin: 1rem 0;
+}
+.video-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: var(--transition);
+}
+.video-card:hover { box-shadow: var(--shadow-hover); }
+.video-card .video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+}
+.video-card .video-wrapper iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.video-card .video-info {
+  padding: 0.8rem 1rem;
+}
+.video-card .video-info h4 {
+  font-size: 0.95rem;
+  color: var(--primary);
+  margin-bottom: 0.3rem;
+}
+.video-card .video-info p {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+/* Decay Animations */
+.decay-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.2rem;
+  margin: 1rem 0;
+}
+.decay-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.2rem;
+  transition: var(--transition);
+}
+.decay-card:hover { box-shadow: var(--shadow-hover); }
+.decay-card h4 {
+  color: var(--primary);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.decay-card p.decay-desc {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+.decay-card .decay-equation {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.4rem;
+  background: var(--primary-bg);
+  border-radius: 6px;
+  margin-bottom: 0.8rem;
+}
+.decay-svg-container {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+.decay-svg-container svg {
+  max-width: 100%;
+  height: auto;
+}
+.decay-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+.decay-btn {
+  padding: 0.4rem 1rem;
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.decay-btn:hover, .decay-btn.active {
+  background: var(--primary);
+  color: #fff;
+}
+/* Color legend for decay */
+.decay-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 1rem 0 0.5rem;
+  font-size: 0.82rem;
+  padding: 0.6rem 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+.decay-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.decay-legend-item .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Decay animation keyframes */
+@keyframes alphaEmit {
+  0% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(100px, -20px); opacity: 0.3; }
+}
+@keyframes betaEmit {
+  0% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(90px, 30px); opacity: 0.3; }
+}
+@keyframes neutrinoEmit {
+  0% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(80px, -40px); opacity: 0; }
+}
+@keyframes gammaWave {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(110px); opacity: 0.2; }
+}
+@keyframes nucleusShrink {
+  0% { r: 30; }
+  50% { r: 26; }
+  100% { r: 28; }
+}
+@keyframes nucleusPulse {
+  0% { r: 30; }
+  30% { r: 33; }
+  100% { r: 30; }
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   header h1 { font-size: 1.3rem; }
@@ -491,6 +682,10 @@ footer {
   .shield-demo { flex-wrap: wrap; justify-content: center; }
   .match-pairs { grid-template-columns: 1fr; gap: 0.3rem; }
   .match-arrow-cell { display: none; }
+  .inner-tab-btn { font-size: 0.78rem; padding: 0.6rem 0.5rem; min-width: 80px; }
+  .video-grid { grid-template-columns: 1fr; }
+  .decay-grid { grid-template-columns: 1fr; }
+  .decay-legend { font-size: 0.75rem; gap: 0.5rem; }
 }
 </style>
 </head>
@@ -593,123 +788,376 @@ footer {
 <div class="section" id="sec1">
   <div class="card">
     <h2>⚛️ Arten ionisierender Strahlung</h2>
-    <p>Klicken Sie auf eine Karte, um die Details aufzudecken.</p>
 
-    <div class="flip-grid">
-      <!-- Alpha -->
-      <div class="flip-card" onclick="this.classList.toggle('flipped')">
-        <div class="flip-card-inner">
-          <div class="flip-front" style="background:linear-gradient(135deg,#e53935,#ef5350)">
-            <div class="icon">α</div>
-            <h4>Alpha-Strahlung</h4>
-            <p>Heliumkerne</p>
-            <span class="hint">Klicken zum Aufdecken</span>
-          </div>
-          <div class="flip-back">
-            <h4 style="color:#e53935;">Alpha-Strahlung (α)</h4>
-            <ul>
-              <li><strong>Teilchen:</strong> Heliumkerne (²He⁴ — 2 Protonen + 2 Neutronen)</li>
-              <li><strong>Ladung:</strong> +2e</li>
-              <li><strong>Energie:</strong> Typisch 3–7 MeV</li>
-              <li><strong>Ionisationsdichte:</strong> Sehr hoch (~10⁴ Ionenpaare/cm in Luft)</li>
-              <li><strong>Reichweite:</strong> Wenige cm in Luft, wird bereits durch ein Blatt Papier oder die Hornhaut gestoppt</li>
-              <li><strong>Gefahr:</strong> Gering bei äußerer Bestrahlung, <strong>extrem gefährlich bei Inkorporation</strong> (Einatmen, Verschlucken)</li>
-            </ul>
-            <span class="shield-label">🛡️ Abschirmung: Papier</span>
-          </div>
-        </div>
-      </div>
-      <!-- Beta -->
-      <div class="flip-card" onclick="this.classList.toggle('flipped')">
-        <div class="flip-card-inner">
-          <div class="flip-front" style="background:linear-gradient(135deg,#1e88e5,#42a5f5)">
-            <div class="icon">β</div>
-            <h4>Beta-Strahlung</h4>
-            <p>Elektronen / Positronen</p>
-            <span class="hint">Klicken zum Aufdecken</span>
-          </div>
-          <div class="flip-back">
-            <h4 style="color:#1e88e5;">Beta-Strahlung (β)</h4>
-            <ul>
-              <li><strong>Teilchen:</strong> Elektronen (β⁻) oder Positronen (β⁺)</li>
-              <li><strong>Ladung:</strong> −1e bzw. +1e</li>
-              <li><strong>Energie:</strong> Kontinuierliches Spektrum bis zum Maximalwert (keV–MeV)</li>
-              <li><strong>Ionisationsdichte:</strong> Geringer als α, aber deutlich höhere Reichweite</li>
-              <li><strong>Reichweite:</strong> Bis einige Meter in Luft; wenige mm Aluminium reichen zur Abschirmung</li>
-              <li><strong>Besonderheit β⁺:</strong> Positron annihiliert mit Elektron → zwei 511-keV-Photonen (Grundlage der PET-Diagnostik)</li>
-            </ul>
-            <span class="shield-label">🛡️ Abschirmung: Aluminium (wenige mm)</span>
+    <!-- Inner Tab Navigation -->
+    <div class="inner-tabs-nav">
+      <button class="inner-tab-btn active" data-inner-tab="overview" onclick="switchInnerTab(this, 'overview')">📋 Übersicht</button>
+      <button class="inner-tab-btn" data-inner-tab="videos" onclick="switchInnerTab(this, 'videos')">🎬 Videos</button>
+      <button class="inner-tab-btn" data-inner-tab="decays" onclick="switchInnerTab(this, 'decays')">⚛️ Zerfallsprozesse</button>
+    </div>
+
+    <!-- ===== Tab 1: Übersicht (Flip-Cards) ===== -->
+    <div class="inner-tab-content active" id="innerTab-overview">
+      <p>Klicken Sie auf eine Karte, um die Details aufzudecken.</p>
+
+      <div class="flip-grid">
+        <!-- Alpha -->
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front" style="background:linear-gradient(135deg,#e53935,#ef5350)">
+              <div class="icon">α</div>
+              <h4>Alpha-Strahlung</h4>
+              <p>Heliumkerne</p>
+              <span class="hint">Klicken zum Aufdecken</span>
+            </div>
+            <div class="flip-back">
+              <h4 style="color:#e53935;">Alpha-Strahlung (α)</h4>
+              <ul>
+                <li><strong>Teilchen:</strong> Heliumkerne (²He⁴ — 2 Protonen + 2 Neutronen)</li>
+                <li><strong>Ladung:</strong> +2e</li>
+                <li><strong>Energie:</strong> Typisch 3–7 MeV</li>
+                <li><strong>Ionisationsdichte:</strong> Sehr hoch (~10⁴ Ionenpaare/cm in Luft)</li>
+                <li><strong>Reichweite:</strong> Wenige cm in Luft, wird bereits durch ein Blatt Papier oder die Hornhaut gestoppt</li>
+                <li><strong>Gefahr:</strong> Gering bei äußerer Bestrahlung, <strong>extrem gefährlich bei Inkorporation</strong> (Einatmen, Verschlucken)</li>
+              </ul>
+              <span class="shield-label">🛡️ Abschirmung: Papier</span>
+            </div>
           </div>
         </div>
-      </div>
-      <!-- Gamma -->
-      <div class="flip-card" onclick="this.classList.toggle('flipped')">
-        <div class="flip-card-inner">
-          <div class="flip-front" style="background:linear-gradient(135deg,#8e24aa,#ab47bc)">
-            <div class="icon">γ</div>
-            <h4>Gamma-Strahlung</h4>
-            <p>Elektromagn. Welle</p>
-            <span class="hint">Klicken zum Aufdecken</span>
-          </div>
-          <div class="flip-back">
-            <h4 style="color:#8e24aa;">Gamma-Strahlung (γ)</h4>
-            <ul>
-              <li><strong>Natur:</strong> Elektromagnetische Strahlung (Photonen) aus dem <strong>Atomkern</strong></li>
-              <li><strong>Ladung:</strong> Keine (ungeladen)</li>
-              <li><strong>Energie:</strong> Typisch >100 keV bis mehrere MeV</li>
-              <li><strong>Ionisationsdichte:</strong> Gering (dünn ionisierend)</li>
-              <li><strong>Reichweite:</strong> Sehr groß — Intensität nimmt exponentiell ab, wird nie vollständig abgeschirmt</li>
-              <li><strong>Abschirmung:</strong> Dicke Schichten aus Blei oder Beton erforderlich (Halbwertsdicke!)</li>
-            </ul>
-            <span class="shield-label">🛡️ Abschirmung: Blei / Beton</span>
-          </div>
-        </div>
-      </div>
-      <!-- Neutron -->
-      <div class="flip-card" onclick="this.classList.toggle('flipped')">
-        <div class="flip-card-inner">
-          <div class="flip-front" style="background:linear-gradient(135deg,#f57c00,#ffa726)">
-            <div class="icon">n</div>
-            <h4>Neutronenstrahlung</h4>
-            <p>Ungeladene Teilchen</p>
-            <span class="hint">Klicken zum Aufdecken</span>
-          </div>
-          <div class="flip-back">
-            <h4 style="color:#f57c00;">Neutronenstrahlung</h4>
-            <ul>
-              <li><strong>Teilchen:</strong> Freie Neutronen</li>
-              <li><strong>Ladung:</strong> Keine (ungeladen) — daher keine direkte Coulomb-Wechselwirkung</li>
-              <li><strong>Entstehung:</strong> Kernspaltung, Kernfusion, (α,n)-Reaktionen</li>
-              <li><strong>Wechselwirkung:</strong> Elastische Streuung an leichten Kernen (v.&thinsp;a.&thinsp;Wasserstoff) → Abbremsung (Moderation)</li>
-              <li><strong>Biologisch:</strong> Hoher Strahlungswichtungsfaktor (w<sub>R</sub>&nbsp;=&nbsp;2,5–20, energieabhängig)</li>
-              <li><strong>Abschirmung:</strong> Wasserstoffreiche Materialien: Wasser, Paraffin, Polyethylen — plus Bor/Cadmium für Einfang thermischer Neutronen</li>
-            </ul>
-            <span class="shield-label">🛡️ Abschirmung: Wasser / Paraffin</span>
+        <!-- Beta -->
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front" style="background:linear-gradient(135deg,#1e88e5,#42a5f5)">
+              <div class="icon">β</div>
+              <h4>Beta-Strahlung</h4>
+              <p>Elektronen / Positronen</p>
+              <span class="hint">Klicken zum Aufdecken</span>
+            </div>
+            <div class="flip-back">
+              <h4 style="color:#1e88e5;">Beta-Strahlung (β)</h4>
+              <ul>
+                <li><strong>Teilchen:</strong> Elektronen (β⁻) oder Positronen (β⁺)</li>
+                <li><strong>Ladung:</strong> −1e bzw. +1e</li>
+                <li><strong>Energie:</strong> Kontinuierliches Spektrum bis zum Maximalwert (keV–MeV)</li>
+                <li><strong>Ionisationsdichte:</strong> Geringer als α, aber deutlich höhere Reichweite</li>
+                <li><strong>Reichweite:</strong> Bis einige Meter in Luft; wenige mm Aluminium reichen zur Abschirmung</li>
+                <li><strong>Besonderheit β⁺:</strong> Positron annihiliert mit Elektron → zwei 511-keV-Photonen (Grundlage der PET-Diagnostik)</li>
+              </ul>
+              <span class="shield-label">🛡️ Abschirmung: Aluminium (wenige mm)</span>
+            </div>
           </div>
         </div>
-      </div>
-      <!-- Röntgen -->
-      <div class="flip-card" onclick="this.classList.toggle('flipped')">
-        <div class="flip-card-inner">
-          <div class="flip-front" style="background:linear-gradient(135deg,#3f51b5,#5c6bc0)">
-            <div class="icon">X</div>
-            <h4>Röntgenstrahlung</h4>
-            <p>Aus der Elektronenhülle</p>
-            <span class="hint">Klicken zum Aufdecken</span>
+        <!-- Gamma -->
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front" style="background:linear-gradient(135deg,#8e24aa,#ab47bc)">
+              <div class="icon">γ</div>
+              <h4>Gamma-Strahlung</h4>
+              <p>Elektromagn. Welle</p>
+              <span class="hint">Klicken zum Aufdecken</span>
+            </div>
+            <div class="flip-back">
+              <h4 style="color:#8e24aa;">Gamma-Strahlung (γ)</h4>
+              <ul>
+                <li><strong>Natur:</strong> Elektromagnetische Strahlung (Photonen) aus dem <strong>Atomkern</strong></li>
+                <li><strong>Ladung:</strong> Keine (ungeladen)</li>
+                <li><strong>Energie:</strong> Typisch >100 keV bis mehrere MeV</li>
+                <li><strong>Ionisationsdichte:</strong> Gering (dünn ionisierend)</li>
+                <li><strong>Reichweite:</strong> Sehr groß — Intensität nimmt exponentiell ab, wird nie vollständig abgeschirmt</li>
+                <li><strong>Abschirmung:</strong> Dicke Schichten aus Blei oder Beton erforderlich (Halbwertsdicke!)</li>
+              </ul>
+              <span class="shield-label">🛡️ Abschirmung: Blei / Beton</span>
+            </div>
           </div>
-          <div class="flip-back">
-            <h4 style="color:#3f51b5;">Röntgenstrahlung</h4>
-            <ul>
-              <li><strong>Natur:</strong> Elektromagnetische Strahlung wie Gamma, aber Ursprung in der <strong>Elektronenhülle</strong> (charakteristische Röntgenstrahlung) oder durch Abbremsung schneller Elektronen (Bremsstrahlung)</li>
-              <li><strong>Energie:</strong> Typisch 1&nbsp;keV – 250&nbsp;keV</li>
-              <li><strong>Abgrenzung zu γ:</strong> Physikalisch identisch — der Unterschied liegt im <strong>Entstehungsort</strong> (Hülle vs. Kern)</li>
-              <li><strong>Anwendung:</strong> Medizinische Diagnostik, Materialprüfung, Kristallstrukturanalyse</li>
-            </ul>
-            <span class="shield-label">🛡️ Abschirmung: Blei (dünnere Schichten als bei γ)</span>
+        </div>
+        <!-- Neutron -->
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front" style="background:linear-gradient(135deg,#f57c00,#ffa726)">
+              <div class="icon">n</div>
+              <h4>Neutronenstrahlung</h4>
+              <p>Ungeladene Teilchen</p>
+              <span class="hint">Klicken zum Aufdecken</span>
+            </div>
+            <div class="flip-back">
+              <h4 style="color:#f57c00;">Neutronenstrahlung</h4>
+              <ul>
+                <li><strong>Teilchen:</strong> Freie Neutronen</li>
+                <li><strong>Ladung:</strong> Keine (ungeladen) — daher keine direkte Coulomb-Wechselwirkung</li>
+                <li><strong>Entstehung:</strong> Kernspaltung, Kernfusion, (α,n)-Reaktionen</li>
+                <li><strong>Wechselwirkung:</strong> Elastische Streuung an leichten Kernen (v.&thinsp;a.&thinsp;Wasserstoff) → Abbremsung (Moderation)</li>
+                <li><strong>Biologisch:</strong> Hoher Strahlungswichtungsfaktor (w<sub>R</sub>&nbsp;=&nbsp;2,5–20, energieabhängig)</li>
+                <li><strong>Abschirmung:</strong> Wasserstoffreiche Materialien: Wasser, Paraffin, Polyethylen — plus Bor/Cadmium für Einfang thermischer Neutronen</li>
+              </ul>
+              <span class="shield-label">🛡️ Abschirmung: Wasser / Paraffin</span>
+            </div>
+          </div>
+        </div>
+        <!-- Röntgen -->
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-front" style="background:linear-gradient(135deg,#3f51b5,#5c6bc0)">
+              <div class="icon">X</div>
+              <h4>Röntgenstrahlung</h4>
+              <p>Aus der Elektronenhülle</p>
+              <span class="hint">Klicken zum Aufdecken</span>
+            </div>
+            <div class="flip-back">
+              <h4 style="color:#3f51b5;">Röntgenstrahlung</h4>
+              <ul>
+                <li><strong>Natur:</strong> Elektromagnetische Strahlung wie Gamma, aber Ursprung in der <strong>Elektronenhülle</strong> (charakteristische Röntgenstrahlung) oder durch Abbremsung schneller Elektronen (Bremsstrahlung)</li>
+                <li><strong>Energie:</strong> Typisch 1&nbsp;keV – 250&nbsp;keV</li>
+                <li><strong>Abgrenzung zu γ:</strong> Physikalisch identisch — der Unterschied liegt im <strong>Entstehungsort</strong> (Hülle vs. Kern)</li>
+                <li><strong>Anwendung:</strong> Medizinische Diagnostik, Materialprüfung, Kristallstrukturanalyse</li>
+              </ul>
+              <span class="shield-label">🛡️ Abschirmung: Blei (dünnere Schichten als bei γ)</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- ===== Tab 2: Videos ===== -->
+    <div class="inner-tab-content" id="innerTab-videos">
+      <p style="margin-bottom:1rem;">Hier finden Sie Erklärvideos zu den verschiedenen Strahlungsarten und radioaktiven Zerfällen.</p>
+
+      <div class="video-grid">
+        <!-- Video: Radioaktiver Zerfall allgemein -->
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/edlKhWHLVSI" title="Radioaktiver Zerfall – Alpha-, Beta- und Gammazerfall – einfach und anschaulich erklärt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h4>☢️ Radioaktivität — Überblick</h4>
+            <p>Dieses Video erklärt die Grundlagen der Radioaktivität und stellt die drei klassischen Strahlungsarten (α, β, γ) im Überblick vor.</p>
+          </div>
+        </div>
+
+        <!-- Video: Alpha-Zerfall -->
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/IxZJEIt7iO0" title="Alpha-Zerfall einfach erklärt – Radioaktivität, Alphastrahlung" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h4>α Alpha-Zerfall</h4>
+            <p>Beim Alpha-Zerfall sendet ein instabiler Kern einen Heliumkern (2 Protonen + 2 Neutronen) aus. Erfahren Sie, warum schwere Kerne diesen Zerfall bevorzugen.</p>
+          </div>
+        </div>
+
+        <!-- Video: Beta-Zerfall -->
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/zdIMFuaynxw" title="Beta-Zerfall einfach erklärt – Radioaktivität, Betastrahlung" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h4>β Beta-Zerfall</h4>
+            <p>Beim Beta-Zerfall wandelt sich ein Neutron in ein Proton um (β⁻) oder umgekehrt (β⁺). Dabei werden Elektronen bzw. Positronen und Neutrinos emittiert.</p>
+          </div>
+        </div>
+
+        <!-- Video: Gamma-Strahlung -->
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/mn6izTALp30" title="Gamma-Strahlung einfach erklärt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h4>γ Gamma-Strahlung</h4>
+            <p>Gamma-Strahlung entsteht, wenn ein angeregter Atomkern überschüssige Energie als hochenergetisches Photon abstrahlt. Sie hat die größte Durchdringungsfähigkeit.</p>
+          </div>
+        </div>
+
+        <!-- Video: Neutronenstrahlung -->
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/nGAYjtnbako" title="Neutronen und Neutronenstrahlung – Praktikum Nuklearchemie" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h4>n Neutronenstrahlung</h4>
+            <p>Freie Neutronen entstehen bei der Kernspaltung und können selbst weitere Spaltungen auslösen. Erfahren Sie, wie Neutronenstrahlung moderiert und abgeschirmt wird.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:1rem;">
+        <strong>Hinweis:</strong> Einige Videos sind möglicherweise auf Deutsch, andere auf Englisch verfügbar. Die automatischen Untertitel von YouTube können bei Bedarf aktiviert werden.
+      </div>
+    </div>
+
+    <!-- ===== Tab 3: Zerfallsprozesse (Animationen) ===== -->
+    <div class="inner-tab-content" id="innerTab-decays">
+      <p style="margin-bottom:0.5rem;">Beobachten Sie die wichtigsten radioaktiven Zerfallsprozesse als Animation. Drücken Sie <strong>▶ Play</strong>, um die Animation zu starten.</p>
+
+      <div class="decay-legend">
+        <div class="decay-legend-item"><span class="dot" style="background:#e53935"></span> Protonen</div>
+        <div class="decay-legend-item"><span class="dot" style="background:#1e88e5"></span> Neutronen</div>
+        <div class="decay-legend-item"><span class="dot" style="background:#66bb6a"></span> Elektronen</div>
+        <div class="decay-legend-item"><span class="dot" style="background:#fdd835"></span> Positronen</div>
+        <div class="decay-legend-item"><span class="dot" style="background:#ab47bc"></span> Photonen (γ)</div>
+        <div class="decay-legend-item"><span class="dot" style="background:#bdbdbd"></span> Neutrinos</div>
+      </div>
+
+      <div class="decay-grid">
+
+        <!-- Alpha-Zerfall -->
+        <div class="decay-card">
+          <h4>α Alpha-Zerfall</h4>
+          <div class="decay-equation">
+            <sup>A</sup><sub>Z</sub>X → <sup>A−4</sup><sub>Z−2</sub>Y + <sup>4</sup><sub>2</sub>He
+          </div>
+          <p class="decay-desc">Ein schwerer Atomkern stößt ein Alpha-Teilchen (Heliumkern: 2 Protonen + 2 Neutronen) aus. Der Tochterkern hat die Ordnungszahl Z−2 und die Massenzahl A−4.</p>
+          <div class="decay-svg-container">
+            <svg id="svgAlpha" viewBox="0 0 360 160" width="360" height="160">
+              <!-- Mutterkern -->
+              <circle cx="80" cy="80" r="35" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+              <text x="80" y="68" text-anchor="middle" font-size="10" fill="#e53935">●●●●●</text>
+              <text x="80" y="82" text-anchor="middle" font-size="10" fill="#1e88e5">●●●●●</text>
+              <text x="80" y="96" text-anchor="middle" font-size="10" fill="#e53935">●●●</text>
+              <text x="80" y="125" text-anchor="middle" font-size="11" fill="var(--text)" font-weight="600">Mutterkern</text>
+              <!-- Pfeil -->
+              <line x1="120" y1="80" x2="155" y2="80" stroke="var(--text-light)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+              <!-- Tochterkern -->
+              <circle id="alphaChild" cx="200" cy="80" r="30" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" opacity="0"/>
+              <text id="alphaChildP" x="200" y="74" text-anchor="middle" font-size="10" fill="#e53935" opacity="0">●●●●●</text>
+              <text id="alphaChildN" x="200" y="88" text-anchor="middle" font-size="10" fill="#1e88e5" opacity="0">●●●●</text>
+              <text id="alphaChildLabel" x="200" y="120" text-anchor="middle" font-size="10" fill="var(--text)" opacity="0">Tochterkern (Z−2)</text>
+              <!-- Alpha-Teilchen -->
+              <g id="alphaParticle" opacity="0">
+                <circle cx="300" cy="45" r="16" fill="#ffebee" stroke="#e53935" stroke-width="2"/>
+                <text x="293" y="43" font-size="8" fill="#e53935">●</text>
+                <text x="303" y="43" font-size="8" fill="#e53935">●</text>
+                <text x="293" y="53" font-size="8" fill="#1e88e5">●</text>
+                <text x="303" y="53" font-size="8" fill="#1e88e5">●</text>
+                <text x="300" y="75" text-anchor="middle" font-size="9" fill="var(--text)">⁴₂He (α)</text>
+              </g>
+              <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--text-light)"/></marker></defs>
+            </svg>
+          </div>
+          <div class="decay-controls">
+            <button class="decay-btn" onclick="playAlphaDecay()">▶ Play</button>
+            <button class="decay-btn" onclick="resetAlphaDecay()">↺ Reset</button>
+          </div>
+        </div>
+
+        <!-- Beta⁻-Zerfall -->
+        <div class="decay-card">
+          <h4>β⁻ Beta-minus-Zerfall</h4>
+          <div class="decay-equation">
+            n → p + e⁻ + ν̄<sub>e</sub>
+          </div>
+          <p class="decay-desc">Ein Neutron im Kern wandelt sich in ein Proton um. Dabei werden ein Elektron (β⁻-Teilchen) und ein Elektron-Antineutrino emittiert. Die Ordnungszahl steigt um 1.</p>
+          <div class="decay-svg-container">
+            <svg id="svgBetaMinus" viewBox="0 0 360 160" width="360" height="160">
+              <!-- Neutron (Ausgang) -->
+              <circle cx="60" cy="80" r="22" fill="#e3f2fd" stroke="#1e88e5" stroke-width="2"/>
+              <text x="60" y="84" text-anchor="middle" font-size="13" font-weight="700" fill="#1e88e5">n</text>
+              <text x="60" y="115" text-anchor="middle" font-size="10" fill="var(--text)">Neutron</text>
+              <!-- Pfeil -->
+              <line x1="87" y1="80" x2="120" y2="80" stroke="var(--text-light)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+              <!-- Proton (Ergebnis) -->
+              <circle id="betaMinusProton" cx="160" cy="80" r="22" fill="#ffebee" stroke="#e53935" stroke-width="2" opacity="0"/>
+              <text id="betaMinusProtonT" x="160" y="84" text-anchor="middle" font-size="13" font-weight="700" fill="#e53935" opacity="0">p</text>
+              <text id="betaMinusProtonL" x="160" y="115" text-anchor="middle" font-size="10" fill="var(--text)" opacity="0">Proton</text>
+              <!-- Elektron -->
+              <g id="betaMinusElectron" opacity="0">
+                <circle cx="260" cy="120" r="12" fill="#e8f5e9" stroke="#66bb6a" stroke-width="2"/>
+                <text x="260" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="#66bb6a">e⁻</text>
+                <text x="260" y="148" text-anchor="middle" font-size="9" fill="var(--text)">Elektron</text>
+              </g>
+              <!-- Antineutrino -->
+              <g id="betaMinusNeutrino" opacity="0">
+                <circle cx="300" cy="40" r="12" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="2" stroke-dasharray="3,2"/>
+                <text x="300" y="44" text-anchor="middle" font-size="10" font-weight="600" fill="#9e9e9e">ν̄</text>
+                <text x="300" y="22" text-anchor="middle" font-size="9" fill="var(--text-light)">Antineutrino</text>
+              </g>
+            </svg>
+          </div>
+          <div class="decay-controls">
+            <button class="decay-btn" onclick="playBetaMinusDecay()">▶ Play</button>
+            <button class="decay-btn" onclick="resetBetaMinusDecay()">↺ Reset</button>
+          </div>
+        </div>
+
+        <!-- Beta⁺-Zerfall -->
+        <div class="decay-card">
+          <h4>β⁺ Beta-plus-Zerfall</h4>
+          <div class="decay-equation">
+            p → n + e⁺ + ν<sub>e</sub>
+          </div>
+          <p class="decay-desc">Ein Proton im Kern wandelt sich in ein Neutron um. Dabei werden ein Positron (β⁺-Teilchen) und ein Elektron-Neutrino emittiert. Die Ordnungszahl sinkt um 1.</p>
+          <div class="decay-svg-container">
+            <svg id="svgBetaPlus" viewBox="0 0 360 160" width="360" height="160">
+              <!-- Proton (Ausgang) -->
+              <circle cx="60" cy="80" r="22" fill="#ffebee" stroke="#e53935" stroke-width="2"/>
+              <text x="60" y="84" text-anchor="middle" font-size="13" font-weight="700" fill="#e53935">p</text>
+              <text x="60" y="115" text-anchor="middle" font-size="10" fill="var(--text)">Proton</text>
+              <!-- Pfeil -->
+              <line x1="87" y1="80" x2="120" y2="80" stroke="var(--text-light)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+              <!-- Neutron (Ergebnis) -->
+              <circle id="betaPlusNeutron" cx="160" cy="80" r="22" fill="#e3f2fd" stroke="#1e88e5" stroke-width="2" opacity="0"/>
+              <text id="betaPlusNeutronT" x="160" y="84" text-anchor="middle" font-size="13" font-weight="700" fill="#1e88e5" opacity="0">n</text>
+              <text id="betaPlusNeutronL" x="160" y="115" text-anchor="middle" font-size="10" fill="var(--text)" opacity="0">Neutron</text>
+              <!-- Positron -->
+              <g id="betaPlusPositron" opacity="0">
+                <circle cx="260" cy="120" r="12" fill="#fff9c4" stroke="#fdd835" stroke-width="2"/>
+                <text x="260" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="#f9a825">e⁺</text>
+                <text x="260" y="148" text-anchor="middle" font-size="9" fill="var(--text)">Positron</text>
+              </g>
+              <!-- Neutrino -->
+              <g id="betaPlusNeutrino" opacity="0">
+                <circle cx="300" cy="40" r="12" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="2" stroke-dasharray="3,2"/>
+                <text x="300" y="44" text-anchor="middle" font-size="10" font-weight="600" fill="#9e9e9e">ν</text>
+                <text x="300" y="22" text-anchor="middle" font-size="9" fill="var(--text-light)">Neutrino</text>
+              </g>
+            </svg>
+          </div>
+          <div class="decay-controls">
+            <button class="decay-btn" onclick="playBetaPlusDecay()">▶ Play</button>
+            <button class="decay-btn" onclick="resetBetaPlusDecay()">↺ Reset</button>
+          </div>
+        </div>
+
+        <!-- Gamma-Emission -->
+        <div class="decay-card">
+          <h4>γ Gamma-Emission</h4>
+          <div class="decay-equation">
+            <sup>A</sup><sub>Z</sub>X* → <sup>A</sup><sub>Z</sub>X + γ
+          </div>
+          <p class="decay-desc">Ein angeregter Atomkern (X*) geht in seinen Grundzustand über und gibt die überschüssige Energie als Gamma-Photon (hochenergetische elektromagnetische Strahlung) ab. Massenzahl und Ordnungszahl bleiben unverändert.</p>
+          <div class="decay-svg-container">
+            <svg id="svgGamma" viewBox="0 0 360 160" width="360" height="160">
+              <!-- Angeregter Kern -->
+              <circle cx="80" cy="80" r="30" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2"/>
+              <text x="80" y="78" text-anchor="middle" font-size="12" font-weight="700" fill="#8e24aa">X*</text>
+              <text x="80" y="93" text-anchor="middle" font-size="9" fill="#8e24aa">angeregt</text>
+              <text x="80" y="125" text-anchor="middle" font-size="10" fill="var(--text)">Angeregter Kern</text>
+              <!-- Pfeil -->
+              <line x1="115" y1="80" x2="148" y2="80" stroke="var(--text-light)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+              <!-- Grundzustand Kern -->
+              <circle id="gammaGround" cx="190" cy="80" r="28" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" opacity="0"/>
+              <text id="gammaGroundT" x="190" y="84" text-anchor="middle" font-size="13" font-weight="700" fill="#2e7d32" opacity="0">X</text>
+              <text id="gammaGroundL" x="190" y="125" text-anchor="middle" font-size="10" fill="var(--text)" opacity="0">Grundzustand</text>
+              <!-- Gamma-Photon (Wellenlinie) -->
+              <g id="gammaPhoton" opacity="0">
+                <path d="M240,60 Q250,45 260,60 Q270,75 280,60 Q290,45 300,60 Q310,75 320,60" fill="none" stroke="#ab47bc" stroke-width="2.5"/>
+                <circle cx="325" cy="60" r="8" fill="#f3e5f5" stroke="#ab47bc" stroke-width="1.5"/>
+                <text x="325" y="64" text-anchor="middle" font-size="10" font-weight="700" fill="#ab47bc">γ</text>
+                <text x="280" y="95" text-anchor="middle" font-size="9" fill="var(--text-light)">Gamma-Photon</text>
+              </g>
+            </svg>
+          </div>
+          <div class="decay-controls">
+            <button class="decay-btn" onclick="playGammaDecay()">▶ Play</button>
+            <button class="decay-btn" onclick="resetGammaDecay()">↺ Reset</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="info-box" style="margin-top:1rem;">
+        <strong>Erhaltungssätze:</strong> Bei jedem Kernzerfall bleiben <strong>Ladung</strong>, <strong>Leptonenzahl</strong>, <strong>Baryonenzahl</strong> und <strong>Energie</strong> erhalten. Prüfen Sie dies anhand der Zerfallsgleichungen!
+      </div>
+    </div>
+
   </div>
 
   <!-- Shielding Visualization -->
@@ -1239,6 +1687,99 @@ buildQuiz();
 
 // Initial progress
 progressBar.style.width = (1 / sections.length * 100) + '%';
+
+// ================= Inner Tabs (Section 2) =================
+function switchInnerTab(btn, tabId) {
+  // Remove active from all inner tab buttons and contents
+  document.querySelectorAll('.inner-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.inner-tab-content').forEach(c => c.classList.remove('active'));
+  // Activate selected
+  btn.classList.add('active');
+  document.getElementById('innerTab-' + tabId).classList.add('active');
+}
+
+// ================= Decay Animations =================
+function animateElements(elements, delay) {
+  elements.forEach((el, i) => {
+    const target = typeof el === 'string' ? document.getElementById(el) : el;
+    if (!target) return;
+    setTimeout(() => {
+      target.style.transition = 'opacity 0.6s ease';
+      target.style.opacity = '1';
+    }, delay * (i + 1));
+  });
+}
+
+function resetElements(elements) {
+  elements.forEach(el => {
+    const target = typeof el === 'string' ? document.getElementById(el) : el;
+    if (!target) return;
+    target.style.transition = 'none';
+    target.style.opacity = '0';
+  });
+}
+
+// Alpha Decay
+function playAlphaDecay() {
+  resetAlphaDecay();
+  setTimeout(() => {
+    animateElements(['alphaChild', 'alphaChildP', 'alphaChildN', 'alphaChildLabel'], 400);
+    setTimeout(() => {
+      animateElements(['alphaParticle'], 0);
+    }, 1200);
+  }, 100);
+}
+function resetAlphaDecay() {
+  resetElements(['alphaChild', 'alphaChildP', 'alphaChildN', 'alphaChildLabel', 'alphaParticle']);
+}
+
+// Beta⁻ Decay
+function playBetaMinusDecay() {
+  resetBetaMinusDecay();
+  setTimeout(() => {
+    animateElements(['betaMinusProton', 'betaMinusProtonT', 'betaMinusProtonL'], 300);
+    setTimeout(() => {
+      animateElements(['betaMinusElectron'], 0);
+      setTimeout(() => {
+        animateElements(['betaMinusNeutrino'], 0);
+      }, 400);
+    }, 900);
+  }, 100);
+}
+function resetBetaMinusDecay() {
+  resetElements(['betaMinusProton', 'betaMinusProtonT', 'betaMinusProtonL', 'betaMinusElectron', 'betaMinusNeutrino']);
+}
+
+// Beta⁺ Decay
+function playBetaPlusDecay() {
+  resetBetaPlusDecay();
+  setTimeout(() => {
+    animateElements(['betaPlusNeutron', 'betaPlusNeutronT', 'betaPlusNeutronL'], 300);
+    setTimeout(() => {
+      animateElements(['betaPlusPositron'], 0);
+      setTimeout(() => {
+        animateElements(['betaPlusNeutrino'], 0);
+      }, 400);
+    }, 900);
+  }, 100);
+}
+function resetBetaPlusDecay() {
+  resetElements(['betaPlusNeutron', 'betaPlusNeutronT', 'betaPlusNeutronL', 'betaPlusPositron', 'betaPlusNeutrino']);
+}
+
+// Gamma Decay
+function playGammaDecay() {
+  resetGammaDecay();
+  setTimeout(() => {
+    animateElements(['gammaGround', 'gammaGroundT', 'gammaGroundL'], 300);
+    setTimeout(() => {
+      animateElements(['gammaPhoton'], 0);
+    }, 900);
+  }, 100);
+}
+function resetGammaDecay() {
+  resetElements(['gammaGround', 'gammaGroundT', 'gammaGroundL', 'gammaPhoton']);
+}
 </script>
 
 </body>
