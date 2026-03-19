@@ -204,55 +204,77 @@ main { max-width: 900px; margin: 0 auto; padding: 1rem; }
   margin-top: 0.5rem;
 }
 
-/* Shielding Visualization */
-.shield-demo {
-  display: flex;
-  align-items: center;
-  gap: 0;
+/* Shielding Visualization — Table Layout */
+.shield-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 1.5rem 0;
-  overflow-x: auto;
-  padding: 1rem 0;
+  font-size: 0.9rem;
 }
-.shield-source {
-  min-width: 60px;
+.shield-table th, .shield-table td {
+  padding: 10px 8px;
   text-align: center;
-  font-size: 1.5rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #e0e0e0;
 }
-.shield-arrow {
-  display: flex;
-  align-items: center;
-  position: relative;
-  min-width: 40px;
+.shield-table thead th {
+  background: #f5f5f5;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--text-light);
+  border-bottom: 2px solid #ccc;
 }
-.shield-arrow .line {
-  height: 3px;
-  flex: 1;
-  min-width: 30px;
-  transition: background 0.3s;
+.shield-table thead th:first-child {
+  text-align: left;
+  min-width: 120px;
 }
-.shield-arrow .line.alpha { background: #e53935; }
-.shield-arrow .line.beta { background: #1e88e5; }
-.shield-arrow .line.gamma { background: #8e24aa; }
-.shield-arrow .line.neutron { background: #f57c00; }
-.shield-barrier {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 50px;
-  padding: 0.3rem;
+.shield-table tbody td:first-child {
+  text-align: left;
+  font-weight: 600;
 }
-.shield-barrier .bar {
-  width: 12px;
-  height: 60px;
-  border-radius: 3px;
-  margin-bottom: 4px;
+.shield-table .mat-icon {
+  display: block;
+  font-size: 1.3rem;
+  margin-bottom: 2px;
 }
-.shield-barrier span { font-size: 0.7rem; color: var(--text-light); text-align: center; }
-.bar-paper { background: #d7ccc8; }
-.bar-alu { background: #b0bec5; }
-.bar-lead { background: #546e7a; }
-.bar-concrete { background: #8d6e63; }
-.bar-water { background: #4fc3f7; }
+.shield-table .mat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-light);
+}
+.shield-cell-stopped {
+  background: #ffebee;
+  color: #c62828;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 4px;
+}
+.shield-cell-passes {
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 1.1rem;
+  border-radius: 4px;
+}
+.shield-cell-weakened {
+  background: #fff8e1;
+  color: #f57f17;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+.shield-type-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+@media (max-width: 500px) {
+  .shield-table { font-size: 0.78rem; }
+  .shield-table th, .shield-table td { padding: 6px 4px; }
+}
 
 .shield-legend {
   display: flex;
@@ -1160,70 +1182,55 @@ footer {
 
   </div>
 
-  <!-- Shielding Visualization -->
+  <!-- Shielding Visualization — Table Layout -->
   <div class="card">
     <h3>🛡️ Abschirmung im Vergleich</h3>
     <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">Welche Strahlung wird von welchem Material gestoppt?</p>
 
-    <div class="shield-demo">
-      <div class="shield-source">☢️<br><span style="font-size:0.7rem">Quelle</span></div>
-
-      <div class="shield-arrow">
-        <div class="line alpha"></div>
-        <div class="line beta"></div>
-        <div class="line gamma"></div>
-        <div class="line neutron"></div>
-      </div>
-
-      <div class="shield-barrier">
-        <div class="bar bar-paper"></div>
-        <span>Papier</span>
-      </div>
-
-      <div class="shield-arrow">
-        <div class="line beta"></div>
-        <div class="line gamma"></div>
-        <div class="line neutron"></div>
-      </div>
-
-      <div class="shield-barrier">
-        <div class="bar bar-alu"></div>
-        <span>Aluminium</span>
-      </div>
-
-      <div class="shield-arrow">
-        <div class="line gamma"></div>
-        <div class="line neutron"></div>
-      </div>
-
-      <div class="shield-barrier">
-        <div class="bar bar-lead"></div>
-        <span>Blei</span>
-      </div>
-
-      <div class="shield-arrow">
-        <div class="line neutron"></div>
-      </div>
-
-      <div class="shield-barrier">
-        <div class="bar bar-water"></div>
-        <span>Wasser/<br>Paraffin</span>
-      </div>
-
-      <div class="shield-arrow">
-        <!-- nothing passes -->
-      </div>
-    </div>
-
-    <div class="shield-legend">
-      <div class="shield-legend-item"><span class="dot" style="background:#e53935"></span> α — gestoppt von Papier</div>
-      <div class="shield-legend-item"><span class="dot" style="background:#1e88e5"></span> β — gestoppt von Aluminium</div>
-      <div class="shield-legend-item"><span class="dot" style="background:#8e24aa"></span> γ — stark abgeschwächt durch Blei</div>
-      <div class="shield-legend-item"><span class="dot" style="background:#f57c00"></span> n — gebremst in Wasser/Paraffin</div>
-    </div>
+    <table class="shield-table">
+      <thead>
+        <tr>
+          <th>Strahlung</th>
+          <th><span class="mat-icon">📄</span><span class="mat-label">Papier</span></th>
+          <th><span class="mat-icon">🪶</span><span class="mat-label">Aluminium</span></th>
+          <th><span class="mat-icon">🧱</span><span class="mat-label">Blei</span></th>
+          <th><span class="mat-icon">💧</span><span class="mat-label">Wasser/Paraffin</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="shield-type-dot" style="background:#e53935"></span> <strong>α</strong> Alpha</td>
+          <td class="shield-cell-stopped">✖ gestoppt</td>
+          <td class="shield-cell-stopped">✖</td>
+          <td class="shield-cell-stopped">✖</td>
+          <td class="shield-cell-stopped">✖</td>
+        </tr>
+        <tr>
+          <td><span class="shield-type-dot" style="background:#1e88e5"></span> <strong>β</strong> Beta</td>
+          <td class="shield-cell-passes">→ durch</td>
+          <td class="shield-cell-stopped">✖ gestoppt</td>
+          <td class="shield-cell-stopped">✖</td>
+          <td class="shield-cell-stopped">✖</td>
+        </tr>
+        <tr>
+          <td><span class="shield-type-dot" style="background:#8e24aa"></span> <strong>γ</strong> Gamma</td>
+          <td class="shield-cell-passes">→ durch</td>
+          <td class="shield-cell-passes">→ durch</td>
+          <td class="shield-cell-weakened">⚠ abgeschwächt</td>
+          <td class="shield-cell-weakened">⚠ teilw.</td>
+        </tr>
+        <tr>
+          <td><span class="shield-type-dot" style="background:#f57c00"></span> <strong>n</strong> Neutron</td>
+          <td class="shield-cell-passes">→ durch</td>
+          <td class="shield-cell-passes">→ durch</td>
+          <td class="shield-cell-passes">→ durch</td>
+          <td class="shield-cell-stopped">✖ gebremst</td>
+        </tr>
+      </tbody>
+    </table>
 
     <div class="info-box" style="margin-top:1rem;">
-      <strong>Hinweis:</strong> Gamma-Strahlung wird durch Materie <em>exponentiell</em> abgeschwächt, aber nie zu 100&thinsp;% abgeschirmt. Man spricht von der <strong>Halbwertsdicke</strong> — der Materialdicke, die die Intensität auf die Hälfte reduziert.
+      <strong>Lesebeispiel:</strong> Alpha-Strahlung (α) wird bereits von einem Blatt Papier gestoppt. Gamma-Strahlung durchdringt Papier und Aluminium, wird aber durch Blei <em>exponentiell</em> abgeschwächt — nie zu 100&thinsp;%. Man spricht von der <strong>Halbwertsdicke</strong> (Materialdicke, die die Intensität halbiert). Neutronenstrahlung durchdringt auch Blei, wird aber von wasserstoffreichen Materialien (Wasser, Paraffin) effektiv gebremst.
     </div>
   </div>
 
