@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strahlenschutz — Ionisierende Strahlung</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #2e7d32;
+  --primary-light: #4caf50;
+  --primary-bg: #e8f5e9;
+  --accent: #ff9800;
+  --accent-light: #fff3e0;
+  --text: #212121;
+  --text-light: #555;
+  --bg: #f5f5f5;
+  --card-bg: #fff;
+  --shadow: 0 2px 8px rgba(0,0,0,0.12);
+  --shadow-hover: 0 4px 16px rgba(0,0,0,0.18);
+  --radius: 12px;
+  --transition: 0.3s ease;
+}
+
+body {
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Progress Bar */
+.progress-container {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: #ddd;
+  z-index: 1000;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+/* Header */
+header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  padding: 2rem 1rem 1.5rem;
+  text-align: center;
+  margin-top: 4px;
+}
+header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+header p { opacity: 0.9; font-size: 0.95rem; }
+
+/* Nav Tabs */
+.nav-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+  position: sticky;
+  top: 4px;
+  z-index: 900;
+  -webkit-overflow-scrolling: touch;
+}
+.nav-tab {
+  flex: 1;
+  min-width: 80px;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.nav-tab:hover { color: var(--primary); background: var(--primary-bg); }
+.nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.nav-tab .tab-num {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+
+/* Main */
+main { max-width: 900px; margin: 0 auto; padding: 1rem; }
+
+/* Sections */
+.section { display: none; animation: fadeIn 0.4s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+  transition: var(--transition);
+}
+.card:hover { box-shadow: var(--shadow-hover); }
+.card h2 {
+  color: var(--primary);
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.card h3 {
+  color: var(--primary);
+  font-size: 1.1rem;
+  margin: 1rem 0 0.5rem;
+}
+
+/* Info Box */
+.info-box {
+  background: var(--primary-bg);
+  border-left: 4px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+}
+.info-box.accent {
+  background: var(--accent-light);
+  border-left-color: var(--accent);
+}
+
+/* Spectrum SVG */
+.spectrum-container {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+.spectrum-container svg { display: block; margin: 0 auto; }
+
+/* Flip Cards for radiation types */
+.flip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.flip-card {
+  perspective: 800px;
+  height: 280px;
+  cursor: pointer;
+}
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+.flip-front {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  text-align: center;
+}
+.flip-front .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.flip-front h4 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+.flip-front .hint { font-size: 0.8rem; opacity: 0.8; margin-top: auto; }
+.flip-back {
+  background: var(--card-bg);
+  transform: rotateY(180deg);
+  font-size: 0.88rem;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+.flip-back ul { padding-left: 1.2rem; }
+.flip-back li { margin-bottom: 0.3rem; }
+.flip-back .shield-label {
+  display: inline-block;
+  background: var(--accent-light);
+  color: #e65100;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  margin-top: 0.5rem;
+}
+
+/* Shielding Visualization */
+.shield-demo {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  padding: 1rem 0;
+}
+.shield-source {
+  min-width: 60px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+.shield-arrow {
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-width: 40px;
+}
+.shield-arrow .line {
+  height: 3px;
+  flex: 1;
+  min-width: 30px;
+  transition: background 0.3s;
+}
+.shield-arrow .line.alpha { background: #e53935; }
+.shield-arrow .line.beta { background: #1e88e5; }
+.shield-arrow .line.gamma { background: #8e24aa; }
+.shield-arrow .line.neutron { background: #f57c00; }
+.shield-barrier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+  padding: 0.3rem;
+}
+.shield-barrier .bar {
+  width: 12px;
+  height: 60px;
+  border-radius: 3px;
+  margin-bottom: 4px;
+}
+.shield-barrier span { font-size: 0.7rem; color: var(--text-light); text-align: center; }
+.bar-paper { background: #d7ccc8; }
+.bar-alu { background: #b0bec5; }
+.bar-lead { background: #546e7a; }
+.bar-concrete { background: #8d6e63; }
+.bar-water { background: #4fc3f7; }
+
+.shield-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+  font-size: 0.82rem;
+}
+.shield-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.shield-legend-item .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* Dose Comparison Chart */
+.dose-bars { margin: 1rem 0; }
+.dose-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  gap: 0.5rem;
+}
+.dose-label { min-width: 180px; font-size: 0.85rem; }
+.dose-bar-bg {
+  flex: 1;
+  height: 22px;
+  background: #e0e0e0;
+  border-radius: 11px;
+  overflow: hidden;
+  position: relative;
+}
+.dose-bar-fill {
+  height: 100%;
+  border-radius: 11px;
+  transition: width 1s ease;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  font-size: 0.72rem;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* 3 A's */
+.three-a-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.three-a-card {
+  background: var(--primary-bg);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  text-align: center;
+  transition: var(--transition);
+}
+.three-a-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+.three-a-card .big-letter {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+.three-a-card h4 { color: var(--primary); margin: 0.3rem 0; }
+.three-a-card p { font-size: 0.88rem; color: var(--text-light); }
+
+/* Distance Calculator */
+.calc-box {
+  background: var(--primary-bg);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  margin: 1rem 0;
+}
+.calc-box label { font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 0.3rem; }
+.calc-box input[type=range] { width: 100%; margin: 0.5rem 0; accent-color: var(--primary); }
+.calc-result {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 0.5rem;
+}
+
+/* Quiz */
+.quiz-question {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+}
+.quiz-question h4 {
+  color: var(--primary);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+.quiz-question .q-num {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 28px;
+  font-size: 0.85rem;
+  margin-right: 0.5rem;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.quiz-opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+.quiz-opt:hover:not(.locked) { border-color: var(--primary-light); background: var(--primary-bg); }
+.quiz-opt.correct { border-color: var(--primary); background: var(--primary-bg); }
+.quiz-opt.wrong { border-color: #e53935; background: #ffebee; }
+.quiz-opt.locked { cursor: default; opacity: 0.85; }
+.quiz-opt.locked.correct { opacity: 1; }
+
+.quiz-feedback {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: var(--primary-bg); color: var(--primary); }
+.quiz-feedback.wrong-fb { background: #ffebee; color: #c62828; }
+
+/* Match Quiz */
+.match-container { margin: 0.5rem 0; }
+.match-pairs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+.match-item {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.match-left {
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-weight: 600;
+}
+.match-arrow-cell { color: var(--text-light); font-size: 1.2rem; }
+.match-select {
+  padding: 0.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: #fff;
+  cursor: pointer;
+  width: 100%;
+}
+.match-select.correct { border-color: var(--primary); background: var(--primary-bg); }
+.match-select.wrong { border-color: #e53935; background: #ffebee; }
+
+/* Quiz Result */
+.quiz-result {
+  display: none;
+  text-align: center;
+  padding: 2rem;
+}
+.quiz-result.show { display: block; }
+.quiz-result .score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+}
+.quiz-result .score-text { font-size: 0.85rem; font-weight: 400; }
+
+/* Navigation Buttons */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+.nav-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.nav-btn.prev { background: #e0e0e0; color: var(--text); }
+.nav-btn.prev:hover { background: #bdbdbd; }
+.nav-btn.next { background: var(--primary); color: #fff; }
+.nav-btn.next:hover { background: #1b5e20; }
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  header h1 { font-size: 1.3rem; }
+  .card { padding: 1rem; }
+  .flip-grid { grid-template-columns: 1fr; }
+  .flip-card { height: 260px; }
+  .three-a-grid { grid-template-columns: 1fr; }
+  .dose-label { min-width: 120px; font-size: 0.78rem; }
+  .nav-tab { font-size: 0.7rem; padding: 0.6rem 0.3rem; }
+  .shield-demo { flex-wrap: wrap; justify-content: center; }
+  .match-pairs { grid-template-columns: 1fr; gap: 0.3rem; }
+  .match-arrow-cell { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<header>
+  <h1>☢️ Strahlenschutz — Ionisierende Strahlung</h1>
+  <p>Umweltschutztechnik · 13. Klasse · Berufskolleg</p>
+</header>
+
+<nav class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" data-section="0"><span class="tab-num">1</span>Definition</button>
+  <button class="nav-tab" data-section="1"><span class="tab-num">2</span>Arten</button>
+  <button class="nav-tab" data-section="2"><span class="tab-num">3</span>Biologie</button>
+  <button class="nav-tab" data-section="3"><span class="tab-num">4</span>Schutz</button>
+  <button class="nav-tab" data-section="4"><span class="tab-num">5</span>Quiz</button>
+</nav>
+
+<main>
+
+<!-- ==================== SECTION 1: Definition ==================== -->
+<div class="section active" id="sec0">
+  <div class="card">
+    <h2>☢️ Was ist ionisierende Strahlung?</h2>
+    <p><strong>Ionisierende Strahlung</strong> ist Strahlung, die genügend Energie besitzt, um Elektronen aus Atomen oder Molekülen herauszulösen — ein Vorgang, der als <strong>Ionisation</strong> bezeichnet wird.</p>
+
+    <div class="info-box">
+      <strong>Energiegrenze:</strong> Ab einer Photonenenergie von ca. <strong>5 eV</strong> (entspricht dem UV-C-Bereich, λ&nbsp;≈&nbsp;250&nbsp;nm) kann Strahlung Atome ionisieren. Teilchenstrahlung (α, β, Neutronen) ist aufgrund ihrer kinetischen Energie grundsätzlich ionisierend.
+    </div>
+
+    <h3>Nicht-ionisierende vs. ionisierende Strahlung</h3>
+    <p>Strahlung mit Energien <em>unterhalb</em> der Ionisationsgrenze — etwa Radiowellen, Mikrowellen, Infrarot und sichtbares Licht — wird als <strong>nicht-ionisierende Strahlung</strong> (NIR) bezeichnet. Sie kann Materie erwärmen oder elektronische Übergänge anregen, aber keine Ionen erzeugen.</p>
+
+    <h3>Das elektromagnetische Spektrum</h3>
+    <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:0.5rem;">Bewegen Sie den Mauszeiger über die Bereiche, um Details zu sehen. Die rote Linie markiert die Ionisationsgrenze.</p>
+
+    <div class="spectrum-container">
+      <svg viewBox="0 0 800 200" width="100%" style="max-width:800px;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Elektromagnetisches Spektrum mit Ionisationsgrenze">
+        <!-- Spectrum bands -->
+        <rect x="20" y="40" width="90" height="50" rx="4" fill="#ff5722" class="spec-band" data-info="Radiowellen: λ > 1 mm, E < 0,001 eV — Rundfunk, WLAN"/>
+        <rect x="115" y="40" width="90" height="50" rx="4" fill="#ff9800" class="spec-band" data-info="Mikrowellen: λ = 1 mm – 1 m, E ≈ 0,001 eV — Mobilfunk, Mikrowellenofen"/>
+        <rect x="210" y="40" width="90" height="50" rx="4" fill="#f44336" class="spec-band" data-info="Infrarot: λ = 780 nm – 1 mm, E ≈ 0,001–1,6 eV — Wärmestrahlung"/>
+        <rect x="305" y="40" width="70" height="50" rx="4" fill="url(#visGrad)" class="spec-band" data-info="Sichtbares Licht: λ = 380–780 nm, E ≈ 1,6–3,3 eV"/>
+        <rect x="380" y="40" width="80" height="50" rx="4" fill="#7c4dff" class="spec-band" data-info="Ultraviolett (UV-A/B): λ = 100–380 nm, E ≈ 3,3–12 eV — Teils ionisierend (UV-C ab ~5 eV)"/>
+        <!-- Ionizing boundary line -->
+        <line x1="430" y1="25" x2="430" y2="105" stroke="#e53935" stroke-width="2.5" stroke-dasharray="6,3"/>
+        <text x="432" y="20" fill="#e53935" font-size="11" font-weight="600">≈ 5 eV — Ionisationsgrenze</text>
+        <rect x="465" y="40" width="90" height="50" rx="4" fill="#3f51b5" class="spec-band" data-info="Röntgenstrahlung: λ = 0,01–10 nm, E ≈ 100 eV – 100 keV — Medizinische Bildgebung"/>
+        <rect x="560" y="40" width="90" height="50" rx="4" fill="#1a237e" class="spec-band" data-info="Gamma-Strahlung: λ < 0,01 nm, E > 100 keV — Kernzerfall, höchste Durchdringung"/>
+        <rect x="655" y="40" width="90" height="50" rx="4" fill="#0d0d2b" class="spec-band" data-info="Kosmische Strahlung: E bis 10²⁰ eV — Aus dem Weltall, sehr hochenergetisch"/>
+        <!-- Labels -->
+        <text x="65" y="72" fill="#fff" font-size="10" text-anchor="middle">Radio</text>
+        <text x="160" y="72" fill="#fff" font-size="10" text-anchor="middle">Mikro</text>
+        <text x="255" y="72" fill="#fff" font-size="10" text-anchor="middle">Infrarot</text>
+        <text x="340" y="72" fill="#fff" font-size="10" text-anchor="middle">Sichtbar</text>
+        <text x="420" y="72" fill="#fff" font-size="10" text-anchor="middle">UV</text>
+        <text x="510" y="72" fill="#fff" font-size="10" text-anchor="middle">Röntgen</text>
+        <text x="605" y="72" fill="#fff" font-size="10" text-anchor="middle">Gamma</text>
+        <text x="700" y="72" fill="#fff" font-size="10" text-anchor="middle">Kosmisch</text>
+        <!-- Arrows -->
+        <text x="20" y="120" fill="var(--text-light)" font-size="10">← niedrige Energie</text>
+        <text x="660" y="120" fill="var(--text-light)" font-size="10">hohe Energie →</text>
+        <text x="20" y="135" fill="var(--text-light)" font-size="10">← große Wellenlänge</text>
+        <text x="646" y="135" fill="var(--text-light)" font-size="10">kleine Wellenlänge →</text>
+        <!-- NIR / IR label -->
+        <rect x="20" y="150" width="400" height="24" rx="4" fill="#e8f5e9" stroke="#4caf50" stroke-width="1"/>
+        <text x="220" y="166" fill="#2e7d32" font-size="11" text-anchor="middle" font-weight="600">Nicht-ionisierend (NIR)</text>
+        <rect x="430" y="150" width="315" height="24" rx="4" fill="#ffebee" stroke="#e53935" stroke-width="1"/>
+        <text x="587" y="166" fill="#c62828" font-size="11" text-anchor="middle" font-weight="600">Ionisierend</text>
+        <!-- Tooltip area -->
+        <rect x="20" y="185" width="760" height="15" rx="3" fill="none"/>
+        <text x="400" y="196" fill="var(--text-light)" font-size="10" text-anchor="middle" id="specTooltip">Bewegen Sie den Cursor über einen Bereich …</text>
+        <!-- Gradient for visible light -->
+        <defs>
+          <linearGradient id="visGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#9c27b0"/>
+            <stop offset="25%" stop-color="#2196f3"/>
+            <stop offset="50%" stop-color="#4caf50"/>
+            <stop offset="75%" stop-color="#ffeb3b"/>
+            <stop offset="100%" stop-color="#f44336"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="info-box accent">
+      <strong>Merke:</strong> Nicht die Intensität (Helligkeit) entscheidet, ob Strahlung ionisiert, sondern die <strong>Energie pro Photon</strong> bzw. die <strong>kinetische Energie</strong> des Teilchens. Auch sehr helles sichtbares Licht kann keine Atome ionisieren.
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <span></span>
+    <button class="nav-btn next" onclick="goToSection(1)">Arten der Strahlung →</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION 2: Arten ==================== -->
+<div class="section" id="sec1">
+  <div class="card">
+    <h2>⚛️ Arten ionisierender Strahlung</h2>
+    <p>Klicken Sie auf eine Karte, um die Details aufzudecken.</p>
+
+    <div class="flip-grid">
+      <!-- Alpha -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-front" style="background:linear-gradient(135deg,#e53935,#ef5350)">
+            <div class="icon">α</div>
+            <h4>Alpha-Strahlung</h4>
+            <p>Heliumkerne</p>
+            <span class="hint">Klicken zum Aufdecken</span>
+          </div>
+          <div class="flip-back">
+            <h4 style="color:#e53935;">Alpha-Strahlung (α)</h4>
+            <ul>
+              <li><strong>Teilchen:</strong> Heliumkerne (²He⁴ — 2 Protonen + 2 Neutronen)</li>
+              <li><strong>Ladung:</strong> +2e</li>
+              <li><strong>Energie:</strong> Typisch 3–7 MeV</li>
+              <li><strong>Ionisationsdichte:</strong> Sehr hoch (~10⁴ Ionenpaare/cm in Luft)</li>
+              <li><strong>Reichweite:</strong> Wenige cm in Luft, wird bereits durch ein Blatt Papier oder die Hornhaut gestoppt</li>
+              <li><strong>Gefahr:</strong> Gering bei äußerer Bestrahlung, <strong>extrem gefährlich bei Inkorporation</strong> (Einatmen, Verschlucken)</li>
+            </ul>
+            <span class="shield-label">🛡️ Abschirmung: Papier</span>
+          </div>
+        </div>
+      </div>
+      <!-- Beta -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-front" style="background:linear-gradient(135deg,#1e88e5,#42a5f5)">
+            <div class="icon">β</div>
+            <h4>Beta-Strahlung</h4>
+            <p>Elektronen / Positronen</p>
+            <span class="hint">Klicken zum Aufdecken</span>
+          </div>
+          <div class="flip-back">
+            <h4 style="color:#1e88e5;">Beta-Strahlung (β)</h4>
+            <ul>
+              <li><strong>Teilchen:</strong> Elektronen (β⁻) oder Positronen (β⁺)</li>
+              <li><strong>Ladung:</strong> −1e bzw. +1e</li>
+              <li><strong>Energie:</strong> Kontinuierliches Spektrum bis zum Maximalwert (keV–MeV)</li>
+              <li><strong>Ionisationsdichte:</strong> Geringer als α, aber deutlich höhere Reichweite</li>
+              <li><strong>Reichweite:</strong> Bis einige Meter in Luft; wenige mm Aluminium reichen zur Abschirmung</li>
+              <li><strong>Besonderheit β⁺:</strong> Positron annihiliert mit Elektron → zwei 511-keV-Photonen (Grundlage der PET-Diagnostik)</li>
+            </ul>
+            <span class="shield-label">🛡️ Abschirmung: Aluminium (wenige mm)</span>
+          </div>
+        </div>
+      </div>
+      <!-- Gamma -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-front" style="background:linear-gradient(135deg,#8e24aa,#ab47bc)">
+            <div class="icon">γ</div>
+            <h4>Gamma-Strahlung</h4>
+            <p>Elektromagn. Welle</p>
+            <span class="hint">Klicken zum Aufdecken</span>
+          </div>
+          <div class="flip-back">
+            <h4 style="color:#8e24aa;">Gamma-Strahlung (γ)</h4>
+            <ul>
+              <li><strong>Natur:</strong> Elektromagnetische Strahlung (Photonen) aus dem <strong>Atomkern</strong></li>
+              <li><strong>Ladung:</strong> Keine (ungeladen)</li>
+              <li><strong>Energie:</strong> Typisch >100 keV bis mehrere MeV</li>
+              <li><strong>Ionisationsdichte:</strong> Gering (dünn ionisierend)</li>
+              <li><strong>Reichweite:</strong> Sehr groß — Intensität nimmt exponentiell ab, wird nie vollständig abgeschirmt</li>
+              <li><strong>Abschirmung:</strong> Dicke Schichten aus Blei oder Beton erforderlich (Halbwertsdicke!)</li>
+            </ul>
+            <span class="shield-label">🛡️ Abschirmung: Blei / Beton</span>
+          </div>
+        </div>
+      </div>
+      <!-- Neutron -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-front" style="background:linear-gradient(135deg,#f57c00,#ffa726)">
+            <div class="icon">n</div>
+            <h4>Neutronenstrahlung</h4>
+            <p>Ungeladene Teilchen</p>
+            <span class="hint">Klicken zum Aufdecken</span>
+          </div>
+          <div class="flip-back">
+            <h4 style="color:#f57c00;">Neutronenstrahlung</h4>
+            <ul>
+              <li><strong>Teilchen:</strong> Freie Neutronen</li>
+              <li><strong>Ladung:</strong> Keine (ungeladen) — daher keine direkte Coulomb-Wechselwirkung</li>
+              <li><strong>Entstehung:</strong> Kernspaltung, Kernfusion, (α,n)-Reaktionen</li>
+              <li><strong>Wechselwirkung:</strong> Elastische Streuung an leichten Kernen (v.&thinsp;a.&thinsp;Wasserstoff) → Abbremsung (Moderation)</li>
+              <li><strong>Biologisch:</strong> Hoher Strahlungswichtungsfaktor (w<sub>R</sub>&nbsp;=&nbsp;2,5–20, energieabhängig)</li>
+              <li><strong>Abschirmung:</strong> Wasserstoffreiche Materialien: Wasser, Paraffin, Polyethylen — plus Bor/Cadmium für Einfang thermischer Neutronen</li>
+            </ul>
+            <span class="shield-label">🛡️ Abschirmung: Wasser / Paraffin</span>
+          </div>
+        </div>
+      </div>
+      <!-- Röntgen -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-front" style="background:linear-gradient(135deg,#3f51b5,#5c6bc0)">
+            <div class="icon">X</div>
+            <h4>Röntgenstrahlung</h4>
+            <p>Aus der Elektronenhülle</p>
+            <span class="hint">Klicken zum Aufdecken</span>
+          </div>
+          <div class="flip-back">
+            <h4 style="color:#3f51b5;">Röntgenstrahlung</h4>
+            <ul>
+              <li><strong>Natur:</strong> Elektromagnetische Strahlung wie Gamma, aber Ursprung in der <strong>Elektronenhülle</strong> (charakteristische Röntgenstrahlung) oder durch Abbremsung schneller Elektronen (Bremsstrahlung)</li>
+              <li><strong>Energie:</strong> Typisch 1&nbsp;keV – 250&nbsp;keV</li>
+              <li><strong>Abgrenzung zu γ:</strong> Physikalisch identisch — der Unterschied liegt im <strong>Entstehungsort</strong> (Hülle vs. Kern)</li>
+              <li><strong>Anwendung:</strong> Medizinische Diagnostik, Materialprüfung, Kristallstrukturanalyse</li>
+            </ul>
+            <span class="shield-label">🛡️ Abschirmung: Blei (dünnere Schichten als bei γ)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shielding Visualization -->
+  <div class="card">
+    <h3>🛡️ Abschirmung im Vergleich</h3>
+    <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">Welche Strahlung wird von welchem Material gestoppt?</p>
+
+    <div class="shield-demo">
+      <div class="shield-source">☢️<br><span style="font-size:0.7rem">Quelle</span></div>
+
+      <div class="shield-arrow">
+        <div class="line alpha"></div>
+        <div class="line beta"></div>
+        <div class="line gamma"></div>
+        <div class="line neutron"></div>
+      </div>
+
+      <div class="shield-barrier">
+        <div class="bar bar-paper"></div>
+        <span>Papier</span>
+      </div>
+
+      <div class="shield-arrow">
+        <div class="line beta"></div>
+        <div class="line gamma"></div>
+        <div class="line neutron"></div>
+      </div>
+
+      <div class="shield-barrier">
+        <div class="bar bar-alu"></div>
+        <span>Aluminium</span>
+      </div>
+
+      <div class="shield-arrow">
+        <div class="line gamma"></div>
+        <div class="line neutron"></div>
+      </div>
+
+      <div class="shield-barrier">
+        <div class="bar bar-lead"></div>
+        <span>Blei</span>
+      </div>
+
+      <div class="shield-arrow">
+        <div class="line neutron"></div>
+      </div>
+
+      <div class="shield-barrier">
+        <div class="bar bar-water"></div>
+        <span>Wasser/<br>Paraffin</span>
+      </div>
+
+      <div class="shield-arrow">
+        <!-- nothing passes -->
+      </div>
+    </div>
+
+    <div class="shield-legend">
+      <div class="shield-legend-item"><span class="dot" style="background:#e53935"></span> α — gestoppt von Papier</div>
+      <div class="shield-legend-item"><span class="dot" style="background:#1e88e5"></span> β — gestoppt von Aluminium</div>
+      <div class="shield-legend-item"><span class="dot" style="background:#8e24aa"></span> γ — stark abgeschwächt durch Blei</div>
+      <div class="shield-legend-item"><span class="dot" style="background:#f57c00"></span> n — gebremst in Wasser/Paraffin</div>
+    </div>
+
+    <div class="info-box" style="margin-top:1rem;">
+      <strong>Hinweis:</strong> Gamma-Strahlung wird durch Materie <em>exponentiell</em> abgeschwächt, aber nie zu 100&thinsp;% abgeschirmt. Man spricht von der <strong>Halbwertsdicke</strong> — der Materialdicke, die die Intensität auf die Hälfte reduziert.
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn prev" onclick="goToSection(0)">← Definition</button>
+    <button class="nav-btn next" onclick="goToSection(2)">Biologische Wirkung →</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION 3: Biologische Wirkung ==================== -->
+<div class="section" id="sec2">
+  <div class="card">
+    <h2>🧬 Biologische Wirkung ionisierender Strahlung</h2>
+
+    <h3>Direkte vs. indirekte Strahlenwirkung</h3>
+    <div class="info-box">
+      <p><strong>Direkte Wirkung:</strong> Ein ionisierendes Teilchen oder Photon trifft <em>direkt</em> auf ein biologisch kritisches Molekül (z.&thinsp;B.&nbsp;DNA) und verursacht Strangbrüche oder Basenschäden.</p>
+    </div>
+    <div class="info-box accent">
+      <p><strong>Indirekte Wirkung:</strong> Strahlung ionisiert Wassermoleküle (Radiolyse) → es entstehen hochreaktive <strong>freie Radikale</strong> (v.&thinsp;a.&nbsp;OH•), die dann sekundär die DNA oder andere Biomoleküle schädigen. Da der menschliche Körper zu ca.&nbsp;70&thinsp;% aus Wasser besteht, ist dies der <strong>dominierende Mechanismus</strong>.</p>
+    </div>
+
+    <h3>Deterministische vs. stochastische Schäden</h3>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem;">
+        <thead>
+          <tr style="background:var(--primary-bg);">
+            <th style="padding:0.6rem;text-align:left;border-bottom:2px solid var(--primary);">Eigenschaft</th>
+            <th style="padding:0.6rem;text-align:left;border-bottom:2px solid var(--primary);">Deterministische Schäden</th>
+            <th style="padding:0.6rem;text-align:left;border-bottom:2px solid var(--primary);">Stochastische Schäden</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.5rem;border-bottom:1px solid #eee;"><strong>Schwellendosis</strong></td><td style="padding:0.5rem;border-bottom:1px solid #eee;">Ja — Schaden tritt erst oberhalb einer Schwelle auf</td><td style="padding:0.5rem;border-bottom:1px solid #eee;">Nein — jede Dosis erhöht die Wahrscheinlichkeit (LNT-Modell)</td></tr>
+          <tr><td style="padding:0.5rem;border-bottom:1px solid #eee;"><strong>Schwere</strong></td><td style="padding:0.5rem;border-bottom:1px solid #eee;">Nimmt mit der Dosis zu</td><td style="padding:0.5rem;border-bottom:1px solid #eee;">Schwere unabhängig von der Dosis; nur die Wahrscheinlichkeit steigt</td></tr>
+          <tr><td style="padding:0.5rem;border-bottom:1px solid #eee;"><strong>Latenzzeit</strong></td><td style="padding:0.5rem;border-bottom:1px solid #eee;">Stunden bis Wochen</td><td style="padding:0.5rem;border-bottom:1px solid #eee;">Jahre bis Jahrzehnte</td></tr>
+          <tr><td style="padding:0.5rem;"><strong>Beispiele</strong></td><td style="padding:0.5rem;">Hautrötung (Erythem), Strahlenkrankheit, Katarakt, Haarausfall</td><td style="padding:0.5rem;">Krebs, Leukämie, genetische Veränderungen in Keimzellen</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Dosisbegriffe</h3>
+    <div class="info-box">
+      <p><strong>Energiedosis D</strong> (Einheit: <strong>Gray, Gy</strong>)<br>
+      Absorbierte Energie pro Masse: D = ΔE / Δm &nbsp;→&nbsp; 1&nbsp;Gy = 1&nbsp;J/kg</p>
+    </div>
+    <div class="info-box">
+      <p><strong>Äquivalentdosis H</strong> (Einheit: <strong>Sievert, Sv</strong>)<br>
+      Berücksichtigt die biologische Wirksamkeit: H = w<sub>R</sub> · D<br>
+      Der <strong>Strahlungswichtungsfaktor w<sub>R</sub></strong> gewichtet die unterschiedliche biologische Schädigung verschiedener Strahlungsarten:</p>
+      <ul style="margin-top:0.5rem;padding-left:1.2rem;">
+        <li>Photonen (γ, X) und Elektronen (β): w<sub>R</sub> = 1</li>
+        <li>Protonen: w<sub>R</sub> = 2</li>
+        <li>Alpha-Teilchen, Spaltfragmente: w<sub>R</sub> = 20</li>
+        <li>Neutronen: w<sub>R</sub> = 2,5 bis 20 (energieabhängig, s.&nbsp;StrlSchV Anlage&nbsp;18)</li>
+      </ul>
+    </div>
+
+    <h3>Natürliche Strahlenexposition in Deutschland</h3>
+    <p>Jeder Mensch in Deutschland ist einer natürlichen Strahlenexposition von durchschnittlich <strong>ca.&nbsp;2,1&nbsp;mSv pro Jahr</strong> ausgesetzt. Der Großteil stammt aus:</p>
+
+    <div class="dose-bars" id="doseBars">
+      <div class="dose-row">
+        <div class="dose-label">Radon (Inhalation)</div>
+        <div class="dose-bar-bg"><div class="dose-bar-fill" style="width:0%;background:#e53935;" data-target="52">1,1 mSv</div></div>
+      </div>
+      <div class="dose-row">
+        <div class="dose-label">Terrestrische Strahlung</div>
+        <div class="dose-bar-bg"><div class="dose-bar-fill" style="width:0%;background:#f57c00;" data-target="19">0,4 mSv</div></div>
+      </div>
+      <div class="dose-row">
+        <div class="dose-label">Kosmische Strahlung</div>
+        <div class="dose-bar-bg"><div class="dose-bar-fill" style="width:0%;background:#1e88e5;" data-target="14">0,3 mSv</div></div>
+      </div>
+      <div class="dose-row">
+        <div class="dose-label">Nahrung (Ingestion)</div>
+        <div class="dose-bar-bg"><div class="dose-bar-fill" style="width:0%;background:#4caf50;" data-target="14">0,3 mSv</div></div>
+      </div>
+    </div>
+    <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.3rem;">Hinzu kommt die zivilisatorische Exposition (v.&thinsp;a. medizinische Diagnostik: im Mittel ca. 1,6&nbsp;mSv/a).</p>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn prev" onclick="goToSection(1)">← Arten</button>
+    <button class="nav-btn next" onclick="goToSection(3)">Strahlenschutz →</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION 4: Strahlenschutzgrundsätze ==================== -->
+<div class="section" id="sec3">
+  <div class="card">
+    <h2>🛡️ Strahlenschutzgrundsätze</h2>
+
+    <h3>Die drei A's des Strahlenschutzes</h3>
+    <div class="three-a-grid">
+      <div class="three-a-card">
+        <div class="big-letter">A</div>
+        <h4>Abstand</h4>
+        <p>Größtmöglichen Abstand zur Strahlenquelle einhalten. Dosis nimmt mit 1/r² ab.</p>
+      </div>
+      <div class="three-a-card">
+        <div class="big-letter">A</div>
+        <h4>Abschirmung</h4>
+        <p>Geeignetes Material zwischen Quelle und Person bringen (Blei, Beton, Wasser …).</p>
+      </div>
+      <div class="three-a-card">
+        <div class="big-letter">A</div>
+        <h4>Aufenthaltsdauer</h4>
+        <p>Zeit im Strahlenfeld minimieren. Dosis ist proportional zur Expositionszeit.</p>
+      </div>
+    </div>
+
+    <h3>Abstandsgesetz (1/r²)</h3>
+    <div class="info-box">
+      <p>Für eine Punktquelle gilt: Die <strong>Dosisleistung</strong> nimmt mit dem Quadrat des Abstands ab:</p>
+      <p style="font-size:1.1rem;text-align:center;margin:0.5rem 0;font-weight:600;">
+        Ḣ(r) = Ḣ(r₀) · (r₀ / r)²
+      </p>
+      <p>Verdopplung des Abstands → Reduktion auf ¼ der Dosisleistung.</p>
+    </div>
+
+    <div class="calc-box">
+      <label>🔬 Interaktiver Abstandsrechner</label>
+      <p style="font-size:0.85rem;margin-bottom:0.5rem;">Dosisleistung bei r₀ = 1 m: <strong>100 µSv/h</strong>. Schieben Sie den Regler:</p>
+      <label>Abstand r: <strong id="distVal">1,0</strong> m</label>
+      <input type="range" id="distSlider" min="0.5" max="10" step="0.1" value="1">
+      <div class="calc-result">Dosisleistung: <span id="doseResult">100,0</span> µSv/h <span id="doseReduction" style="font-size:0.85rem;color:var(--text-light);"></span></div>
+    </div>
+
+    <h3>ALARA-Prinzip</h3>
+    <div class="info-box accent">
+      <p><strong>ALARA</strong> = <em>As Low As Reasonably Achievable</em><br>
+      Die Strahlenexposition soll so niedrig gehalten werden, wie es unter Berücksichtigung wirtschaftlicher und sozialer Faktoren <strong>vernünftigerweise erreichbar</strong> ist. Dies ist in § 8 StrlSchG (Strahlenschutzgesetz) verankert (Minimierungsgebot).</p>
+    </div>
+
+    <h3>Grenzwerte (StrlSchV)</h3>
+    <div class="info-box">
+      <p>Die folgenden Grenzwerte für die <strong>effektive Dosis</strong> gelten nach der deutschen Strahlenschutzverordnung (StrlSchV, § 80):</p>
+      <ul style="padding-left:1.2rem;margin-top:0.5rem;">
+        <li><strong>Allgemeine Bevölkerung:</strong> 1 mSv pro Kalenderjahr (effektive Dosis)</li>
+        <li><strong>Beruflich strahlenexponierte Personen (Kategorie A):</strong> 20 mSv pro Kalenderjahr (effektive Dosis)</li>
+        <li><strong>Augenlinse:</strong> 20 mSv/a (beruflich) — seit 2018 verschärft</li>
+        <li><strong>Haut, Hände, Füße:</strong> 500 mSv/a (Organdosis, beruflich)</li>
+        <li><strong>Schwangere:</strong> 1 mSv für das ungeborene Kind ab Bekanntgabe der Schwangerschaft</li>
+      </ul>
+    </div>
+    <div class="info-box accent">
+      <strong>Merke:</strong> Grenzwerte sind <em>Obergrenzen</em>, keine Zielwerte! Das ALARA-Prinzip verlangt, auch unterhalb der Grenzwerte die Exposition weiter zu minimieren.
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn prev" onclick="goToSection(2)">← Biologie</button>
+    <button class="nav-btn next" onclick="goToSection(4)">Quiz starten →</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION 5: Quiz ==================== -->
+<div class="section" id="sec4">
+  <div class="card">
+    <h2>📝 Wissensquiz</h2>
+    <p>Testen Sie Ihr Wissen! Wählen Sie bei jeder Frage die richtige Antwort.</p>
+  </div>
+
+  <!-- Quiz Questions Container -->
+  <div id="quizContainer"></div>
+
+  <div class="card quiz-result" id="quizResult">
+    <h3>Ergebnis</h3>
+    <div class="score-circle" id="scoreCircle">
+      <span id="scoreNum">0</span>
+      <span class="score-text" id="scoreText">von 10</span>
+    </div>
+    <p id="scorePct" style="font-size:1.2rem;font-weight:700;margin-bottom:0.5rem;"></p>
+    <p id="scoreMsg" style="color:var(--text-light);"></p>
+    <button class="nav-btn next" style="margin-top:1rem;" onclick="resetQuiz()">Quiz wiederholen</button>
+  </div>
+
+  <div class="nav-buttons" id="quizNav">
+    <button class="nav-btn prev" onclick="goToSection(3)">← Strahlenschutz</button>
+    <button class="nav-btn next" id="quizEvalBtn" onclick="evaluateQuiz()" style="display:none;">Auswerten ✓</button>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>Erstellt für den Unterricht in Umweltschutztechnik · Berufskolleg · 2025</p>
+  <p style="margin-top:0.3rem;">Dosisangaben gemäß StrlSchV / StrlSchG · Quellenangaben: BfS, ICRP 103</p>
+</footer>
+
+<script>
+// ================= Navigation =================
+const sections = document.querySelectorAll('.section');
+const tabs = document.querySelectorAll('.nav-tab');
+const progressBar = document.getElementById('progressBar');
+let currentSection = 0;
+
+function goToSection(idx) {
+  if (idx < 0 || idx >= sections.length) return;
+  sections[currentSection].classList.remove('active');
+  tabs[currentSection].classList.remove('active');
+  currentSection = idx;
+  sections[currentSection].classList.add('active');
+  tabs[currentSection].classList.add('active');
+  progressBar.style.width = ((idx + 1) / sections.length * 100) + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Animate dose bars in section 2
+  if (idx === 2) animateDoseBars();
+}
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => goToSection(parseInt(tab.dataset.section)));
+});
+
+// ================= Spectrum Tooltip =================
+document.querySelectorAll('.spec-band').forEach(band => {
+  band.style.cursor = 'pointer';
+  band.addEventListener('mouseenter', () => {
+    document.getElementById('specTooltip').textContent = band.dataset.info;
+  });
+  band.addEventListener('mouseleave', () => {
+    document.getElementById('specTooltip').textContent = 'Bewegen Sie den Cursor über einen Bereich …';
+  });
+  // Touch support
+  band.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    document.getElementById('specTooltip').textContent = band.dataset.info;
+  });
+});
+
+// ================= Dose Bars Animation =================
+let doseBarsAnimated = false;
+function animateDoseBars() {
+  if (doseBarsAnimated) return;
+  doseBarsAnimated = true;
+  document.querySelectorAll('#doseBars .dose-bar-fill').forEach(bar => {
+    setTimeout(() => { bar.style.width = bar.dataset.target + '%'; }, 200);
+  });
+}
+
+// ================= Distance Calculator =================
+const distSlider = document.getElementById('distSlider');
+const distVal = document.getElementById('distVal');
+const doseResult = document.getElementById('doseResult');
+const doseReduction = document.getElementById('doseReduction');
+
+distSlider.addEventListener('input', () => {
+  const r = parseFloat(distSlider.value);
+  distVal.textContent = r.toFixed(1).replace('.', ',');
+  const dose = 100 / (r * r);
+  doseResult.textContent = dose.toFixed(1).replace('.', ',');
+  const factor = (1 / (r * r));
+  if (r > 1) {
+    doseReduction.textContent = '(Faktor ' + factor.toFixed(3).replace('.', ',') + ' — Reduktion auf ' + (factor * 100).toFixed(1).replace('.', ',') + ' %)';
+  } else if (r < 1) {
+    doseReduction.textContent = '(Faktor ' + factor.toFixed(1).replace('.', ',') + ' — Erhöhung!)';
+  } else {
+    doseReduction.textContent = '';
+  }
+});
+
+// ================= Quiz =================
+const quizData = [
+  {
+    type: 'mc',
+    question: 'Ab welcher Photonenenergie spricht man von ionisierender Strahlung?',
+    options: ['Ab ca. 1 eV', 'Ab ca. 5 eV (UV-C-Bereich)', 'Ab ca. 100 eV', 'Ab ca. 1 MeV'],
+    correct: 1,
+    explanation: 'Die Ionisationsgrenze liegt bei ca. 5 eV, was dem UV-C-Bereich (λ ≈ 250 nm) entspricht. Ab dieser Energie können Photonen Elektronen aus Atomen lösen.'
+  },
+  {
+    type: 'mc',
+    question: 'Welche Strahlung hat die höchste Ionisationsdichte?',
+    options: ['Gamma-Strahlung', 'Beta-Strahlung', 'Alpha-Strahlung', 'Röntgenstrahlung'],
+    correct: 2,
+    explanation: 'Alpha-Teilchen sind schwer (4 u) und doppelt geladen (+2e). Sie erzeugen auf kurzer Strecke sehr viele Ionenpaare — die Ionisationsdichte ist etwa 10⁴ Ionenpaare pro cm in Luft.'
+  },
+  {
+    type: 'mc',
+    question: 'Welches Material eignet sich am besten zur Abschirmung von Neutronenstrahlung?',
+    options: ['Blei', 'Aluminium', 'Wasser oder Paraffin', 'Papier'],
+    correct: 2,
+    explanation: 'Neutronen werden durch elastische Stöße an leichten Kernen abgebremst. Wasserstoffreiche Materialien (Wasser, Paraffin, Polyethylen) sind daher ideal zur Moderation.'
+  },
+  {
+    type: 'mc',
+    question: 'Was beschreibt die Äquivalentdosis H?',
+    options: [
+      'Die reine absorbierte Energie pro Masse',
+      'Die biologisch gewichtete Dosis unter Berücksichtigung des Strahlungswichtungsfaktors w_R',
+      'Die Aktivität einer Quelle in Becquerel',
+      'Die Dosisleistung in Sievert pro Stunde'
+    ],
+    correct: 1,
+    explanation: 'Die Äquivalentdosis H = w_R · D berücksichtigt, dass verschiedene Strahlungsarten bei gleicher Energiedosis unterschiedlich stark biologisch wirken. Die Einheit ist Sievert (Sv).'
+  },
+  {
+    type: 'mc',
+    question: 'Wie hoch ist der Grenzwert der effektiven Dosis für die allgemeine Bevölkerung gemäß StrlSchV?',
+    options: ['0,1 mSv pro Jahr', '1 mSv pro Jahr', '6 mSv pro Jahr', '20 mSv pro Jahr'],
+    correct: 1,
+    explanation: 'Der Grenzwert für die allgemeine Bevölkerung beträgt 1 mSv pro Kalenderjahr (effektive Dosis). Für beruflich strahlenexponierte Personen (Kategorie A) gilt 20 mSv/a.'
+  },
+  {
+    type: 'mc',
+    question: 'Was passiert mit der Dosisleistung, wenn Sie den Abstand zu einer punktförmigen Quelle verdreifachen?',
+    options: [
+      'Sie sinkt auf ⅓',
+      'Sie sinkt auf ⅑ (1/9)',
+      'Sie sinkt auf die Hälfte',
+      'Sie bleibt gleich'
+    ],
+    correct: 1,
+    explanation: 'Nach dem Abstandsgesetz (1/r²) gilt: Verdreifachung des Abstands → Dosisleistung sinkt auf 1/3² = 1/9 des ursprünglichen Werts.'
+  },
+  {
+    type: 'mc',
+    question: 'Welcher Strahlungswichtungsfaktor w_R gilt für Alpha-Strahlung?',
+    options: ['w_R = 1', 'w_R = 2', 'w_R = 5', 'w_R = 20'],
+    correct: 3,
+    explanation: 'Für Alpha-Teilchen und schwere Ionen gilt w_R = 20. Das bedeutet: Bei gleicher Energiedosis ist die biologische Wirkung 20-mal so groß wie bei Photonen oder Elektronen (w_R = 1).'
+  },
+  {
+    type: 'mc',
+    question: 'Welche Aussage zu stochastischen Strahlenschäden ist richtig?',
+    options: [
+      'Es gibt eine Schwellendosis, unterhalb derer keine Schäden auftreten.',
+      'Die Schwere des Schadens nimmt mit der Dosis zu.',
+      'Jede Dosis erhöht die Wahrscheinlichkeit eines Schadens; eine Schwellendosis wird nicht angenommen.',
+      'Stochastische Schäden treten innerhalb von Stunden auf.'
+    ],
+    correct: 2,
+    explanation: 'Stochastische Schäden (z. B. Krebs) haben nach dem LNT-Modell (Linear No-Threshold) keine Schwellendosis. Jede zusätzliche Dosis erhöht die Wahrscheinlichkeit, aber nicht die Schwere des Schadens. Die Latenzzeit beträgt Jahre bis Jahrzehnte.'
+  },
+  {
+    type: 'mc',
+    question: 'Was unterscheidet Röntgenstrahlung physikalisch von Gamma-Strahlung?',
+    options: [
+      'Röntgenstrahlung hat eine kürzere Wellenlänge.',
+      'Röntgenstrahlung ist nicht ionisierend.',
+      'Der Unterschied liegt im Entstehungsort: Elektronenhülle (Röntgen) vs. Atomkern (Gamma).',
+      'Gamma-Strahlung besteht aus Teilchen, Röntgenstrahlung aus Photonen.'
+    ],
+    correct: 2,
+    explanation: 'Röntgen- und Gamma-Strahlung sind physikalisch identisch (elektromagnetische Strahlung / Photonen). Der Unterschied ist konventionell: Röntgenstrahlung entsteht in der Elektronenhülle (Bremsstrahlung, charakteristische Strahlung), Gamma-Strahlung bei Kernübergängen.'
+  },
+  {
+    type: 'mc',
+    question: 'Wofür steht das Akronym ALARA im Strahlenschutz?',
+    options: [
+      'All Limits Are Regularly Adjusted',
+      'As Low As Reasonably Achievable',
+      'Automatic Limitation And Radiation Assessment',
+      'Averaged Lifetime Annual Radiation Allowance'
+    ],
+    correct: 1,
+    explanation: 'ALARA = As Low As Reasonably Achievable. Die Strahlenexposition soll unter Berücksichtigung wirtschaftlicher und sozialer Faktoren so niedrig wie vernünftigerweise erreichbar gehalten werden (Minimierungsgebot, § 8 StrlSchG).'
+  }
+];
+
+let quizAnswered = 0;
+const totalQuestions = quizData.length;
+
+function buildQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  quizAnswered = 0;
+  document.getElementById('quizResult').classList.remove('show');
+  document.getElementById('quizEvalBtn').style.display = 'none';
+
+  quizData.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.id = 'q' + qi;
+
+    let html = '<h4><span class="q-num">' + (qi + 1) + '</span>' + q.question + '</h4>';
+    html += '<div class="quiz-options">';
+    q.options.forEach((opt, oi) => {
+      html += '<button class="quiz-opt" data-q="' + qi + '" data-o="' + oi + '" onclick="answerQuiz(this,' + qi + ',' + oi + ')">' + opt + '</button>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-feedback" id="fb' + qi + '"></div>';
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(btn, qi, oi) {
+  const q = quizData[qi];
+  const qDiv = document.getElementById('q' + qi);
+  const opts = qDiv.querySelectorAll('.quiz-opt');
+  if (opts[0].classList.contains('locked')) return; // already answered
+
+  quizAnswered++;
+  opts.forEach((o, i) => {
+    o.classList.add('locked');
+    if (i === q.correct) o.classList.add('correct');
+  });
+  if (oi !== q.correct) btn.classList.add('wrong');
+
+  const fb = document.getElementById('fb' + qi);
+  fb.classList.add('show');
+  if (oi === q.correct) {
+    fb.className = 'quiz-feedback show correct-fb';
+    fb.innerHTML = '✅ <strong>Richtig!</strong> ' + q.explanation;
+  } else {
+    fb.className = 'quiz-feedback show wrong-fb';
+    fb.innerHTML = '❌ <strong>Leider falsch.</strong> ' + q.explanation;
+  }
+
+  if (quizAnswered === totalQuestions) {
+    document.getElementById('quizEvalBtn').style.display = 'inline-block';
+  }
+}
+
+function evaluateQuiz() {
+  let correct = 0;
+  quizData.forEach((q, qi) => {
+    const qDiv = document.getElementById('q' + qi);
+    const opts = qDiv.querySelectorAll('.quiz-opt');
+    opts.forEach((o, i) => {
+      if (o.classList.contains('correct') && !o.classList.contains('wrong') &&
+          i === q.correct && o.classList.contains('correct')) {
+        // Check if user actually clicked the correct one
+      }
+    });
+  });
+  // Count by checking if the correct button has no 'wrong' class sibling that was clicked
+  quizData.forEach((q, qi) => {
+    const qDiv = document.getElementById('q' + qi);
+    const wrongBtns = qDiv.querySelectorAll('.quiz-opt.wrong');
+    if (wrongBtns.length === 0) correct++;
+  });
+
+  const pct = Math.round(correct / totalQuestions * 100);
+  const circle = document.getElementById('scoreCircle');
+  document.getElementById('scoreNum').textContent = correct;
+  document.getElementById('scoreText').textContent = 'von ' + totalQuestions;
+  document.getElementById('scorePct').textContent = pct + ' %';
+
+  let msg, color;
+  if (pct >= 90) { msg = 'Hervorragend! Sie beherrschen das Thema ausgezeichnet.'; color = '#2e7d32'; }
+  else if (pct >= 70) { msg = 'Gut gemacht! Sie haben solide Kenntnisse.'; color = '#4caf50'; }
+  else if (pct >= 50) { msg = 'Ordentlich — einige Bereiche sollten Sie noch vertiefen.'; color = '#ff9800'; }
+  else { msg = 'Hier besteht noch Übungsbedarf. Lesen Sie die Abschnitte erneut durch.'; color = '#e53935'; }
+
+  circle.style.background = color;
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('quizResult').classList.add('show');
+  document.getElementById('quizResult').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetQuiz() {
+  buildQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Build quiz on load
+buildQuiz();
+
+// Initial progress
+progressBar.style.width = (1 / sections.length * 100) + '%';
+</script>
+
+</body>
+</html>
