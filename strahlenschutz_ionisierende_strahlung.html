@@ -154,7 +154,7 @@ main { max-width: 900px; margin: 0 auto; padding: 1rem; }
 }
 .flip-card {
   perspective: 800px;
-  height: 280px;
+  height: 380px;
   cursor: pointer;
 }
 .flip-card-inner {
@@ -173,9 +173,9 @@ main { max-width: 900px; margin: 0 auto; padding: 1rem; }
   padding: 1.2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   box-shadow: var(--shadow);
 }
+.flip-front { justify-content: center; }
 .flip-front {
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: #fff;
@@ -192,6 +192,8 @@ main { max-width: 900px; margin: 0 auto; padding: 1rem; }
   overflow-y: auto;
   line-height: 1.55;
   color: #212121;
+  justify-content: flex-start;
+  padding-top: 1rem;
 }
 .flip-back h4 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
 .flip-back ul { padding-left: 1.2rem; }
