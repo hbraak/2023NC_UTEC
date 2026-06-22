@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rechentraining Energie — Photovoltaik & Wasserstoff</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #0277bd;
+  --primary-light: #29b6f6;
+  --primary-bg: #e1f5fe;
+  --accent: #ff9800;
+  --accent-light: #fff3e0;
+  --text: #212121;
+  --text-light: #555;
+  --bg: #f5f5f5;
+  --card-bg: #fff;
+  --shadow: 0 2px 8px rgba(0,0,0,0.12);
+  --shadow-hover: 0 4px 16px rgba(0,0,0,0.18);
+  --radius: 12px;
+  --transition: 0.3s ease;
+}
+body { font-family: system-ui, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+.progress-container { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: #ddd; z-index: 1000; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); width: 0%; transition: width 0.4s ease; }
+
+header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; padding: 2rem 1rem 1.5rem; text-align: center; margin-top: 4px; }
+header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+header p { opacity: 0.92; font-size: 0.95rem; }
+
+.nav-tabs { display: flex; gap: 0; background: var(--card-bg); box-shadow: var(--shadow); overflow-x: auto; position: sticky; top: 4px; z-index: 900; -webkit-overflow-scrolling: touch; }
+.nav-tab { flex: 1; min-width: 110px; padding: 0.75rem 0.5rem; text-align: center; font-size: 0.82rem; font-weight: 600; color: var(--text-light); background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; transition: var(--transition); white-space: nowrap; }
+.nav-tab:hover { color: var(--primary); background: var(--primary-bg); }
+.nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.nav-tab .tab-num { display: block; font-size: 1.1rem; margin-bottom: 2px; }
+
+main { max-width: 900px; margin: 0 auto; padding: 1rem; }
+.section { display: none; animation: fadeIn 0.4s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; margin-bottom: 1.2rem; transition: var(--transition); }
+.card:hover { box-shadow: var(--shadow-hover); }
+.card h2 { color: var(--primary); font-size: 1.4rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.card h3 { color: var(--primary); font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+
+.info-box { background: var(--primary-bg); border-left: 4px solid var(--primary); border-radius: 8px; padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.info-box.accent { background: var(--accent-light); border-left-color: var(--accent); }
+
+.formula-box { background: #e8eaf6; border-left: 4px solid #3949ab; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.8rem 0 1.2rem; }
+.formula-box h4 { color: #283593; margin-bottom: 0.5rem; font-size: 1rem; }
+.formula { font-family: 'Cambria Math', Georgia, serif; font-size: 1.15rem; background: #fff; border: 1px solid #c5cae9; border-radius: 6px; padding: 0.5rem 0.9rem; margin: 0.4rem 0; display: inline-block; }
+.formula small { font-size: 0.78rem; color: var(--text-light); }
+.var-list { list-style: none; margin: 0.5rem 0 0; padding: 0; font-size: 0.9rem; }
+.var-list li { margin: 0.2rem 0; }
+.var-list b { color: #283593; }
+
+.datenblatt { width: 100%; border-collapse: collapse; margin: 0.6rem 0 1rem; font-size: 0.88rem; overflow-x:auto; display:block; }
+.datenblatt th, .datenblatt td { border: 1px solid #cfd8dc; padding: 0.45rem 0.6rem; text-align: left; white-space:nowrap; }
+.datenblatt th { background: #37474f; color: #fff; font-weight: 600; }
+.datenblatt tr:nth-child(even) td { background: #eceff1; }
+.datenblatt caption { font-weight: 700; color: #37474f; margin-bottom: 0.3rem; text-align: left; }
+
+.aufgabe-box { background: var(--card-bg); border: 1px solid #e0e0e0; border-top: 4px solid var(--accent); border-radius: var(--radius); padding: 1.2rem 1.4rem; margin-bottom: 1.3rem; box-shadow: var(--shadow); }
+.aufgabe-box .aufg-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+.aufgabe-box .aufg-num { background: var(--accent); color: #fff; font-weight: 700; border-radius: 6px; padding: 0.15rem 0.6rem; font-size: 0.9rem; }
+.aufgabe-box .aufg-title { font-weight: 700; color: var(--text); font-size: 1.05rem; }
+.badge { font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 0.1rem 0.55rem; border: 1px solid transparent; }
+.badge.afb1 { background:#e8f5e9; color:#2e7d32; border-color:#a5d6a7; }
+.badge.afb2 { background:#e3f2fd; color:#1565c0; border-color:#90caf9; }
+.badge.afb3 { background:#fff3e0; color:#e65100; border-color:#ffcc80; }
+.badge.pts  { background:#ede7f6; color:#4527a0; border-color:#b39ddb; }
+
+details.loesung { margin-top: 0.9rem; border: 1px solid #b3e5fc; border-radius: 8px; background: #e1f5fe; overflow: hidden; }
+details.loesung > summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 700; color: #0277bd; background: #b3e5fc; list-style: none; user-select: none; }
+details.loesung > summary::-webkit-details-marker { display: none; }
+details.loesung > summary::before { content: '▸ '; }
+details.loesung[open] > summary::before { content: '▾ '; }
+details.loesung > summary:hover { background: #81d4fa; }
+.loesung-body { padding: 0.8rem 1rem; background:#fff; }
+.loesung-body .step { margin: 0.4rem 0; }
+.loesung-body .result { background: #fff9c4; border: 1px solid #fbc02d; border-radius: 6px; padding: 0.5rem 0.8rem; margin-top: 0.6rem; font-weight: 600; }
+.calc { font-family: 'Cambria Math', Georgia, serif; }
+
+.nav-buttons { display: flex; justify-content: space-between; gap: 1rem; margin: 1.5rem 0 0.5rem; }
+.nav-btn { padding: 0.7rem 1.2rem; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+.nav-btn.next { background: var(--primary); color: #fff; margin-left: auto; }
+.nav-btn.prev { background: #e0e0e0; color: var(--text); }
+.nav-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+footer { text-align: center; color: var(--text-light); font-size: 0.82rem; padding: 2rem 1rem 3rem; }
+
+@media (max-width: 600px) {
+  header h1 { font-size: 1.4rem; }
+  .card h2 { font-size: 1.2rem; }
+  .formula { font-size: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<header>
+  <h1>⚡ Rechentraining Energie</h1>
+  <p>Photovoltaik &amp; Wasserstoff · Umweltschutztechnik · 13. Klasse · Prüfungsvorbereitung</p>
+</header>
+
+<nav class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" data-section="0"><span class="tab-num">☀️</span>Photovoltaik</button>
+  <button class="nav-tab" data-section="1"><span class="tab-num">💧</span>Elektrolyse &amp; BZ</button>
+  <button class="nav-tab" data-section="2"><span class="tab-num">🔗</span>Wirkungsgradkette</button>
+</nav>
+
+<main>
+
+<!-- ==================== SECTION 1: Photovoltaik ==================== -->
+<div class="section active" id="sec0">
+  <div class="card">
+    <h2>☀️ Photovoltaik — Kennlinie, Wirkungsgrad &amp; Ertrag</h2>
+    <p>Trainieren Sie die quantitativen PV-Aufgaben der Prüfung: <strong>Kennlinie/MPP auswerten, Wirkungsgrad, Degradation und Deckungsanteil</strong>. Erst selbst rechnen, dann Musterlösung vergleichen.</p>
+    <div class="info-box accent"><strong>Tipp:</strong> Bei Kennlinien immer zuerst die Leistung P = U · I für jeden Messpunkt berechnen — das Maximum ist der MPP.</div>
+  </div>
+
+  <div class="card">
+    <h3>📐 Formeln &amp; Daten</h3>
+    <div class="formula-box">
+      <div class="formula">P = U · I</div>
+      <div class="formula">η = P<sub>max</sub> / (E · A)</div>
+      <div class="formula">Δ = (P<sub>Hersteller</sub> − P<sub>mess</sub>) / P<sub>Hersteller</sub> · 100 %</div>
+      <div class="formula">E<sub>Jahr</sub> = P<sub>kWp</sub> · spez. Jahresertrag</div>
+      <ul class="var-list">
+        <li><b>E</b> Bestrahlungsstärke bei STC = <b>1000 W/m²</b> &nbsp;·&nbsp; <b>A</b> Modulfläche (m²)</li>
+        <li><b>I<sub>SC</sub></b> Kurzschlussstrom (bei U = 0) &nbsp;·&nbsp; <b>U<sub>OC</sub></b> Leerlaufspannung (bei I = 0)</li>
+        <li><b>P<sub>max</sub></b> = MPP, größter Wert von U·I &nbsp;·&nbsp; spez. Jahresertrag in kWh/(kWp·a)</li>
+      </ul>
+    </div>
+    <table class="datenblatt">
+      <caption>Moduldaten (Beispielmodul „SunPeak 330")</caption>
+      <tr><th>Größe</th><th>Wert</th></tr>
+      <tr><td>Abmessungen</td><td>1,76 m × 1,13 m</td></tr>
+      <tr><td>Nennleistung (Hersteller, neu)</td><td>330 W<sub>p</sub></td></tr>
+      <tr><td>spez. Jahresertrag am Standort</td><td>950 kWh/(kW<sub>p</sub>·a)</td></tr>
+    </table>
+  </div>
+
+  <!-- PV-A1 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">PV-1</span><span class="aufg-title">Kennlinie auswerten — I<sub>SC</sub>, U<sub>OC</sub>, P<sub>max</sub></span><span class="badge afb2">AFB II</span><span class="badge pts">12 P</span></div>
+    <p>Auf einer netzfernen <strong>Berghütte</strong> wird ein PV-Modul unter Standardtestbedingungen (STC) vermessen:</p>
+    <table class="datenblatt">
+      <tr><th>U in V</th><td>0</td><td>10</td><td>18</td><td>25</td><td>30</td><td>33</td><td>35</td><td>37</td><td>39</td><td>41</td></tr>
+      <tr><th>I in A</th><td>9,3</td><td>9,2</td><td>9,1</td><td>9,0</td><td>8,8</td><td>8,4</td><td>8,1</td><td>6,8</td><td>4,0</td><td>0,5</td></tr>
+    </table>
+    <p>Berechnen Sie für jeden Messpunkt die Leistung und ermitteln Sie <strong>I<sub>SC</sub>, U<sub>OC</sub></strong> und den <strong>MPP (P<sub>max</sub>)</strong>. (Eine Skizze der I-U- und P-U-Kennlinie auf Millimeterpapier gehört in der Klausur dazu.)</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step"><b>Leistung P = U · I:</b></p>
+      <table class="datenblatt">
+        <tr><th>U in V</th><td>0</td><td>10</td><td>18</td><td>25</td><td>30</td><td>33</td><td>35</td><td>37</td><td>39</td><td>41</td></tr>
+        <tr><th>I in A</th><td>9,3</td><td>9,2</td><td>9,1</td><td>9,0</td><td>8,8</td><td>8,4</td><td>8,1</td><td>6,8</td><td>4,0</td><td>0,5</td></tr>
+        <tr><th>P in W</th><td>0</td><td>92</td><td>163,8</td><td>225</td><td>264</td><td>277,2</td><td><b>283,5</b></td><td>251,6</td><td>156</td><td>20,5</td></tr>
+      </table>
+      <p class="step"><b>Ablesen:</b></p>
+      <p class="step calc">I<sub>SC</sub> ≈ 9,3 A (bei U = 0) &nbsp;·&nbsp; U<sub>OC</sub> ≈ 41 V (bei I → 0)</p>
+      <div class="result">P<sub>max</sub> = 283,5 W bei U<sub>MPP</sub> = 35 V und I<sub>MPP</sub> = 8,1 A</div>
+    </div></details>
+  </div>
+
+  <!-- PV-A2 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">PV-2</span><span class="aufg-title">Wirkungsgrad des Moduls</span><span class="badge afb2">AFB II</span><span class="badge pts">5 P</span></div>
+    <p>Berechnen Sie den Wirkungsgrad des Moduls aus PV-1 bei STC (E = 1000 W/m²).</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step"><b>Modulfläche:</b></p>
+      <p class="step calc">A = 1,76 m · 1,13 m = 1,99 m²</p>
+      <p class="step"><b>Wirkungsgrad:</b></p>
+      <p class="step calc">η = P<sub>max</sub> / (E · A) = 283,5 W / (1000 W/m² · 1,99 m²) = 283,5 / 1990</p>
+      <div class="result">η ≈ 0,143 = 14,3 % &nbsp;(neu/Herstellerangabe: 330 W → 16,6 %)</div>
+    </div></details>
+  </div>
+
+  <!-- PV-A3 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">PV-3</span><span class="aufg-title">Degradation bestimmen</span><span class="badge afb1">AFB I</span><span class="badge pts">3 P</span></div>
+    <p>Das Modul ist laut Herstellerangabe mit <strong>330 W<sub>p</sub></strong> spezifiziert. Berechnen Sie die relative Abweichung der gemessenen Leistung und beurteilen Sie kurz.</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step calc">Δ = (P<sub>Hersteller</sub> − P<sub>mess</sub>) / P<sub>Hersteller</sub> · 100 % = (330 − 283,5) / 330 · 100 %</p>
+      <p class="step calc">Δ = 46,5 / 330 · 100 % = 14,1 %</p>
+      <div class="result">Die gemessene Leistung liegt 14,1 % unter der Nennleistung → deutliche Degradation/Alterung des Moduls.</div>
+    </div></details>
+  </div>
+
+  <!-- PV-A4 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">PV-4</span><span class="aufg-title">Anlagenleistung &amp; Deckungsanteil</span><span class="badge afb3">AFB III</span><span class="badge pts">12 P</span></div>
+    <p>Ein <strong>Handwerksbetrieb</strong> (Stromverbrauch 9000 kWh/a) installiert <strong>12 dieser Module</strong>. Berechnen Sie mit der <em>gemessenen</em> Leistung die Anlagengröße, den Jahresertrag und den Deckungsanteil. Beurteilen Sie das Ergebnis.</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step"><b>Anlagenleistung:</b></p>
+      <p class="step calc">P = 12 · 283,5 W = 3402 W = 3,40 kW<sub>p</sub></p>
+      <p class="step"><b>Jahresertrag:</b></p>
+      <p class="step calc">E = 3,40 kW<sub>p</sub> · 950 kWh/(kW<sub>p</sub>·a) = 3231 kWh/a</p>
+      <p class="step"><b>Deckungsanteil:</b></p>
+      <p class="step calc">3231 kWh / 9000 kWh = 0,359 = 35,9 %</p>
+      <div class="result">Die Anlage deckt ca. 36 % des Bedarfs. Mit neuen Modulen (330 W → 3,96 kW<sub>p</sub>) wären es ≈ 42 % — die Degradation kostet spürbar Ertrag. Maßnahmen: Modultausch, Speicher, Eigenverbrauch optimieren.</div>
+    </div></details>
+  </div>
+
+  <div class="nav-buttons">
+    <span></span>
+    <button class="nav-btn next" onclick="goToSection(1)">Elektrolyse &amp; Brennstoffzelle →</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION 2: Elektrolyse & Brennstoffzelle ==================== -->
+<div class="section" id="sec1">
+  <div class="card">
+    <h2>💧 Elektrolyseur &amp; Brennstoffzelle</h2>
+    <p>Trainieren Sie die Wasserstoff-Aufgaben: <strong>Faraday-Gesetz, Wirkungsgrad des Elektrolyseurs und Kennlinie/Stack-Dimensionierung der Brennstoffzelle</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h3>📐 Formeln &amp; Konstanten</h3>
+    <div class="formula-box">
+      <div class="formula">Q = I · t</div>
+      <div class="formula">n = Q / (z · F)</div>
+      <div class="formula">η = W<sub>chem</sub> / W<sub>el</sub> &nbsp;<small>mit W<sub>el</sub> = U · I · t = U · Q</small></div>
+      <div class="formula">P = U · I</div>
+      <ul class="var-list">
+        <li><b>F</b> Faraday-Konstante = 96485 C/mol &nbsp;·&nbsp; <b>z</b> Elektronenzahl (für H₂: z = 2)</li>
+        <li><b>V<sub>m</sub></b> molares Volumen (Normbed.) = 22,4 L/mol &nbsp;·&nbsp; <b>M</b>(H₂) = 2,016 g/mol</li>
+        <li><b>ΔH</b>(H₂) Brennwert = 286 kJ/mol &nbsp;·&nbsp; W<sub>chem</sub> = n · ΔH</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EL-A1 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">EL-1</span><span class="aufg-title">Wasserstoffmenge (Faraday)</span><span class="badge afb2">AFB II</span><span class="badge pts">8 P</span></div>
+    <p>Ein <strong>PEM-Elektrolyseur</strong> im Labor wird mit <strong>I = 50 A</strong> über <strong>t = 2 h</strong> betrieben. Berechnen Sie die erzeugte Stoffmenge, das Volumen (Normbedingungen) und die Masse an Wasserstoff.</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step"><b>Ladung:</b></p>
+      <p class="step calc">Q = I · t = 50 A · 7200 s = 360 000 C</p>
+      <p class="step"><b>Stoffmenge H₂</b> (z = 2):</p>
+      <p class="step calc">n = Q / (z · F) = 360 000 / (2 · 96485) = 1,87 mol</p>
+      <p class="step"><b>Volumen &amp; Masse:</b></p>
+      <p class="step calc">V = n · V<sub>m</sub> = 1,87 · 22,4 L = 41,8 L &nbsp;·&nbsp; m = n · M = 1,87 · 2,016 g = 3,76 g</p>
+      <div class="result">n ≈ 1,87 mol H₂ → V ≈ 41,8 L (Normbed.) → m ≈ 3,76 g</div>
+    </div></details>
+  </div>
+
+  <!-- EL-A2 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">EL-2</span><span class="aufg-title">Wirkungsgrad des Elektrolyseurs</span><span class="badge afb3">AFB III</span><span class="badge pts">8 P</span></div>
+    <p>Der Elektrolyseur aus EL-1 arbeitet mit einer Zellspannung von <strong>U = 2,0 V</strong>. Berechnen Sie seinen Wirkungsgrad (bezogen auf den Brennwert des erzeugten Wasserstoffs).</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step"><b>Zugeführte elektrische Energie:</b></p>
+      <p class="step calc">W<sub>el</sub> = U · Q = 2,0 V · 360 000 C = 720 000 J = 720 kJ</p>
+      <p class="step"><b>Chemisch gespeicherte Energie</b> (Brennwert):</p>
+      <p class="step calc">W<sub>chem</sub> = n · ΔH = 1,87 mol · 286 kJ/mol = 535 kJ</p>
+      <p class="step"><b>Wirkungsgrad:</b></p>
+      <p class="step calc">η = W<sub>chem</sub> / W<sub>el</sub> = 535 / 720 = 0,74</p>
+      <div class="result">η<sub>EL</sub> ≈ 74 % — die übrigen 26 % gehen v. a. als Wärme verloren (Überspannung).</div>
+    </div></details>
+  </div>
+
+  <!-- BZ-A1 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">BZ-1</span><span class="aufg-title">BZ-Kennlinie &amp; Stack-Dimensionierung</span><span class="badge afb2">AFB II</span><span class="badge pts">13 P</span></div>
+    <p>Ein neues <strong>PEM-Brennstoffzellen-Modul</strong> wird charakterisiert:</p>
+    <table class="datenblatt">
+      <tr><th>I in A</th><td>0</td><td>2</td><td>5</td><td>8</td><td>11</td><td>14</td><td>17</td><td>19</td></tr>
+      <tr><th>U in V</th><td>0,95</td><td>0,82</td><td>0,72</td><td>0,64</td><td>0,56</td><td>0,48</td><td>0,38</td><td>0,30</td></tr>
+    </table>
+    <p>Ermitteln Sie den Punkt maximaler Leistung und geben Sie an, aus wie vielen Modulen ein Stack mit <strong>1,5 kW</strong> bestehen muss.</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step"><b>Leistung P = U · I:</b></p>
+      <table class="datenblatt">
+        <tr><th>I in A</th><td>0</td><td>2</td><td>5</td><td>8</td><td>11</td><td>14</td><td>17</td><td>19</td></tr>
+        <tr><th>P in W</th><td>0</td><td>1,64</td><td>3,60</td><td>5,12</td><td>6,16</td><td><b>6,72</b></td><td>6,46</td><td>5,70</td></tr>
+      </table>
+      <p class="step calc">P<sub>max</sub> = 6,72 W bei I = 14 A und U = 0,48 V</p>
+      <p class="step"><b>Modulanzahl für 1,5 kW:</b></p>
+      <p class="step calc">n = 1500 W / 6,72 W = 223,2 → <b>224 Module</b></p>
+      <div class="result">P<sub>max</sub> ≈ 6,72 W/Modul → ein Stack aus 224 in Reihe geschalteten Modulen liefert ca. 1,5 kW.</div>
+    </div></details>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn prev" onclick="goToSection(0)">← Photovoltaik</button>
+    <button class="nav-btn next" onclick="goToSection(2)">Wirkungsgradkette →</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION 3: Wirkungsgradkette ==================== -->
+<div class="section" id="sec2">
+  <div class="card">
+    <h2>🔗 Wirkungsgradkette &amp; Bewertung</h2>
+    <p>Die Stärke der Umwelttechnik-Prüfung liegt im <strong>Verknüpfen und Bewerten</strong>. Hier kommen PV, Elektrolyse und Brennstoffzelle zusammen.</p>
+    <div class="formula-box">
+      <div class="formula">η<sub>gesamt</sub> = η<sub>1</sub> · η<sub>2</sub> · η<sub>3</sub> · …</div>
+      <ul class="var-list"><li>Wirkungsgrade einer Kette werden <b>multipliziert</b> (nicht addiert!).</li></ul>
+    </div>
+  </div>
+
+  <!-- WK-A1 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">WK-1</span><span class="aufg-title">Power-to-Power-Wirkungsgrad</span><span class="badge afb3">AFB III</span><span class="badge pts">10 P</span></div>
+    <p>In einer autarken Inselanlage wird PV-Überschuss als Wasserstoff gespeichert und später rückverstromt:</p>
+    <ul style="margin:0.3rem 0 0.6rem 1.2rem;">
+      <li>Elektrolyseur: η<sub>EL</sub> = 74 %</li>
+      <li>Verdichtung &amp; Speicher: η<sub>Sp</sub> = 90 %</li>
+      <li>Brennstoffzelle: η<sub>BZ</sub> = 55 %</li>
+    </ul>
+    <p>Berechnen Sie den Gesamtwirkungsgrad der Speicherkette (Strom → H₂ → Strom) und beurteilen Sie das Ergebnis.</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step calc">η<sub>gesamt</sub> = 0,74 · 0,90 · 0,55 = 0,366</p>
+      <div class="result">η<sub>gesamt</sub> ≈ 37 %: Von 100 kWh PV-Strom bleiben nach Speicherung nur ≈ 37 kWh nutzbar.</div>
+      <p class="step"><b>Bewertung:</b> Die Direktnutzung bzw. ein Batteriespeicher (η ≈ 90 %) ist deutlich effizienter. Der Wasserstoffpfad lohnt sich v. a. als <b>Langzeit-/Saisonspeicher</b> und für Autarkie, wenn Batterien an ihre Kapazitätsgrenze stoßen.</p>
+    </div></details>
+  </div>
+
+  <!-- WK-A2 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head"><span class="aufg-num">WK-2</span><span class="aufg-title">Transfer: Anlage richtig auslegen</span><span class="badge afb3">AFB III</span><span class="badge pts">6 P</span></div>
+    <p>Begründen Sie, warum eine autarke Inselanlage <strong>sowohl</strong> eine Pufferbatterie <strong>als auch</strong> einen Wasserstoffspeicher sinnvoll kombiniert. Gehen Sie auf eine kritische Energiesituation ein.</p>
+    <details class="loesung"><summary>Musterlösung anzeigen</summary><div class="loesung-body">
+      <p class="step">• <b>Batterie</b>: hoher Wirkungsgrad, schnelle Reaktion → deckt <b>kurzfristige</b> Schwankungen (Tag/Nacht) effizient ab.</p>
+      <p class="step">• <b>Wasserstoff</b>: verlustreicher, aber <b>beliebig skalierbarer Langzeitspeicher</b> → überbrückt sonnenarme Wochen (Winter).</p>
+      <p class="step"><b>Kritische Situation:</b> Längere Schlechtwetterperiode im Winter — die Batterie ist nach 1–2 Tagen leer, der H₂-Speicher liefert über die Brennstoffzelle weiter Strom. So wird eine Energielücke vermieden.</p>
+      <div class="result">Kombination = Effizienz (Batterie) + Versorgungssicherheit (H₂). Steuerung/Laderegler verteilt die Energieflüsse nach Bedarf.</div>
+    </div></details>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn prev" onclick="goToSection(1)">← Elektrolyse &amp; BZ</button>
+    <span></span>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>Rechentraining Energie · Erstellt für die Prüfungsvorbereitung 13NC · Umweltschutztechnik</p>
+  <p style="margin-top:0.3rem;">Kontexte und Zahlen frei gewählt — gleiche Aufgabentypen wie in der Abschlussprüfung.</p>
+</footer>
+
+<script>
+const sections = document.querySelectorAll('.section');
+const tabs = document.querySelectorAll('.nav-tab');
+const progressBar = document.getElementById('progressBar');
+let currentSection = 0;
+
+function goToSection(idx) {
+  if (idx < 0 || idx >= sections.length) return;
+  sections[currentSection].classList.remove('active');
+  tabs[currentSection].classList.remove('active');
+  currentSection = idx;
+  sections[currentSection].classList.add('active');
+  tabs[currentSection].classList.add('active');
+  progressBar.style.width = ((idx + 1) / sections.length * 100) + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => goToSection(parseInt(tab.dataset.section)));
+});
+progressBar.style.width = (1 / sections.length * 100) + '%';
+</script>
+</body>
+</html>
