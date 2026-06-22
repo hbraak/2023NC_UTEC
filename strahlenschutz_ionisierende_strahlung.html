@@ -714,6 +714,100 @@ footer {
   .decay-grid { grid-template-columns: 1fr; }
   .decay-legend { font-size: 0.75rem; gap: 0.5rem; }
 }
+
+/* ===== Rechnen-Tab (Aktivität & Dosis) ===== */
+.formula-box {
+  background: #f3e5f5;
+  border-left: 4px solid #8e24aa;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin: 0.8rem 0 1.2rem;
+}
+.formula-box h4 { color: #6a1b9a; margin-bottom: 0.5rem; font-size: 1rem; }
+.formula {
+  font-family: 'Cambria Math', Georgia, serif;
+  font-size: 1.15rem;
+  background: #fff;
+  border: 1px solid #e1bee7;
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  margin: 0.4rem 0;
+  display: inline-block;
+}
+.formula small { font-size: 0.78rem; color: var(--text-light); }
+.var-list { list-style: none; margin: 0.5rem 0 0; padding: 0; font-size: 0.9rem; }
+.var-list li { margin: 0.2rem 0; }
+.var-list b { color: #6a1b9a; }
+
+.datenblatt {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.6rem 0 1rem;
+  font-size: 0.88rem;
+}
+.datenblatt th, .datenblatt td {
+  border: 1px solid #cfd8dc;
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+}
+.datenblatt th { background: #37474f; color: #fff; font-weight: 600; }
+.datenblatt tr:nth-child(even) td { background: #eceff1; }
+.datenblatt caption { font-weight: 700; color: #37474f; margin-bottom: 0.3rem; text-align: left; }
+
+.aufgabe-box {
+  background: var(--card-bg);
+  border: 1px solid #e0e0e0;
+  border-top: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1.3rem;
+  box-shadow: var(--shadow);
+}
+.aufgabe-box .aufg-head {
+  display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+.aufgabe-box .aufg-num {
+  background: var(--accent); color: #fff; font-weight: 700;
+  border-radius: 6px; padding: 0.15rem 0.6rem; font-size: 0.9rem;
+}
+.aufgabe-box .aufg-title { font-weight: 700; color: var(--text); font-size: 1.05rem; }
+.badge {
+  font-size: 0.72rem; font-weight: 700; border-radius: 999px;
+  padding: 0.1rem 0.55rem; border: 1px solid transparent;
+}
+.badge.afb1 { background:#e8f5e9; color:#2e7d32; border-color:#a5d6a7; }
+.badge.afb2 { background:#e3f2fd; color:#1565c0; border-color:#90caf9; }
+.badge.afb3 { background:#fff3e0; color:#e65100; border-color:#ffcc80; }
+.badge.pts  { background:#f3e5f5; color:#6a1b9a; border-color:#ce93d8; }
+
+details.loesung {
+  margin-top: 0.9rem;
+  border: 1px solid #c8e6c9;
+  border-radius: 8px;
+  background: #f1f8e9;
+  overflow: hidden;
+}
+details.loesung > summary {
+  cursor: pointer;
+  padding: 0.6rem 0.9rem;
+  font-weight: 700;
+  color: #2e7d32;
+  background: #e8f5e9;
+  list-style: none;
+  user-select: none;
+}
+details.loesung > summary::-webkit-details-marker { display: none; }
+details.loesung > summary::before { content: '▸ '; }
+details.loesung[open] > summary::before { content: '▾ '; }
+details.loesung > summary:hover { background: #dcedc8; }
+.loesung-body { padding: 0.8rem 1rem; }
+.loesung-body .step { margin: 0.4rem 0; }
+.loesung-body .result {
+  background: #fff9c4; border: 1px solid #fbc02d; border-radius: 6px;
+  padding: 0.5rem 0.8rem; margin-top: 0.6rem; font-weight: 600;
+}
+.calc { font-family: 'Cambria Math', Georgia, serif; }
 </style>
 </head>
 <body>
@@ -730,7 +824,8 @@ footer {
   <button class="nav-tab" data-section="1"><span class="tab-num">2</span>Arten</button>
   <button class="nav-tab" data-section="2"><span class="tab-num">3</span>Biologie</button>
   <button class="nav-tab" data-section="3"><span class="tab-num">4</span>Schutz</button>
-  <button class="nav-tab" data-section="4"><span class="tab-num">5</span>Quiz</button>
+  <button class="nav-tab" data-section="4"><span class="tab-num">5</span>Rechnen</button>
+  <button class="nav-tab" data-section="5"><span class="tab-num">6</span>Quiz</button>
 </nav>
 
 <main>
@@ -1391,12 +1486,190 @@ footer {
 
   <div class="nav-buttons">
     <button class="nav-btn prev" onclick="goToSection(2)">← Biologie</button>
-    <button class="nav-btn next" onclick="goToSection(4)">Quiz starten →</button>
+    <button class="nav-btn next" onclick="goToSection(4)">Rechnen: Aktivität &amp; Dosis →</button>
   </div>
 </div>
 
-<!-- ==================== SECTION 5: Quiz ==================== -->
+<!-- ==================== SECTION 6: Rechnen — Aktivität & Dosis ==================== -->
 <div class="section" id="sec4">
+  <div class="card">
+    <h2>🧮 Rechnen: Aktivität &amp; Dosis</h2>
+    <p>Hier trainieren Sie den <strong>quantitativen Teil</strong> – genau die Aufgabentypen der Abschlussprüfung (Aktivität, Zerfallsgesetz, Dosisleistung, Grenzwertbewertung). Die Kontexte sind <em>neu</em>: Üben Sie das <strong>Vorgehen</strong>, nicht den Einzelfall.</p>
+    <div class="info-box accent">
+      <strong>Arbeitsweise:</strong> Erst selbst rechnen (CAS + Tafelwerk erlaubt), Einheiten mitführen, dann die Musterlösung aufklappen und vergleichen. Achten Sie auf saubere Angabe von Ergebnis <em>mit Einheit</em> und einer kurzen Bewertung.
+    </div>
+  </div>
+
+  <!-- Formelsammlung -->
+  <div class="card">
+    <h3>📐 Formelübersicht</h3>
+    <div class="formula-box">
+      <h4>Zerfallsgesetz &amp; Aktivität</h4>
+      <div class="formula">A(t) = A<sub>0</sub> · e<sup>−λ·t</sup></div>
+      <div class="formula">λ = ln 2 / T<sub>½</sub></div>
+      <div class="formula">A<sub>0</sub> = a · m</div>
+      <ul class="var-list">
+        <li><b>A(t)</b> Aktivität zur Zeit t (Bq) &nbsp;·&nbsp; <b>A<sub>0</sub></b> Anfangsaktivität (Bq)</li>
+        <li><b>λ</b> Zerfallskonstante (1/Zeit) &nbsp;·&nbsp; <b>T<sub>½</sub></b> Halbwertszeit</li>
+        <li><b>a</b> spezifische Aktivität (Bq/g) &nbsp;·&nbsp; <b>m</b> Masse des Nuklids (g)</li>
+        <li>Einheit der Aktivität: 1 Bq = 1 Zerfall/s &nbsp;·&nbsp; 1 GBq = 10<sup>9</sup> Bq &nbsp;·&nbsp; 1 TBq = 10<sup>12</sup> Bq</li>
+      </ul>
+    </div>
+    <div class="formula-box">
+      <h4>Äquivalentdosisleistung &amp; Jahresdosis</h4>
+      <div class="formula">Ḣ = Γ · A / r²</div>
+      <div class="formula">H = Ḣ · t</div>
+      <ul class="var-list">
+        <li><b>Ḣ</b> Dosisleistung (mSv/h) &nbsp;·&nbsp; <b>Γ</b> Gamma-Dosisleistungskonstante (mSv·m²/(GBq·h))</li>
+        <li><b>A</b> Aktivität (GBq) &nbsp;·&nbsp; <b>r</b> Abstand (m) &nbsp;·&nbsp; <b>t</b> Aufenthaltsdauer (h)</li>
+        <li>Jahr: 1 a = 8760 h (Daueraufenthalt) &nbsp;·&nbsp; Arbeitsjahr ≈ 1500–2000 h</li>
+      </ul>
+    </div>
+    <div class="formula-box">
+      <h4>Abschwächung (Zehntelwertsdicke)</h4>
+      <div class="formula">I = I<sub>0</sub> · (1/10)<sup>d / d₁₀</sup> &nbsp;<small>bzw. n ZWD → Faktor 10<sup>n</sup></small></div>
+      <ul class="var-list">
+        <li><b>d₁₀</b> Zehntelwertsdicke (jede d₁₀ senkt die Dosis auf 1/10)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Datenblatt -->
+  <div class="card">
+    <h3>📋 Datenblatt (für die Aufgaben)</h3>
+    <table class="datenblatt">
+      <caption>Nuklid-Daten</caption>
+      <tr><th>Nuklid</th><th>T<sub>½</sub></th><th>Zerfall</th><th>spez. Aktivität a</th><th>Γ<sub>H*(10)</sub> in mSv·m²/(GBq·h)</th><th>ZWD Blei</th></tr>
+      <tr><td>Co-60</td><td>5,27 a</td><td>β⁻, γ (1,17 &amp; 1,33 MeV)</td><td>4,18·10<sup>13</sup> Bq/g</td><td>0,351</td><td>≈ 4,0 cm</td></tr>
+      <tr><td>Ir-192</td><td>73,8 d</td><td>β⁻, γ</td><td>3,4·10<sup>14</sup> Bq/g</td><td>0,13</td><td>≈ 1,6 cm</td></tr>
+      <tr><td>Sr-90</td><td>28,8 a</td><td>β⁻ (rein)</td><td>5,1·10<sup>12</sup> Bq/g</td><td>—</td><td>—</td></tr>
+    </table>
+    <table class="datenblatt">
+      <caption>Grenzwerte effektive Dosis (StrlSchG)</caption>
+      <tr><th>Personengruppe</th><th>Grenzwert effektive Dosis</th></tr>
+      <tr><td>Einzelpersonen der Bevölkerung (§ 80)</td><td>1 mSv im Kalenderjahr</td></tr>
+      <tr><td>beruflich strahlenexponierte Personen (§ 78)</td><td>20 mSv im Kalenderjahr</td></tr>
+    </table>
+  </div>
+
+  <!-- AUFGABE 1 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head">
+      <span class="aufg-num">A1</span>
+      <span class="aufg-title">Aktivität einer Co-60-Prüfquelle</span>
+      <span class="badge afb2">AFB II</span><span class="badge pts">8 P</span>
+    </div>
+    <p>In einem Gerät zur <strong>zerstörungsfreien Werkstoffprüfung</strong> (Gammagrafie) wird eine umschlossene <strong>Co-60-Quelle</strong> eingesetzt. Bei der Herstellung wurden <strong>0,50 mg Co-60</strong> verbaut. Die Quelle wurde <strong>vor 8 Jahren</strong> gefertigt.</p>
+    <p>Weisen Sie rechnerisch nach, dass die momentane Aktivität der Quelle ca. <strong>7,3 GBq</strong> beträgt.</p>
+    <details class="loesung">
+      <summary>Musterlösung anzeigen</summary>
+      <div class="loesung-body">
+        <p class="step"><b>1. Anfangsaktivität</b> (spez. Aktivität · Masse):</p>
+        <p class="step calc">A<sub>0</sub> = a · m = 4,18·10<sup>13</sup> Bq/g · 0,50·10<sup>−3</sup> g = 2,09·10<sup>10</sup> Bq = <b>20,9 GBq</b></p>
+        <p class="step"><b>2. Zerfallskonstante:</b></p>
+        <p class="step calc">λ = ln 2 / T<sub>½</sub> = 0,693 / 5,27 a = 0,1315 a<sup>−1</sup></p>
+        <p class="step"><b>3. Zerfallsgesetz</b> (t = 8 a):</p>
+        <p class="step calc">A(8 a) = 20,9 GBq · e<sup>−0,1315·8</sup> = 20,9 GBq · e<sup>−1,052</sup> = 20,9 GBq · 0,349</p>
+        <div class="result">A(8 a) ≈ 7,3 GBq ✓</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- AUFGABE 2 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head">
+      <span class="aufg-num">A2</span>
+      <span class="aufg-title">Warum sinkt die Aktivität nie auf null?</span>
+      <span class="badge afb2">AFB II</span><span class="badge pts">2 P</span>
+    </div>
+    <p>Erklären Sie, warum die Aktivität einer radioaktiven Quelle rechnerisch nie vollständig auf null absinkt.</p>
+    <details class="loesung">
+      <summary>Musterlösung anzeigen</summary>
+      <div class="loesung-body">
+        <p class="step">Die Aktivität nimmt <b>exponentiell</b> ab: Nach jeder Halbwertszeit halbiert sich der Wert.</p>
+        <p class="step calc">Mathematisch gilt: e<sup>−λt</sup> → 0 für t → ∞, erreicht aber <b>nie exakt null</b>.</p>
+        <p class="step">Die Kurve nähert sich der Nulllinie nur <b>asymptotisch</b> an. (Praktisch sinkt die Aktivität irgendwann unter die Nachweisgrenze bzw. auf den letzten Kern.)</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- AUFGABE 3 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head">
+      <span class="aufg-num">A3</span>
+      <span class="aufg-title">Dosisleistung &amp; Grenzwertbewertung</span>
+      <span class="badge afb3">AFB III</span><span class="badge pts">12 P</span>
+    </div>
+    <p>Die Co-60-Quelle aus A1 (Aktivität <strong>7,3 GBq</strong>) wird in einem Prüflabor ohne Abschirmung gelagert. Ein Mitarbeiter arbeitet dauerhaft in <strong>r = 5 m</strong> Abstand, <strong>1500 h pro Jahr</strong>.</p>
+    <p>Begründen Sie mit Hilfe der Äquivalentdosisleistung, ob der Grenzwert der effektiven Dosis für <strong>beruflich strahlenexponierte Personen</strong> überschritten wird.</p>
+    <details class="loesung">
+      <summary>Musterlösung anzeigen</summary>
+      <div class="loesung-body">
+        <p class="step"><b>1. Grenzwert</b> (beruflich, § 78): 20 mSv/a</p>
+        <p class="step"><b>2. Dosisleistung:</b></p>
+        <p class="step calc">Ḣ = Γ · A / r² = 0,351 mSv·m²/(GBq·h) · 7,3 GBq / (5 m)² = 2,562 / 25 = 0,1025 mSv/h</p>
+        <p class="step"><b>3. Jahresdosis</b> (t = 1500 h):</p>
+        <p class="step calc">H = Ḣ · t = 0,1025 mSv/h · 1500 h = 153,7 mSv/a</p>
+        <div class="result">153,7 mSv/a ≫ 20 mSv/a → Grenzwert ca. 7,7-fach überschritten! Schutzmaßnahmen sind zwingend erforderlich.</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- AUFGABE 4 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head">
+      <span class="aufg-num">A4</span>
+      <span class="aufg-title">Schutzmaßnahmen quantitativ (Transfer)</span>
+      <span class="badge afb3">AFB III</span><span class="badge pts">6 P</span>
+    </div>
+    <p>Schlagen Sie zwei Maßnahmen vor, mit denen der Mitarbeiter aus A3 unter den Grenzwert von 20 mSv/a kommt, und belegen Sie diese rechnerisch:</p>
+    <p>(a) durch <strong>Abschirmung mit Blei</strong> (ZWD), (b) durch <strong>Vergrößern des Abstands</strong>.</p>
+    <details class="loesung">
+      <summary>Musterlösung anzeigen</summary>
+      <div class="loesung-body">
+        <p class="step"><b>Benötigter Reduktionsfaktor:</b> 153,7 / 20 = 7,7</p>
+        <p class="step"><b>(a) Abschirmung:</b> Eine Zehntelwertsdicke senkt auf 1/10 (Faktor 10 &gt; 7,7).</p>
+        <p class="step calc">1 ZWD Blei = 4,0 cm → H = 153,7 / 10 = 15,4 mSv/a &lt; 20 mSv/a ✓</p>
+        <p class="step"><b>(b) Abstand</b> (Abstandsgesetz 1/r²): zulässige Dosisleistung Ḣ<sub>zul</sub> = 20 mSv / 1500 h = 0,0133 mSv/h</p>
+        <p class="step calc">r = √(Γ·A / Ḣ<sub>zul</sub>) = √(2,562 / 0,0133) = √192,6 ≈ 13,9 m</p>
+        <div class="result">4,0 cm Blei (1 ZWD) <em>oder</em> Abstand auf ≈ 14 m vergrößern. Optimal: kombinieren (ALARA) und Aufenthaltsdauer reduzieren.</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- AUFGABE 5 -->
+  <div class="aufgabe-box">
+    <div class="aufg-head">
+      <span class="aufg-num">A5</span>
+      <span class="aufg-title">Zerfallsgleichungen &amp; Bewertung (Sr-90)</span>
+      <span class="badge afb1">AFB I</span><span class="badge afb3">AFB III</span><span class="badge pts">7 P</span>
+    </div>
+    <p>In einer alten Kalibrierquelle befindet sich <strong>Sr-90</strong> (Z = 38), ein reiner β⁻-Strahler. Es zerfällt über das Tochternuklid <strong>Y-90</strong> (Z = 39) weiter zu stabilem <strong>Zr-90</strong> (Z = 40).</p>
+    <p>(a) Geben Sie beide Zerfallsgleichungen an. (b) Begründen Sie, warum ein reiner β-Strahler wie Sr-90 bei <em>Inkorporation</em> besonders gefährlich ist.</p>
+    <details class="loesung">
+      <summary>Musterlösung anzeigen</summary>
+      <div class="loesung-body">
+        <p class="step"><b>(a) Zerfallsgleichungen (β⁻):</b></p>
+        <p class="step calc"><sup>90</sup><sub>38</sub>Sr → <sup>90</sup><sub>39</sub>Y + <sup>&nbsp;0</sup><sub>−1</sub>e + ν̄<sub>e</sub></p>
+        <p class="step calc"><sup>90</sup><sub>39</sub>Y → <sup>90</sup><sub>40</sub>Zr + <sup>&nbsp;0</sup><sub>−1</sub>e + ν̄<sub>e</sub> &nbsp;(Zr-90 stabil → Ende der Kette)</p>
+        <p class="step">Beim β⁻-Zerfall wandelt sich ein Neutron in ein Proton um: Z steigt um 1, A bleibt gleich.</p>
+        <p class="step"><b>(b) Gefährdung bei Inkorporation:</b></p>
+        <p class="step">• Reiner β-Strahler → <b>kein γ</b>, daher von außen schwer messbar/nachweisbar.</p>
+        <p class="step">• Strontium verhält sich chemisch wie <b>Calcium</b> → Einlagerung in die <b>Knochen</b>, lange Verweildauer.</p>
+        <p class="step">• β-Strahlung wirkt dann direkt im Gewebe (Knochenmark) → erhöhtes <b>stochastisches Risiko</b> (z. B. Leukämie).</p>
+        <div class="result">Von außen ist β leicht abschirmbar (Plexiglas/Alu) – die Gefahr entsteht durch Aufnahme in den Körper (5. A: Aufnahme verhindern!).</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn prev" onclick="goToSection(3)">← Schutz</button>
+    <button class="nav-btn next" onclick="goToSection(5)">Quiz →</button>
+  </div>
+</div>
+
+<!-- ==================== SECTION 6: Quiz ==================== -->
+<div class="section" id="sec5">
   <div class="card">
     <h2>📝 Wissensquiz</h2>
     <p>Testen Sie Ihr Wissen! Wählen Sie bei jeder Frage die richtige Antwort.</p>
@@ -1417,7 +1690,7 @@ footer {
   </div>
 
   <div class="nav-buttons" id="quizNav">
-    <button class="nav-btn prev" onclick="goToSection(3)">← Strahlenschutz</button>
+    <button class="nav-btn prev" onclick="goToSection(4)">← Rechnen</button>
     <button class="nav-btn next" id="quizEvalBtn" onclick="evaluateQuiz()" style="display:none;">Auswerten ✓</button>
   </div>
 </div>
