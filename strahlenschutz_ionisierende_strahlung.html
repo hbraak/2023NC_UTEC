@@ -154,6 +154,16 @@ main { max-width: 900px; margin: 0 auto; padding: 1rem; }
 .leifi-box a::after { content: ' ↗'; font-size: 0.85em; opacity: 0.7; }
 .leifi-box .leifi-note { font-size: 0.83rem; color: var(--text-light); margin-top: 0.5rem; }
 
+/* Begleitskript (PDF-Download) */
+.skript-box { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; background: #fff8e1; border: 1px solid #ffe082; border-left: 4px solid #f9a825; border-radius: 0 var(--radius) var(--radius) 0; padding: 1rem 1.2rem; margin: 1.2rem 0; }
+.skript-box .skript-icon { font-size: 2rem; line-height: 1; flex: none; }
+.skript-box .skript-body { flex: 1; min-width: 220px; }
+.skript-box .skript-title { font-weight: 700; color: #e65100; margin-bottom: 0.2rem; }
+.skript-box .skript-meta { font-size: 0.82rem; color: var(--text-light); }
+.skript-box .skript-btn { display: inline-block; margin-top: 0.5rem; background: #f9a825; color: #3e2723; font-weight: 700; text-decoration: none; padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.9rem; transition: 0.2s ease; }
+.skript-box .skript-btn:hover { background: #f57f17; color: #fff; }
+.skript-box a.src { color: #e65100; }
+
 /* Spectrum SVG */
 .spectrum-container {
   overflow-x: auto;
@@ -852,6 +862,15 @@ details.loesung > summary:hover { background: #dcedc8; }
   <div class="card">
     <h2>☢️ Was ist ionisierende Strahlung?</h2>
     <p><strong>Ionisierende Strahlung</strong> ist Strahlung, die genügend Energie besitzt, um Elektronen aus Atomen oder Molekülen herauszulösen — ein Vorgang, der als <strong>Ionisation</strong> bezeichnet wird.</p>
+
+    <div class="skript-box">
+      <span class="skript-icon">📕</span>
+      <div class="skript-body">
+        <div class="skript-title">Begleitskript: Radioaktivität und Strahlenschutz</div>
+        <div class="skript-meta">Martin Volkmer · Informationskreis KernEnergie (2007) · 86 Seiten · deckt Atombau, α/β/γ-Zerfall, Halbwertszeit, Dosis &amp; Strahlenschutz ab. <a class="src" href="https://hsgnet.hsg-kl.de/faecher/ph/Radioaktivitaet_strahlenschutz2007.pdf" target="_blank" rel="noopener">Originalquelle</a></div>
+        <a class="skript-btn" href="radioaktivitaet_strahlenschutz_volkmer.pdf" target="_blank" rel="noopener">📥 Skript als PDF öffnen</a>
+      </div>
+    </div>
 
     <div class="info-box">
       <strong>Energiegrenze:</strong> Ab einer Photonenenergie von ca. <strong>5 eV</strong> (entspricht dem UV-C-Bereich, λ&nbsp;≈&nbsp;250&nbsp;nm) kann Strahlung Atome ionisieren. Teilchenstrahlung (α, β, Neutronen) ist aufgrund ihrer kinetischen Energie grundsätzlich ionisierend.
