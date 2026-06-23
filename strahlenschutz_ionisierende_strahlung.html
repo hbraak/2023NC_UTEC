@@ -169,7 +169,9 @@ main { max-width: 900px; margin: 0 auto; padding: 1rem; }
 .ds-chain { display: flex; flex-direction: column; align-items: flex-start; gap: 0; width: max-content; min-width: 100%; }
 .ds-nuclide { font-family: 'Cambria Math', Georgia, serif; background: #fff; border: 2px solid #cfd8dc; border-radius: 10px; padding: 0.4rem 0.9rem; text-align: center; min-width: 9.5rem; line-height: 1.2; }
 .ds-nuclide .ds-sym { font-size: 1.25rem; font-weight: 700; }
-.ds-nuclide .ds-sym sup, .ds-nuclide .ds-sym sub { font-size: 0.62em; font-weight: 600; }
+/* Nuklid-Schreibweise: A über Z, rechtsbündig vor dem Symbol */
+.nuc { display: inline-block; vertical-align: -0.05em; text-align: right; font-size: 0.5em; line-height: 1.04; font-weight: 600; margin-right: 1px; }
+.nuc sup, .nuc sub { display: block; font-size: 1em; position: static; top: auto; bottom: auto; line-height: 1.04; }
 .ds-nuclide .ds-hl { display: block; font-size: 0.72rem; color: var(--text-light); margin-top: 0.15rem; font-family: system-ui, sans-serif; }
 .ds-nuclide { cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; }
 .ds-nuclide:hover { transform: translateY(-2px); box-shadow: 0 3px 10px rgba(0,0,0,0.15); }
@@ -189,7 +191,7 @@ main { max-width: 900px; margin: 0 auto; padding: 1rem; }
 .ds-legend .dot { width: 0.85rem; height: 0.85rem; border-radius: 3px; display: inline-block; border: 2px solid; }
 .ds-detail { margin-top: 1rem; background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1rem 1.2rem; min-height: 3rem; }
 .ds-detail .ds-eq { font-family: 'Cambria Math', Georgia, serif; font-size: 1.25rem; margin: 0.3rem 0 0.5rem; }
-.ds-detail .ds-eq sup, .ds-detail .ds-eq sub { font-size: 0.62em; }
+.ds-detail .ds-eq .nuc { font-size: 0.55em; }
 .ds-detail .ds-d-title { font-weight: 700; }
 .ds-detail .ds-hint { color: var(--text-light); font-style: italic; }
 
@@ -1376,29 +1378,29 @@ details.loesung > summary:hover { background: #dcedc8; }
       <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:0.4rem;">👉 Klicken Sie auf ein Nuklid, um seine Zerfallsgleichung zu sehen.</p>
       <div class="decay-series">
         <div class="ds-chain">
-          <div class="ds-nuclide ds-alpha" data-key="u234" onclick="showDecay(this)"><span class="ds-sym"><sup>234</sup><sub>92</sub>U</span><span class="ds-hl">2,46 · 10⁵ a</span></div>
+          <div class="ds-nuclide ds-alpha" data-key="u234" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>234</sup><sub>92</sub></span>U</span><span class="ds-hl">2,46 · 10⁵ a</span></div>
           <div class="ds-step"><span class="ds-badge a">α</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-alpha" data-key="th230" onclick="showDecay(this)"><span class="ds-sym"><sup>230</sup><sub>90</sub>Th</span><span class="ds-hl">7,54 · 10⁴ a</span></div>
+          <div class="ds-nuclide ds-alpha" data-key="th230" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>230</sup><sub>90</sub></span>Th</span><span class="ds-hl">7,54 · 10⁴ a</span></div>
           <div class="ds-step"><span class="ds-badge a">α</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-alpha" data-key="ra226" onclick="showDecay(this)"><span class="ds-sym"><sup>226</sup><sub>88</sub>Ra</span><span class="ds-hl">1600 a</span></div>
+          <div class="ds-nuclide ds-alpha" data-key="ra226" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>226</sup><sub>88</sub></span>Ra</span><span class="ds-hl">1600 a</span></div>
           <div class="ds-step"><span class="ds-badge a">α</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-alpha" data-key="rn222" onclick="showDecay(this)"><span class="ds-sym"><sup>222</sup><sub>86</sub>Rn</span><span class="ds-hl">3,82 d</span></div>
+          <div class="ds-nuclide ds-alpha" data-key="rn222" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>222</sup><sub>86</sub></span>Rn</span><span class="ds-hl">3,82 d</span></div>
           <div class="ds-step"><span class="ds-badge a">α</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-alpha" data-key="po218" onclick="showDecay(this)"><span class="ds-sym"><sup>218</sup><sub>84</sub>Po</span><span class="ds-hl">3,05 min</span></div>
+          <div class="ds-nuclide ds-alpha" data-key="po218" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>218</sup><sub>84</sub></span>Po</span><span class="ds-hl">3,05 min</span></div>
           <div class="ds-step"><span class="ds-badge a">α</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-beta" data-key="pb214" onclick="showDecay(this)"><span class="ds-sym"><sup>214</sup><sub>82</sub>Pb</span><span class="ds-hl">26,8 min</span></div>
+          <div class="ds-nuclide ds-beta" data-key="pb214" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>214</sup><sub>82</sub></span>Pb</span><span class="ds-hl">26,8 min</span></div>
           <div class="ds-step"><span class="ds-badge b">β⁻</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-beta" data-key="bi214" onclick="showDecay(this)"><span class="ds-sym"><sup>214</sup><sub>83</sub>Bi</span><span class="ds-hl">19,9 min</span></div>
+          <div class="ds-nuclide ds-beta" data-key="bi214" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>214</sup><sub>83</sub></span>Bi</span><span class="ds-hl">19,9 min</span></div>
           <div class="ds-step"><span class="ds-badge b">β⁻</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-alpha" data-key="po214" onclick="showDecay(this)"><span class="ds-sym"><sup>214</sup><sub>84</sub>Po</span><span class="ds-hl">164 µs</span></div>
+          <div class="ds-nuclide ds-alpha" data-key="po214" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>214</sup><sub>84</sub></span>Po</span><span class="ds-hl">164 µs</span></div>
           <div class="ds-step"><span class="ds-badge a">α</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-beta" data-key="pb210" onclick="showDecay(this)"><span class="ds-sym"><sup>210</sup><sub>82</sub>Pb</span><span class="ds-hl">22,3 a</span></div>
+          <div class="ds-nuclide ds-beta" data-key="pb210" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>210</sup><sub>82</sub></span>Pb</span><span class="ds-hl">22,3 a</span></div>
           <div class="ds-step"><span class="ds-badge b">β⁻</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-beta" data-key="bi210" onclick="showDecay(this)"><span class="ds-sym"><sup>210</sup><sub>83</sub>Bi</span><span class="ds-hl">5,01 d</span></div>
+          <div class="ds-nuclide ds-beta" data-key="bi210" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>210</sup><sub>83</sub></span>Bi</span><span class="ds-hl">5,01 d</span></div>
           <div class="ds-step"><span class="ds-badge b">β⁻</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-alpha" data-key="po210" onclick="showDecay(this)"><span class="ds-sym"><sup>210</sup><sub>84</sub>Po</span><span class="ds-hl">138 d</span></div>
+          <div class="ds-nuclide ds-alpha" data-key="po210" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>210</sup><sub>84</sub></span>Po</span><span class="ds-hl">138 d</span></div>
           <div class="ds-step"><span class="ds-badge a">α</span><span class="ds-line">↘</span></div>
-          <div class="ds-nuclide ds-stable" data-key="pb206" onclick="showDecay(this)"><span class="ds-sym"><sup>206</sup><sub>82</sub>Pb</span><span class="ds-hl">stabil</span></div>
+          <div class="ds-nuclide ds-stable" data-key="pb206" onclick="showDecay(this)"><span class="ds-sym"><span class="nuc"><sup>206</sup><sub>82</sub></span>Pb</span><span class="ds-hl">stabil</span></div>
         </div>
         <div class="ds-legend">
           <span><span class="dot" style="border-color:#f9a825;"></span> α-Zerfall (gelb)</span>
@@ -1410,18 +1412,18 @@ details.loesung > summary:hover { background: #dcedc8; }
 
       <script>
       const DS_DECAY = {
-        u234:  {t:'α', eq:'<sup>234</sup><sub>92</sub>U &rarr; <sup>230</sup><sub>90</sub>Th + <sup>4</sup><sub>2</sub>He', info:'Alpha-Zerfall: Der Kern emittiert einen Helium-Kern (2 Protonen + 2 Neutronen). Massenzahl −4, Kernladungszahl −2.'},
-        th230: {t:'α', eq:'<sup>230</sup><sub>90</sub>Th &rarr; <sup>226</sup><sub>88</sub>Ra + <sup>4</sup><sub>2</sub>He', info:'Alpha-Zerfall zu Radium-226. Massenzahl −4, Kernladungszahl −2.'},
-        ra226: {t:'α', eq:'<sup>226</sup><sub>88</sub>Ra &rarr; <sup>222</sup><sub>86</sub>Rn + <sup>4</sup><sub>2</sub>He', info:'Alpha-Zerfall zum Edelgas Radon-222 (gasförmig!).'},
-        rn222: {t:'α', eq:'<sup>222</sup><sub>86</sub>Rn &rarr; <sup>218</sup><sub>84</sub>Po + <sup>4</sup><sub>2</sub>He', info:'Alpha-Zerfall. Radon-222 ist gasförmig und für einen großen Teil der natürlichen Strahlenexposition verantwortlich.'},
-        po218: {t:'α', eq:'<sup>218</sup><sub>84</sub>Po &rarr; <sup>214</sup><sub>82</sub>Pb + <sup>4</sup><sub>2</sub>He', info:'Alpha-Zerfall zu Blei-214.'},
-        pb214: {t:'β⁻', eq:'<sup>214</sup><sub>82</sub>Pb &rarr; <sup>214</sup><sub>83</sub>Bi + <sup>&nbsp;&nbsp;0</sup><sub>−1</sub>e', info:'Beta-minus-Zerfall: Ein Neutron wandelt sich in ein Proton um. Kernladungszahl +1, Massenzahl unverändert.'},
-        bi214: {t:'β⁻', eq:'<sup>214</sup><sub>83</sub>Bi &rarr; <sup>214</sup><sub>84</sub>Po + <sup>&nbsp;&nbsp;0</sup><sub>−1</sub>e', info:'Beta-minus-Zerfall zu Polonium-214. Kernladungszahl +1.'},
-        po214: {t:'α', eq:'<sup>214</sup><sub>84</sub>Po &rarr; <sup>210</sup><sub>82</sub>Pb + <sup>4</sup><sub>2</sub>He', info:'Alpha-Zerfall mit extrem kurzer Halbwertszeit (164 µs).'},
-        pb210: {t:'β⁻', eq:'<sup>210</sup><sub>82</sub>Pb &rarr; <sup>210</sup><sub>83</sub>Bi + <sup>&nbsp;&nbsp;0</sup><sub>−1</sub>e', info:'Beta-minus-Zerfall zu Wismut-210.'},
-        bi210: {t:'β⁻', eq:'<sup>210</sup><sub>83</sub>Bi &rarr; <sup>210</sup><sub>84</sub>Po + <sup>&nbsp;&nbsp;0</sup><sub>−1</sub>e', info:'Beta-minus-Zerfall zu Polonium-210.'},
-        po210: {t:'α', eq:'<sup>210</sup><sub>84</sub>Po &rarr; <sup>206</sup><sub>82</sub>Pb + <sup>4</sup><sub>2</sub>He', info:'Alpha-Zerfall zum stabilen Endnuklid Blei-206. Damit endet die Reihe.'},
-        pb206: {t:'stabil', eq:'<sup>206</sup><sub>82</sub>Pb', info:'Stabiles Endnuklid der Uran-Radium-Reihe – es zerfällt nicht weiter.'}
+        u234:  {t:'α', eq:'<span class="nuc"><sup>234</sup><sub>92</sub></span>U &rarr; <span class="nuc"><sup>230</sup><sub>90</sub></span>Th + <span class="nuc"><sup>4</sup><sub>2</sub></span>He', info:'Alpha-Zerfall: Der Kern emittiert einen Helium-Kern (2 Protonen + 2 Neutronen). Massenzahl −4, Kernladungszahl −2.'},
+        th230: {t:'α', eq:'<span class="nuc"><sup>230</sup><sub>90</sub></span>Th &rarr; <span class="nuc"><sup>226</sup><sub>88</sub></span>Ra + <span class="nuc"><sup>4</sup><sub>2</sub></span>He', info:'Alpha-Zerfall zu Radium-226. Massenzahl −4, Kernladungszahl −2.'},
+        ra226: {t:'α', eq:'<span class="nuc"><sup>226</sup><sub>88</sub></span>Ra &rarr; <span class="nuc"><sup>222</sup><sub>86</sub></span>Rn + <span class="nuc"><sup>4</sup><sub>2</sub></span>He', info:'Alpha-Zerfall zum Edelgas Radon-222 (gasförmig!).'},
+        rn222: {t:'α', eq:'<span class="nuc"><sup>222</sup><sub>86</sub></span>Rn &rarr; <span class="nuc"><sup>218</sup><sub>84</sub></span>Po + <span class="nuc"><sup>4</sup><sub>2</sub></span>He', info:'Alpha-Zerfall. Radon-222 ist gasförmig und für einen großen Teil der natürlichen Strahlenexposition verantwortlich.'},
+        po218: {t:'α', eq:'<span class="nuc"><sup>218</sup><sub>84</sub></span>Po &rarr; <span class="nuc"><sup>214</sup><sub>82</sub></span>Pb + <span class="nuc"><sup>4</sup><sub>2</sub></span>He', info:'Alpha-Zerfall zu Blei-214.'},
+        pb214: {t:'β⁻', eq:'<span class="nuc"><sup>214</sup><sub>82</sub></span>Pb &rarr; <span class="nuc"><sup>214</sup><sub>83</sub></span>Bi + <span class="nuc"><sup>0</sup><sub>−1</sub></span>e', info:'Beta-minus-Zerfall: Ein Neutron wandelt sich in ein Proton um. Kernladungszahl +1, Massenzahl unverändert.'},
+        bi214: {t:'β⁻', eq:'<span class="nuc"><sup>214</sup><sub>83</sub></span>Bi &rarr; <span class="nuc"><sup>214</sup><sub>84</sub></span>Po + <span class="nuc"><sup>0</sup><sub>−1</sub></span>e', info:'Beta-minus-Zerfall zu Polonium-214. Kernladungszahl +1.'},
+        po214: {t:'α', eq:'<span class="nuc"><sup>214</sup><sub>84</sub></span>Po &rarr; <span class="nuc"><sup>210</sup><sub>82</sub></span>Pb + <span class="nuc"><sup>4</sup><sub>2</sub></span>He', info:'Alpha-Zerfall mit extrem kurzer Halbwertszeit (164 µs).'},
+        pb210: {t:'β⁻', eq:'<span class="nuc"><sup>210</sup><sub>82</sub></span>Pb &rarr; <span class="nuc"><sup>210</sup><sub>83</sub></span>Bi + <span class="nuc"><sup>0</sup><sub>−1</sub></span>e', info:'Beta-minus-Zerfall zu Wismut-210.'},
+        bi210: {t:'β⁻', eq:'<span class="nuc"><sup>210</sup><sub>83</sub></span>Bi &rarr; <span class="nuc"><sup>210</sup><sub>84</sub></span>Po + <span class="nuc"><sup>0</sup><sub>−1</sub></span>e', info:'Beta-minus-Zerfall zu Polonium-210.'},
+        po210: {t:'α', eq:'<span class="nuc"><sup>210</sup><sub>84</sub></span>Po &rarr; <span class="nuc"><sup>206</sup><sub>82</sub></span>Pb + <span class="nuc"><sup>4</sup><sub>2</sub></span>He', info:'Alpha-Zerfall zum stabilen Endnuklid Blei-206. Damit endet die Reihe.'},
+        pb206: {t:'stabil', eq:'<span class="nuc"><sup>206</sup><sub>82</sub></span>Pb', info:'Stabiles Endnuklid der Uran-Radium-Reihe – es zerfällt nicht weiter.'}
       };
       function showDecay(el){
         const key = el.getAttribute('data-key');
