@@ -98,7 +98,7 @@ const QUESTIONS = [
     a:["<sup>137</sup><sub>54</sub>Xe","<sup>137</sup><sub>56</sub>Ba","<sup>133</sup><sub>53</sub>I"],
     correct:1, e:"A bleibt 137, Z steigt von 55 auf 56 → Barium-137 (<sup>137</sup><sub>56</sub>Ba)." },
 
-  { q:"Nuklidkarte: Wohin „springt" ein Nuklid beim α-Zerfall? (N = Neutronen, Z = Protonen)",
+  { q:"Nuklidkarte: Wohin bewegt sich ein Nuklid beim α-Zerfall? (N = Neutronen, Z = Protonen)",
     a:["N−1, Z+1 (eins nach links, eins hoch)","N−2, Z−2 (zwei nach links, zwei runter)","N+2, Z+2 (zwei nach rechts, zwei hoch)"],
     correct:1, e:"α-Zerfall: 2 Protonen und 2 Neutronen weg → in der Karte 2 nach links und 2 nach unten." },
 
@@ -139,6 +139,7 @@ function render(){
   oi.forEach(originalIndex => {
     const b=document.createElement('button');
     b.className='opt'; b.innerHTML=q.a[originalIndex];
+    b.dataset.correct = (originalIndex===q.correct) ? '1' : '0';
     b.onclick=()=>choose(b, originalIndex===q.correct, q);
     opts.appendChild(b);
   });
@@ -155,7 +156,7 @@ function choose(btn, isCorrect, q){
     fb.className='fb show ok'; fb.innerHTML='✅ Richtig! '+q.e;
   } else {
     btn.classList.add('no');
-    buttons.forEach(b=>{ if(b.innerHTML===q.a[q.correct]) b.classList.add('ok'); });
+    buttons.forEach(b=>{ if(b.dataset.correct==='1') b.classList.add('ok'); });
     fb.className='fb show no'; fb.innerHTML='❌ Nicht ganz. '+q.e;
   }
   document.getElementById('scoreLive').textContent = `Punkte: ${score}`;
