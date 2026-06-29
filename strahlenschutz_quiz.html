@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strahlenschutz-Quiz | UTEC 13NC</title>
+<style>
+  :root{ --bg:#f5f6f8; --card:#fff; --ink:#1c2530; --muted:#5a6675; --acc:#b8860b; --ok:#1a7a36; --no:#b23; --line:#dde2e8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{background:#1c2530;color:#fff;padding:18px 16px}
+  header h1{margin:0;font-size:1.25rem}
+  header p{margin:4px 0 0;color:#b9c3d0;font-size:.9rem}
+  main{max-width:680px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .bar{height:8px;background:#e7eaef;border-radius:99px;overflow:hidden;margin-bottom:6px}
+  .bar > i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+  .meta{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-bottom:10px}
+  .q{font-size:1.15rem;font-weight:600;margin:6px 0 16px}
+  .q sup,.q sub{font-size:.7em}
+  .opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:10px;
+       padding:13px 15px;margin:9px 0;font-size:1rem;cursor:pointer;transition:.15s;color:var(--ink)}
+  .opt:hover{border-color:var(--acc)}
+  .opt:disabled{cursor:default}
+  .opt.ok{border-color:var(--ok);background:#eaf6ee}
+  .opt.no{border-color:var(--no);background:#fcecec}
+  .fb{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:.95rem;display:none}
+  .fb.show{display:block}
+  .fb.ok{background:#eaf6ee;border:1px solid #bfe2c8}
+  .fb.no{background:#fcecec;border:1px solid #efc3c3}
+  .btn{display:inline-block;border:none;background:var(--acc);color:#fff;font-weight:600;font-size:1rem;
+       padding:12px 22px;border-radius:10px;cursor:pointer;margin-top:14px}
+  .btn:hover{filter:brightness(1.07)}
+  .center{text-align:center}
+  .score{font-size:2.4rem;font-weight:800;color:var(--acc)}
+  .hidden{display:none}
+  footer{max-width:680px;margin:0 auto;padding:8px 16px 40px;color:var(--muted);font-size:.82rem;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>☢️ Strahlenschutz-Quiz</h1>
+  <p>UTEC 13NC · Training für den 1. Klausurteil: Strahlungsarten · Zerfallsgleichungen · Nuklidkarte · Zerfallsreihen</p>
+</header>
+<main>
+
+  <div id="start" class="card center">
+    <p>Teste dein Wissen in einer kurzen Runde. Pro Frage gibt es sofort eine Erklärung. Schaffst du alle richtig?</p>
+    <button class="btn" onclick="startGame()">Quiz starten</button>
+  </div>
+
+  <div id="game" class="card hidden">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="count"></span><span id="scoreLive"></span></div>
+    <div class="q" id="qtext"></div>
+    <div id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <button class="btn hidden" id="next" onclick="nextQ()">Weiter →</button>
+  </div>
+
+  <div id="end" class="card center hidden">
+    <p>Geschafft!</p>
+    <div class="score" id="finalScore"></div>
+    <p id="endMsg"></p>
+    <button class="btn" onclick="startGame()">Nochmal spielen</button>
+  </div>
+
+</main>
+<footer>UTEC 13NC · Lore-Lorentz-Schule Düsseldorf · Quiz zur Klausurvorbereitung Strahlenschutz</footer>
+
+<script>
+const QUESTIONS = [
+  { q:"Woraus besteht α-Strahlung?",
+    a:["Heliumkernen (2 Protonen + 2 Neutronen)","schnellen Elektronen","hochenergetischen Photonen"],
+    correct:0, e:"α-Strahlung sind Heliumkerne ⁴₂He, also 2 Protonen und 2 Neutronen (Ladung +2e)." },
+
+  { q:"Welche Strahlungsart hat die <b>geringste</b> Reichweite in Luft?",
+    a:["γ-Strahlung","β-Strahlung","α-Strahlung"],
+    correct:2, e:"α-Strahlung kommt nur wenige Zentimeter weit und wird schon von einem Blatt Papier gestoppt." },
+
+  { q:"Womit lässt sich γ-Strahlung am besten abschirmen?",
+    a:["Blatt Papier","wenige mm Aluminium","dicke Blei- oder Betonschicht"],
+    correct:2, e:"γ-Strahlung ist sehr durchdringend – nötig sind dicke Blei- oder Betonschichten." },
+
+  { q:"Welche Strahlungsart ist <b>ungeladen</b>?",
+    a:["α","β⁻","γ"],
+    correct:2, e:"γ-Strahlung ist elektromagnetische Strahlung (Photonen) und trägt keine Ladung." },
+
+  { q:"Beim β⁻-Zerfall – wie ändert sich die Kernladungszahl Z?",
+    a:["Z bleibt gleich","Z nimmt um 1 zu","Z nimmt um 1 ab"],
+    correct:1, e:"Ein Neutron wandelt sich in ein Proton um: Z steigt um 1, die Massenzahl A bleibt gleich." },
+
+  { q:"α-Zerfall: <sup>226</sup><sub>88</sub>Ra → ? + <sup>4</sup><sub>2</sub>He",
+    a:["<sup>222</sup><sub>86</sub>Rn","<sup>224</sup><sub>88</sub>Ra","<sup>230</sup><sub>90</sub>Th"],
+    correct:0, e:"A: 226−4 = 222, Z: 88−2 = 86 → Radon-222 (<sup>222</sup><sub>86</sub>Rn)." },
+
+  { q:"β⁻-Zerfall: <sup>137</sup><sub>55</sub>Cs → ? + e⁻ + ν̄",
+    a:["<sup>137</sup><sub>54</sub>Xe","<sup>137</sup><sub>56</sub>Ba","<sup>133</sup><sub>53</sub>I"],
+    correct:1, e:"A bleibt 137, Z steigt von 55 auf 56 → Barium-137 (<sup>137</sup><sub>56</sub>Ba)." },
+
+  { q:"Nuklidkarte: Wohin „springt" ein Nuklid beim α-Zerfall? (N = Neutronen, Z = Protonen)",
+    a:["N−1, Z+1 (eins nach links, eins hoch)","N−2, Z−2 (zwei nach links, zwei runter)","N+2, Z+2 (zwei nach rechts, zwei hoch)"],
+    correct:1, e:"α-Zerfall: 2 Protonen und 2 Neutronen weg → in der Karte 2 nach links und 2 nach unten." },
+
+  { q:"Die Uran-Radium-Reihe startet bei <sup>238</sup><sub>92</sub>U. Das erste Tochternuklid (α-Zerfall) ist …",
+    a:["<sup>234</sup><sub>90</sub>Th","<sup>234</sup><sub>91</sub>Pa","<sup>238</sup><sub>93</sub>Np"],
+    correct:0, e:"<sup>238</sup><sub>92</sub>U →α <sup>234</sup><sub>90</sub>Th (Thorium-234)." },
+
+  { q:"Welche Strahlungsart ist am <b>stärksten ionisierend</b>?",
+    a:["α","β⁻","γ"],
+    correct:0, e:"α-Strahlung hat das höchste Ionisationsvermögen – deshalb nach Inkorporation besonders gefährlich (w_R = 20)." }
+];
+
+let order=[], idx=0, score=0, answered=false;
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function startGame(){
+  order = shuffle([...Array(QUESTIONS.length).keys()]);
+  idx=0; score=0;
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('end').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  render();
+}
+
+function render(){
+  answered=false;
+  const q = QUESTIONS[order[idx]];
+  document.getElementById('count').textContent = `Frage ${idx+1} / ${order.length}`;
+  document.getElementById('scoreLive').textContent = `Punkte: ${score}`;
+  document.getElementById('prog').style.width = `${(idx/order.length)*100}%`;
+  document.getElementById('qtext').innerHTML = q.q;
+  const fb = document.getElementById('fb'); fb.className='fb'; fb.innerHTML='';
+  document.getElementById('next').classList.add('hidden');
+  const opts = document.getElementById('opts'); opts.innerHTML='';
+  // Antwortreihenfolge mischen
+  const oi = shuffle([...Array(q.a.length).keys()]);
+  oi.forEach(originalIndex => {
+    const b=document.createElement('button');
+    b.className='opt'; b.innerHTML=q.a[originalIndex];
+    b.onclick=()=>choose(b, originalIndex===q.correct, q);
+    opts.appendChild(b);
+  });
+}
+
+function choose(btn, isCorrect, q){
+  if(answered) return;
+  answered=true;
+  const buttons = document.querySelectorAll('.opt');
+  buttons.forEach(b=>b.disabled=true);
+  const fb = document.getElementById('fb');
+  if(isCorrect){
+    btn.classList.add('ok'); score++;
+    fb.className='fb show ok'; fb.innerHTML='✅ Richtig! '+q.e;
+  } else {
+    btn.classList.add('no');
+    buttons.forEach(b=>{ if(b.innerHTML===q.a[q.correct]) b.classList.add('ok'); });
+    fb.className='fb show no'; fb.innerHTML='❌ Nicht ganz. '+q.e;
+  }
+  document.getElementById('scoreLive').textContent = `Punkte: ${score}`;
+  document.getElementById('next').classList.remove('hidden');
+  document.getElementById('next').textContent = (idx+1<order.length) ? 'Weiter →' : 'Ergebnis ansehen';
+}
+
+function nextQ(){
+  idx++;
+  if(idx<order.length){ render(); }
+  else { showEnd(); }
+}
+
+function showEnd(){
+  document.getElementById('game').classList.add('hidden');
+  const end = document.getElementById('end'); end.classList.remove('hidden');
+  document.getElementById('finalScore').textContent = `${score} / ${order.length}`;
+  let msg;
+  const r = score/order.length;
+  if(r===1) msg='Perfekt! Strahlenschutz sitzt. ☢️';
+  else if(r>=0.7) msg='Stark! Nur noch ein paar Details wiederholen.';
+  else if(r>=0.4) msg='Solide Basis – schau dir die Erklärungen nochmal an.';
+  else msg='Dranbleiben! Wiederhole Strahlungsarten und Zerfallsregeln.';
+  document.getElementById('endMsg').textContent = msg;
+}
+</script>
+</body>
+</html>
