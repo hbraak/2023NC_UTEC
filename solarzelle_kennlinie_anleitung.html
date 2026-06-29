@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solarzelle vermessen – Aufbau & Anschluss | UTEC 13NC</title>
+<style>
+  :root{ --bg:#f5f6f8; --card:#fff; --ink:#1c2530; --muted:#5a6675; --acc:#b8860b; --acc2:#0b5; --line:#dde2e8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{background:#1c2530;color:#fff;padding:18px 16px}
+  header h1{margin:0;font-size:1.25rem}
+  header p{margin:4px 0 0;color:#b9c3d0;font-size:.9rem}
+  main{max-width:760px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  h2{font-size:1.1rem;margin:.2em 0 .6em;display:flex;align-items:center;gap:.5em}
+  h2 .n{background:var(--acc);color:#fff;border-radius:50%;width:1.6em;height:1.6em;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;flex:none}
+  ol,ul{margin:.4em 0 .4em 1.1em;padding:0}
+  li{margin:.35em 0}
+  .pill{display:inline-block;background:#eef3ee;color:#1a5e2a;border:1px solid #cfe3cf;border-radius:999px;padding:1px 9px;font-size:.8rem;font-weight:600}
+  .warn{background:#fff7e6;border:1px solid #f0d79a;border-radius:10px;padding:10px 14px;margin:10px 0}
+  .tip{background:#eef6ff;border:1px solid #c4ddf5;border-radius:10px;padding:10px 14px;margin:10px 0}
+  table{width:100%;border-collapse:collapse;margin:.4em 0}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;font-size:.92rem}
+  th{background:#f0f2f5}
+  details{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0;background:#fff}
+  summary{cursor:pointer;font-weight:600}
+  details[open]{background:#fbfcfd}
+  .svgwrap{overflow-x:auto;text-align:center}
+  svg{max-width:100%;height:auto}
+  code{background:#eef0f3;padding:1px 5px;border-radius:5px;font-size:.9em}
+  footer{max-width:760px;margin:0 auto;padding:8px 16px 40px;color:var(--muted);font-size:.82rem}
+  .key{font-variant:small-caps;letter-spacing:.02em}
+</style>
+</head>
+<body>
+<header>
+  <h1>☀️ Solarzelle vermessen – Aufbau &amp; Anschluss</h1>
+  <p>UTEC 13NC · Praktikum „Solare Wasserstoff-Energiekette" · Leybold-Module</p>
+</header>
+<main>
+
+  <div class="card">
+    <p style="margin:0"><strong>Ziel:</strong> Du nimmst die <strong>Kennlinie der Solarzelle</strong> auf – also die Wertepaare aus Spannung <span class="key">U</span> und Strom <span class="key">I</span> bei verschiedenen Belastungen. Dafür änderst du mit einem <strong>regelbaren Widerstand</strong> die Last und misst jedes Mal U und I.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">1</span>Was du brauchst</h2>
+    <ul>
+      <li>Solarzelle / PV-Modul (Leybold) + Lampe/Strahler</li>
+      <li><strong>Regelbarer Widerstand</strong> (Potentiometer) als Last</li>
+      <li><strong>2 Multimeter</strong>: eines als <span class="pill">Amperemeter (mA)</span>, eines als <span class="pill">Voltmeter (V)</span></li>
+      <li>Verbindungskabel</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">2</span>Schaltplan</h2>
+    <div class="svgwrap">
+    <svg viewBox="0 0 600 300" role="img" aria-label="Schaltplan: Solarzelle mit Amperemeter in Reihe, Voltmeter parallel und regelbarem Lastwiderstand">
+      <!-- Leiter (Rahmen) -->
+      <g stroke="#1c2530" stroke-width="3" fill="none">
+        <!-- obere Leitung -->
+        <line x1="90" y1="60" x2="300" y2="60"/>
+        <line x1="360" y1="60" x2="500" y2="60"/>
+        <!-- untere Leitung -->
+        <line x1="90" y1="240" x2="500" y2="240"/>
+        <!-- Solarzelle Anschlüsse -->
+        <line x1="90" y1="60" x2="90" y2="110"/>
+        <line x1="90" y1="190" x2="90" y2="240"/>
+        <!-- Voltmeter Zweig (parallel zur Zelle) -->
+        <line x1="190" y1="60" x2="190" y2="95"/>
+        <line x1="190" y1="145" x2="190" y2="240"/>
+        <!-- Lastwiderstand Anschlüsse -->
+        <line x1="500" y1="60" x2="500" y2="110"/>
+        <line x1="500" y1="190" x2="500" y2="240"/>
+      </g>
+
+      <!-- Solarzelle (PV) -->
+      <g>
+        <rect x="55" y="110" width="70" height="80" rx="4" fill="#fffbe9" stroke="#b8860b" stroke-width="3"/>
+        <text x="90" y="142" text-anchor="middle" font-size="20">☀️</text>
+        <text x="90" y="168" text-anchor="middle" font-size="12" fill="#1c2530">PV</text>
+        <text x="78" y="80" text-anchor="middle" font-size="16" fill="#1c2530">+</text>
+        <text x="78" y="232" text-anchor="middle" font-size="18" fill="#1c2530">−</text>
+        <text x="90" y="208" text-anchor="middle" font-size="11" fill="#5a6675">Solarzelle</text>
+      </g>
+
+      <!-- Voltmeter -->
+      <g>
+        <circle cx="190" cy="120" r="25" fill="#eef6ff" stroke="#0b5" stroke-width="3"/>
+        <text x="190" y="127" text-anchor="middle" font-size="20" fill="#0b5" font-weight="bold">V</text>
+      </g>
+
+      <!-- Amperemeter (in Reihe, obere Leitung) -->
+      <g>
+        <circle cx="330" cy="60" r="25" fill="#fff7e6" stroke="#b8860b" stroke-width="3"/>
+        <text x="330" y="67" text-anchor="middle" font-size="20" fill="#b8860b" font-weight="bold">A</text>
+      </g>
+
+      <!-- Lastwiderstand (Potentiometer) -->
+      <g>
+        <rect x="475" y="110" width="50" height="80" fill="#fff" stroke="#1c2530" stroke-width="3"/>
+        <line x1="455" y1="200" x2="540" y2="100" stroke="#1c2530" stroke-width="3"/>
+        <polygon points="540,100 530,103 537,110" fill="#1c2530"/>
+        <text x="560" y="155" text-anchor="middle" font-size="13" fill="#5a6675">R</text>
+        <text x="500" y="206" text-anchor="middle" font-size="11" fill="#5a6675" dy="0"></text>
+      </g>
+      <text x="500" y="270" text-anchor="middle" font-size="11" fill="#5a6675">regelbarer Widerstand</text>
+    </svg>
+    </div>
+    <p style="margin:.3em 0 0;font-size:.92rem;color:var(--muted)">
+      <strong>So liest du den Plan:</strong> Das <strong style="color:#b8860b">Amperemeter (A)</strong> liegt <strong>in Reihe</strong> im Stromkreis (der ganze Strom fließt hindurch). Das <strong style="color:#0b5">Voltmeter (V)</strong> liegt <strong>parallel</strong> zur Solarzelle (es misst die Spannung an den Klemmen). Mit <strong>R</strong> stellst du die Last ein.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">3</span>Aufbau Schritt für Schritt</h2>
+    <ol>
+      <li>Lampe so aufstellen, dass sie die Solarzelle <strong>nah und senkrecht</strong> bestrahlt. Während der ganzen Messung <strong>nicht mehr verändern!</strong></li>
+      <li>Vom <strong>Pluspol</strong> der Solarzelle ein Kabel zum <strong>Amperemeter</strong> (Buchse <code>mA</code>) führen.</li>
+      <li>Vom Amperemeter weiter zum <strong>regelbaren Widerstand</strong> (ein Anschluss + Schleifer).</li>
+      <li>Vom Widerstand zurück zum <strong>Minuspol</strong> der Solarzelle → der Stromkreis ist geschlossen.</li>
+      <li><strong>Voltmeter parallel</strong> direkt an die beiden Pole der Solarzelle anschließen.</li>
+      <li>Multimeter einstellen: Amperemeter auf <strong>mA-Gleichstrom</strong>, Voltmeter auf <strong>V-Gleichspannung</strong>.</li>
+    </ol>
+    <div class="tip">💡 Reihenfolge merken: <strong>+ → A → R → −</strong> ist der Stromkreis. Das <strong>V</strong> hängt „außen herum" direkt an der Zelle.</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">4</span>Messen</h2>
+    <table>
+      <tr><th>Was</th><th>So einstellen</th><th>Ablesen</th></tr>
+      <tr><td><strong>U<sub>OC</sub></strong> (Leerlaufspannung)</td><td>Widerstand <strong>ganz groß</strong> (≈ offen, I ≈ 0)</td><td>nur Spannung</td></tr>
+      <tr><td><strong>I<sub>SC</sub></strong> (Kurzschlussstrom)</td><td>Widerstand <strong>ganz klein</strong> (U ≈ 0)</td><td>nur Strom</td></tr>
+      <tr><td><strong>Kennlinie</strong></td><td>Widerstand <strong>in Schritten</strong> von groß → klein</td><td>jeweils U <em>und</em> I</td></tr>
+    </table>
+    <p style="margin:.4em 0 0">Trage alle Wertepaare in die Tabelle auf dem Laufzettel ein. Die <strong>Leistung</strong> rechnest du selbst: <code>P = U · I</code>. Der größte P-Wert ist der <strong>MPP</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">5</span>Häufige Fragen &amp; typische Fehler</h2>
+
+    <details><summary>Mein Amperemeter zeigt 0 / nichts an.</summary>
+    <p>Steckt das Kabel in der <code>mA</code>-Buchse (nicht in der 10-A-Buchse)? Ist der Messbereich auf <strong>Gleichstrom (DC/=)</strong>? Ist der Stromkreis wirklich geschlossen (+ → A → R → −)?</p></details>
+
+    <details><summary>Wo kommt das Voltmeter hin – in Reihe oder parallel?</summary>
+    <p><strong>Parallel</strong> zur Solarzelle! Ein Voltmeter wird immer parallel zu dem Bauteil geschaltet, dessen Spannung du messen willst. Das Amperemeter dagegen kommt <strong>in Reihe</strong>.</p></details>
+
+    <details><summary>Warum ändert sich nichts, wenn ich den Widerstand drehe?</summary>
+    <p>Nutzt du den richtigen Anschluss am Potentiometer (einen festen Anschluss <em>und</em> den Schleifer-Mittelanschluss)? Und: Steht die Lampe noch? Ohne Licht keine Leistung.</p></details>
+
+    <details><summary>Mein Strom ist winzig (nur wenige mA).</summary>
+    <p>Das ist bei den Leybold-Zellen normal – deshalb messen wir in <strong>mA</strong>. Lampe näher und senkrecht ausrichten erhöht den Strom.</p></details>
+
+    <details><summary>Wie finde ich den MPP?</summary>
+    <p>Für jeden Messpunkt <code>P = U · I</code> berechnen. Der Punkt mit der <strong>größten Leistung</strong> ist der MPP (Maximum Power Point) – liegt zwischen Leerlauf und Kurzschluss.</p></details>
+  </div>
+
+  <div class="warn">⚠️ Solarzelle <strong>nicht dauerhaft kurzschließen</strong> und die heiße Lampe nicht berühren.</div>
+
+</main>
+<footer>
+  UTEC 13NC · Lore-Lorentz-Schule Düsseldorf · Begleitseite zum Laufzettel „Solarzelle: Kennlinie &amp; Auswertung". Weiterrechnen im <strong>Rechentraining Energie</strong> (Aufgabe PV-1).
+</footer>
+</body>
+</html>
