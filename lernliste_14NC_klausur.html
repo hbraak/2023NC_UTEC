@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernliste Abschlussklausur | UTEC 14NC</title>
+<style>
+  :root{ --bg:#f5f6f8; --card:#fff; --ink:#1c2530; --muted:#5a6675; --acc:#2e7d32; --line:#dde2e8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{background:#1c2530;color:#fff;padding:18px 16px}
+  header h1{margin:0;font-size:1.25rem}
+  header p{margin:4px 0 0;color:#b9c3d0;font-size:.9rem}
+  main{max-width:760px;margin:0 auto;padding:16px}
+  .intro{background:#eef6ee;border:1px solid #cfe3cf;border-radius:10px;padding:10px 14px;font-size:.92rem}
+  .progwrap{position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5}
+  .bar{height:10px;background:#e7eaef;border-radius:99px;overflow:hidden}
+  .bar > i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
+  .progtxt{font-size:.85rem;color:var(--muted);margin-top:4px;text-align:right}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  h2{font-size:1.05rem;margin:.1em 0 .5em;display:flex;align-items:center;gap:.5em}
+  label.zi{display:flex;gap:.6em;align-items:flex-start;padding:8px 6px;border-radius:8px;cursor:pointer}
+  label.zi:hover{background:#f4f7f4}
+  label.zi input{width:1.25em;height:1.25em;margin-top:2px;flex:none;accent-color:var(--acc)}
+  label.zi span{font-size:.96rem}
+  label.zi input:checked + span{color:var(--muted);text-decoration:line-through}
+  .tools{font-size:.82rem;color:var(--muted);font-style:italic}
+  .reset{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:var(--muted);cursor:pointer;font-size:.85rem}
+  footer{max-width:760px;margin:0 auto;padding:8px 16px 40px;color:var(--muted);font-size:.82rem}
+  sup,sub{font-size:.72em}
+</style>
+</head>
+<body>
+<header>
+  <h1>✅ Lernliste zur Abschlussklausur</h1>
+  <p>Umweltschutztechnik 14NC · hake ab, was du sicher kannst</p>
+</header>
+<main>
+
+  <div class="intro">Diese Liste zeigt dir, was du für die Klausur sicher beherrschen solltest. Hake ab, was du schon kannst – bei offenen Kästchen weißt du, was du noch üben musst. <em>(Dein Stand wird auf diesem Gerät gespeichert.)</em></div>
+
+  <div class="progwrap">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="progtxt"><span id="ptxt">0 von 0</span> &nbsp;·&nbsp; <button class="reset" onclick="resetAll()">zurücksetzen</button></div>
+  </div>
+
+  <div class="card">
+    <h2>☢️ Strahlung und Strahlenschutz</h2>
+    <label class="zi"><input type="checkbox"><span>Ich kann die drei Arten ionisierender Strahlung (α, β<sup>−</sup>, γ) benennen und angeben, woraus sie bestehen und welche elektrische Ladung sie tragen.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann α-, β<sup>−</sup>- und γ-Strahlung hinsichtlich Reichweite in Luft, geeigneter Abschirmung und Ionisationsvermögen vergleichen.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann erläutern, warum α-Strahlung von außen meist ungefährlich, nach Inkorporation (z. B. Einatmen) aber besonders gefährlich ist.</span></label>
+  </div>
+
+  <div class="card">
+    <h2>⚛️ Kernzerfall und Zerfallsgleichungen</h2>
+    <label class="zi"><input type="checkbox"><span>Ich kann angeben, wie sich Massenzahl <em>A</em> und Kernladungszahl <em>Z</em> beim α- und beim β<sup>−</sup>-Zerfall ändern.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann Zerfallsgleichungen für α-, β<sup>−</sup>- und β<sup>+</sup>-Zerfall vervollständigen und das jeweils freigesetzte Teilchen angeben.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann zu einem gegebenen Strahler die vollständige Zerfallsgleichung aufstellen und das Tochternuklid benennen.</span></label>
+  </div>
+
+  <div class="card">
+    <h2>🗺️ Nuklidkarte und Zerfallsreihen</h2>
+    <label class="zi"><input type="checkbox"><span>Ich kann den Aufbau der Nuklidkarte beschreiben (Achsen: Neutronenzahl <em>N</em> und Protonenzahl <em>Z</em>; Farbcodierung der Zerfallsarten).</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann angeben, in welche Richtung sich ein Nuklid in der Karte beim α- bzw. beim β<sup>−</sup>-Zerfall verschiebt.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann mithilfe der Nuklidkarte die Tochternuklide einer Zerfallsreihe bestimmen und die jeweilige Zerfallsart angeben.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann begründen, warum eine Zerfallsreihe bei einem stabilen Nuklid endet.</span></label>
+  </div>
+
+  <div class="card">
+    <h2>☀️ Solarzelle – Kennlinie und Wirkungsgrad</h2>
+    <label class="zi"><input type="checkbox"><span>Ich kann aus einer Messreihe für jeden Messpunkt die Leistung <em>P</em> = <em>U</em>·<em>I</em> berechnen.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann den Punkt maximaler Leistung (MPP) mit <em>P</em><sub>max</sub>, <em>U</em><sub>MPP</sub> und <em>I</em><sub>MPP</sub> sowie die Leerlaufspannung <em>U</em><sub>OC</sub> und den Kurzschlussstrom <em>I</em><sub>SC</sub> bestimmen.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann die <strong>I-U-Kennlinie</strong> und das <strong>I-P-Diagramm</strong> auf Millimeterpapier zeichnen (sinnvolle Skalierung, Achsenbeschriftung mit Einheiten) und den MPP markieren.</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann den Modulwirkungsgrad η<sub>Modul</sub> = <em>P</em><sub>max</sub> / (<em>E</em>·<em>A</em>) berechnen und dabei Flächeneinheiten korrekt umrechnen.</span></label>
+  </div>
+
+  <div class="card">
+    <h2>💧 Wasserstofftechnik – Energiekette</h2>
+    <label class="zi"><input type="checkbox"><span>Ich kann den Gesamtwirkungsgrad einer Energiekette aus den Teilwirkungsgraden berechnen (η<sub>Kette</sub> = η<sub>PV</sub>·η<sub>EL</sub>·η<sub>BZ</sub>).</span></label>
+    <label class="zi"><input type="checkbox"><span>Ich kann beurteilen, wofür sich die Speicherung von Sonnenenergie über Wasserstoff eignet und wofür nicht.</span></label>
+  </div>
+
+  <p class="tools">Zugelassene Hilfsmittel in der Klausur: TI Nspire CX CAS, Tafelwerk (mit Auszug aus der Nuklidkarte), Millimeterpapier.</p>
+
+</main>
+<footer>UTEC 14NC · Lore-Lorentz-Schule Düsseldorf · Lernliste zur Abschlussklausur</footer>
+
+<script>
+const KEY='lernliste14nc';
+const boxes=[...document.querySelectorAll('label.zi input')];
+boxes.forEach((b,i)=>b.dataset.i=i);
+function save(){ localStorage.setItem(KEY, JSON.stringify(boxes.map(b=>b.checked))); }
+function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)||'[]'); s.forEach((v,i)=>{ if(boxes[i]) boxes[i].checked=v; }); }catch(e){} }
+function upd(){ const n=boxes.filter(b=>b.checked).length, t=boxes.length;
+  document.getElementById('prog').style.width=(t? n/t*100:0)+'%';
+  document.getElementById('ptxt').textContent=n+' von '+t+' Lernzielen'; }
+boxes.forEach(b=>b.addEventListener('change',()=>{save();upd();}));
+function resetAll(){ boxes.forEach(b=>b.checked=false); save(); upd(); }
+load(); upd();
+</script>
+</body>
+</html>
