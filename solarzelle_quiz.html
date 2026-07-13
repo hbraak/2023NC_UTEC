@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solarzellen-Quiz | UTEC 14NC</title>
+<style>
+  :root{ --bg:#f5f6f8; --card:#fff; --ink:#1c2530; --muted:#5a6675; --acc:#d97706; --ok:#1a7a36; --no:#b23; --line:#dde2e8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{background:#1c2530;color:#fff;padding:18px 16px}
+  header h1{margin:0;font-size:1.25rem}
+  header p{margin:4px 0 0;color:#b9c3d0;font-size:.9rem}
+  main{max-width:680px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .bar{height:8px;background:#e7eaef;border-radius:99px;overflow:hidden;margin-bottom:6px}
+  .bar > i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+  .meta{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-bottom:10px}
+  .q{font-size:1.15rem;font-weight:600;margin:6px 0 16px}
+  .q sup,.q sub{font-size:.7em}
+  .opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:10px;
+       padding:13px 15px;margin:9px 0;font-size:1rem;cursor:pointer;transition:.15s;color:var(--ink)}
+  .opt:hover{border-color:var(--acc)}
+  .opt:disabled{cursor:default}
+  .opt.ok{border-color:var(--ok);background:#eaf6ee}
+  .opt.no{border-color:var(--no);background:#fcecec}
+  .fb{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:.95rem;display:none}
+  .fb.show{display:block}
+  .fb.ok{background:#eaf6ee;border:1px solid #bfe2c8}
+  .fb.no{background:#fcecec;border:1px solid #efc3c3}
+  .btn{display:inline-block;border:none;background:var(--acc);color:#fff;font-weight:600;font-size:1rem;
+       padding:12px 22px;border-radius:10px;cursor:pointer;margin-top:14px}
+  .btn:hover{filter:brightness(1.07)}
+  .center{text-align:center}
+  .score{font-size:2.4rem;font-weight:800;color:var(--acc)}
+  .hidden{display:none}
+  footer{max-width:680px;margin:0 auto;padding:8px 16px 40px;color:var(--muted);font-size:.82rem;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>☀️ Solarzellen-Quiz</h1>
+  <p>UTEC 14NC · Warm-up zur Abschlussprüfung: Kennlinie · MPP · Füllfaktor · Wirkungsgrad · H₂-Energiekette</p>
+</header>
+<main>
+
+  <div id="start" class="card center">
+    <p>Auffrischung zum Arbeitsblatt „Solarzelle: Kennlinie &amp; Auswertung“. Pro Frage gibt es sofort eine Erklärung. Kopfrechnen ist erlaubt – Taschenrechner auch. 😉</p>
+    <button class="btn" onclick="startGame()">Quiz starten</button>
+  </div>
+
+  <div id="game" class="card hidden">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="count"></span><span id="scoreLive"></span></div>
+    <div class="q" id="qtext"></div>
+    <div id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <button class="btn hidden" id="next" onclick="nextQ()">Weiter →</button>
+  </div>
+
+  <div id="end" class="card center hidden">
+    <p>Geschafft!</p>
+    <div class="score" id="finalScore"></div>
+    <p id="endMsg"></p>
+    <button class="btn" onclick="startGame()">Nochmal spielen</button>
+  </div>
+
+</main>
+<footer>UTEC 14NC · Lore-Lorentz-Schule Düsseldorf · Quiz zur Prüfungsvorbereitung Photovoltaik &amp; H₂-Energiekette</footer>
+
+<script>
+const QUESTIONS = [
+  { q:"Was ist die <b>Leerlaufspannung</b> U<sub>OC</sub> einer Solarzelle?",
+    a:["die Spannung, wenn kein Strom fließt (I = 0)","die Spannung am Punkt maximaler Leistung","die Spannung bei kurzgeschlossenen Klemmen"],
+    correct:0, e:"U<sub>OC</sub> (open circuit) misst man bei offenen Klemmen – es fließt kein Strom (I = 0)." },
+
+  { q:"Was ist der <b>Kurzschlussstrom</b> I<sub>SC</sub>?",
+    a:["der Strom am MPP","der Strom bei U ≈ 0 (kurzgeschlossene Klemmen)","der maximale Strom, den die Lampe liefert"],
+    correct:1, e:"I<sub>SC</sub> (short circuit) fließt, wenn die Klemmen kurzgeschlossen sind – die Spannung ist dann U ≈ 0." },
+
+  { q:"Wie berechnet man die Leistung an jedem Punkt der Kennlinie?",
+    a:["P = U · I","P = U / I","P = U + I"],
+    correct:0, e:"Leistung ist das Produkt aus Spannung und Strom: P = U · I. Damit füllst du die Leistungsspalte der Messtabelle." },
+
+  { q:"Was ist der <b>MPP</b> einer Solarzelle?",
+    a:["der Punkt, an dem der Strom maximal ist","der Punkt, an dem die Spannung maximal ist","der Punkt, an dem die Leistung P = U·I maximal ist"],
+    correct:2, e:"MPP = Maximum Power Point. Er liegt im „Knie“ der I-U-Kennlinie – weder bei U<sub>OC</sub> noch bei I<sub>SC</sub>, sondern dazwischen." },
+
+  { q:"Messung: U<sub>MPP</sub> = 2,0 V und I<sub>MPP</sub> = 90 mA. Wie groß ist P<sub>max</sub>?",
+    a:["180 mW","45 mW","1,8 W"],
+    correct:0, e:"P = U · I = 2,0 V · 90 mA = 180 mW. (Einheiten: V · mA = mW)" },
+
+  { q:"Wie werden die Messgeräte für die Kennlinien-Aufnahme angeschlossen?",
+    a:["Amperemeter parallel, Voltmeter in Reihe","Amperemeter in Reihe, Voltmeter parallel","beide in Reihe"],
+    correct:1, e:"Der Strom fließt DURCH das Amperemeter (in Reihe), die Spannung wird PARALLEL zur Solarzelle abgegriffen." },
+
+  { q:"Wie lautet die Formel für den <b>Füllfaktor</b>?",
+    a:["FF = P<sub>max</sub> / (U<sub>OC</sub> · I<sub>SC</sub>)","FF = (U<sub>OC</sub> · I<sub>SC</sub>) / P<sub>max</sub>","FF = P<sub>max</sub> / (E · A)"],
+    correct:0, e:"FF = P<sub>max</sub> / (U<sub>OC</sub> · I<sub>SC</sub>) – er vergleicht die echte Maximalleistung mit dem „idealen Rechteck“ und ist ein Maß für die Güte der Zelle." },
+
+  { q:"P<sub>max</sub> = 180 mW, U<sub>OC</sub> = 2,5 V, I<sub>SC</sub> = 100 mA. Füllfaktor?",
+    a:["FF ≈ 0,72","FF ≈ 1,39","FF ≈ 0,45"],
+    correct:0, e:"U<sub>OC</sub> · I<sub>SC</sub> = 2,5 V · 100 mA = 250 mW → FF = 180/250 = 0,72. Werte um 0,7–0,8 sind für gute Zellen typisch." },
+
+  { q:"Modul: A = 20 cm² = 0,002 m², E = 450 W/m², P<sub>max</sub> = 180 mW. Modulwirkungsgrad?",
+    a:["η ≈ 40 %","η ≈ 20 %","η ≈ 2 %"],
+    correct:1, e:"P<sub>ein</sub> = E · A = 450 W/m² · 0,002 m² = 0,9 W = 900 mW → η = 180/900 = 0,20 = 20 %." },
+
+  { q:"Wirkungsgradkette: η<sub>PV</sub> = 0,18, η<sub>EL</sub> = 0,70, η<sub>BZ</sub> = 0,55. Gesamtwirkungsgrad der H₂-Kette?",
+    a:["η ≈ 48 %","η ≈ 14 %","η ≈ 7 %"],
+    correct:2, e:"η<sub>Kette</sub> = 0,18 · 0,70 · 0,55 ≈ 0,069 ≈ 7 %. Die Teilwirkungsgrade werden MULTIPLIZIERT – deshalb ist die Kette so verlustreich." },
+
+  { q:"Proof of Principle: Die Lampe (PV) wird ausgeschaltet – der Motor an der Brennstoffzelle läuft weiter. Warum?",
+    a:["Der Elektrolyseur arbeitet rückwärts als Batterie","Der H₂-Speicher enthält chemisch gespeicherte Energie, die die BZ weiter verstromt","Die Solarzelle speichert Restladung wie ein Kondensator"],
+    correct:1, e:"Genau das ist die Speicherfunktion: Die Energie steckt chemisch im Wasserstoff und wird von der Brennstoffzelle unabhängig von der Sonne wieder in elektrische Energie umgewandelt." },
+
+  { q:"Welche Energieumwandlungskette durchläuft das System von der Lampe bis zum Elektromotor?",
+    a:["Licht → elektrisch → chemisch → elektrisch → mechanisch","Licht → thermisch → chemisch → mechanisch","Licht → elektrisch → mechanisch → chemisch"],
+    correct:0, e:"PV: Licht → elektrisch · Elektrolyseur: elektrisch → chemisch (H₂) · Brennstoffzelle: chemisch → elektrisch · Motor: elektrisch → mechanisch." },
+
+  { q:"Die Bestrahlungsstärke E wird verdoppelt. Was passiert (näherungsweise) mit dem Kurzschlussstrom I<sub>SC</sub>?",
+    a:["er halbiert sich","er bleibt gleich","er verdoppelt sich ungefähr"],
+    correct:2, e:"I<sub>SC</sub> wächst näherungsweise proportional zur Bestrahlungsstärke – mehr Photonen erzeugen mehr Ladungsträger. U<sub>OC</sub> ändert sich dagegen nur wenig." },
+
+  { q:"Wofür eignet sich die Speicherung von Sonnenenergie über Wasserstoff besonders?",
+    a:["für kurzfristige Schwankungen im Sekundenbereich – da ist sie am effizientesten","für die Langzeit-/Saisonspeicherung großer Energiemengen trotz geringen Kettenwirkungsgrads","gar nicht, da der Wirkungsgrad zu klein ist"],
+    correct:1, e:"Für kurze Zeiträume sind Batterien effizienter. Wasserstoff punktet bei der LANGZEITSPEICHERUNG (Sommer → Winter) großer Energiemengen – da zählt Speicherkapazität mehr als Wirkungsgrad." }
+];
+
+let order=[], idx=0, score=0, answered=false;
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function startGame(){
+  order = shuffle([...Array(QUESTIONS.length).keys()]);
+  idx=0; score=0;
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('end').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  render();
+}
+
+function render(){
+  answered=false;
+  const q = QUESTIONS[order[idx]];
+  document.getElementById('count').textContent = `Frage ${idx+1} / ${order.length}`;
+  document.getElementById('scoreLive').textContent = `Punkte: ${score}`;
+  document.getElementById('prog').style.width = `${(idx/order.length)*100}%`;
+  document.getElementById('qtext').innerHTML = q.q;
+  const fb = document.getElementById('fb'); fb.className='fb'; fb.innerHTML='';
+  document.getElementById('next').classList.add('hidden');
+  const opts = document.getElementById('opts'); opts.innerHTML='';
+  // Antwortreihenfolge mischen
+  const oi = shuffle([...Array(q.a.length).keys()]);
+  oi.forEach(originalIndex => {
+    const b=document.createElement('button');
+    b.className='opt'; b.innerHTML=q.a[originalIndex];
+    b.dataset.correct = (originalIndex===q.correct) ? '1' : '0';
+    b.onclick=()=>choose(b, originalIndex===q.correct, q);
+    opts.appendChild(b);
+  });
+}
+
+function choose(btn, isCorrect, q){
+  if(answered) return;
+  answered=true;
+  const buttons = document.querySelectorAll('.opt');
+  buttons.forEach(b=>b.disabled=true);
+  const fb = document.getElementById('fb');
+  if(isCorrect){
+    btn.classList.add('ok'); score++;
+    fb.className='fb show ok'; fb.innerHTML='✅ Richtig! '+q.e;
+  } else {
+    btn.classList.add('no');
+    buttons.forEach(b=>{ if(b.dataset.correct==='1') b.classList.add('ok'); });
+    fb.className='fb show no'; fb.innerHTML='❌ Nicht ganz. '+q.e;
+  }
+  document.getElementById('scoreLive').textContent = `Punkte: ${score}`;
+  document.getElementById('next').classList.remove('hidden');
+  document.getElementById('next').textContent = (idx+1<order.length) ? 'Weiter →' : 'Ergebnis ansehen';
+}
+
+function nextQ(){
+  idx++;
+  if(idx<order.length){ render(); }
+  else { showEnd(); }
+}
+
+function showEnd(){
+  document.getElementById('game').classList.add('hidden');
+  const end = document.getElementById('end'); end.classList.remove('hidden');
+  document.getElementById('finalScore').textContent = `${score} / ${order.length}`;
+  let msg;
+  const r = score/order.length;
+  if(r===1) msg='Perfekt! Die Solarzelle sitzt. ☀️';
+  else if(r>=0.7) msg='Stark! Nur noch ein paar Details wiederholen.';
+  else if(r>=0.4) msg='Solide Basis – schau dir die Erklärungen und das Rechentraining nochmal an.';
+  else msg='Dranbleiben! Wiederhole Kennlinie, MPP und die Wirkungsgradformeln.';
+  document.getElementById('endMsg').textContent = msg;
+}
+</script>
+</body>
+</html>
