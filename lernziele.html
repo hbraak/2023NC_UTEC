@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>14NC – Lernziele Umweltschutztechnik</title>
+<style>
+  :root{
+    --green:#2e7d32; --green-dark:#1b5e20; --blue:#1565c0; --amber:#f9a825;
+    --red:#c62828; --grey:#455a64; --bg:#f4f6f8; --card:#ffffff; --line:#e0e0e0;
+    --text:#222; --muted:#607d8b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.55}
+  header{background:linear-gradient(135deg,var(--green-dark),var(--green));color:#fff;padding:2.4rem 1.5rem 2rem}
+  .wrap{max-width:980px;margin:0 auto;padding:0 1.2rem}
+  header h1{margin:0 0 .3rem;font-size:1.75rem;letter-spacing:.2px}
+  header p{margin:.15rem 0;opacity:.95;font-size:.98rem}
+  .meta{margin-top:1rem;display:flex;flex-wrap:wrap;gap:.5rem}
+  .chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    padding:.25rem .7rem;border-radius:999px;font-size:.82rem}
+  nav{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line);
+    box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  nav .wrap{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem 1.2rem}
+  nav a{text-decoration:none;color:var(--grey);font-size:.86rem;font-weight:600;
+    padding:.35rem .7rem;border-radius:6px;border:1px solid transparent}
+  nav a:hover{background:var(--bg);border-color:var(--line)}
+  main{padding:2rem 0 3rem}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    margin:0 0 1.6rem;padding:1.4rem 1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .t1{border-top:5px solid var(--amber)}
+  .t2{border-top:5px solid var(--blue)}
+  .t3{border-top:5px solid var(--red)}
+  .t4{border-top:5px solid var(--grey)}
+  h2{margin:.1rem 0 .2rem;font-size:1.3rem;display:flex;align-items:center;gap:.6rem}
+  h2 .num{display:inline-flex;align-items:center;justify-content:center;width:1.9rem;height:1.9rem;
+    border-radius:8px;color:#fff;font-size:1rem;flex:none}
+  .t1 .num{background:var(--amber)} .t2 .num{background:var(--blue)}
+  .t3 .num{background:var(--red)} .t4 .num{background:var(--grey)}
+  .tag{font-size:.78rem;font-weight:600;color:var(--muted);margin:.1rem 0 1rem;display:block}
+  .prio{display:inline-block;background:#ffebee;color:var(--red);border:1px solid #ffcdd2;
+    font-size:.72rem;font-weight:700;padding:.1rem .55rem;border-radius:999px;margin-left:.5rem;vertical-align:middle}
+  h3{margin:1.2rem 0 .4rem;font-size:1.02rem;color:var(--green-dark)}
+  .t2 h3{color:var(--blue)} .t3 h3{color:var(--red)} .t4 h3{color:var(--grey)}
+  ul{margin:.2rem 0 .6rem;padding-left:1.2rem}
+  li{margin:.28rem 0}
+  .ref{display:inline-block;font-size:.72rem;font-weight:700;background:var(--bg);
+    border:1px solid var(--line);color:var(--muted);border-radius:5px;padding:.02rem .4rem;margin-left:.25rem}
+  code,.fx{font-family:"SF Mono",Consolas,Menlo,monospace;background:var(--bg);
+    padding:.05rem .35rem;border-radius:4px;font-size:.9em}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;padding:2rem 1rem 3rem}
+  .legend{font-size:.84rem;color:var(--muted);background:#fff;border:1px solid var(--line);
+    border-radius:10px;padding:.8rem 1rem;margin-bottom:1.6rem}
+  .legend b{color:var(--text)}
+  @media(max-width:600px){header h1{font-size:1.4rem}h2{font-size:1.12rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Lernziele Umweltschutztechnik – 14NC</h1>
+    <p>Lore-Lorentz-Schule Berufskolleg der Stadt Düsseldorf · Bildungsgang UTA (Anlage D10)</p>
+    <p>Themenübersicht der Kurshalbjahre 13.1 und 13.2 · Haken Sie ab, was Sie sicher können</p>
+    <div class="meta">
+      <span class="chip">☀️ Photovoltaik</span>
+      <span class="chip">💧 Wasserstoff · ☢️ Strahlenschutz</span>
+      <span class="chip">🧰 TI Nspire CX CAS · Tafelwerk · Nuklidkarte · Millimeterpapier</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <a href="#t1">1 · Photovoltaik</a>
+    <a href="#t2">2 · Wasserstoff / BZ</a>
+    <a href="#t3">3 · Kernphysik / Strahlenschutz</a>
+    <a href="#t4">4 · Methodik</a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+
+    <div class="legend">
+      <b>So arbeiten Sie mit dieser Liste:</b> Gehen Sie die Punkte einzeln durch und prüfen Sie ehrlich, ob Sie den Inhalt jemandem <b>erklären</b> könnten. Wo Sie zögern, wissen Sie, was Sie noch üben müssen. Passendes Material finden Sie auf der Kursseite.
+    </div>
+
+    <!-- THEMA 1 -->
+    <section id="t1" class="t1">
+      <h2><span class="num">1</span> Photovoltaik / Energieumwandlung <span class="prio">höchste Priorität</span></h2>
+      <span class="tag">Kurshalbjahr 13.1</span>
+
+      <h3>A) Physikalische Grundlagen der Solarzelle</h3>
+      <ul>
+        <li>Photovoltaischen Effekt erklären; Energieumwandlung Licht → elektrische Energie</li>
+        <li>Eigenschaften eines Halbleiters; Dotierung (3-/5-wertig, p-/n-Schicht)</li>
+        <li>Aufbau &amp; Funktionsweise einer kristallinen Si-Solarzelle am <b>pn-Übergang</b> (Diffusion, Rekombination, Raumladungszone, E-Feld, Ladungstrennung)</li>
+        <li>Schichtaufbau benennen: Front-/Rückkontakt, Antireflexionsschicht, p-/n-Schicht</li>
+        <li>Zelltypen unterscheiden: Standard-<b>PERC</b> vs. Premium-<b>TOPCon</b> (Passivierung, Wirkungsgrad, Degradation)</li>
+      </ul>
+
+      <h3>B) Kenngrößen &amp; Messung</h3>
+      <ul>
+        <li>Kenngrößen interpretieren: <span class="fx">P_MPP, U_MPP, I_MPP, U_OC, I_SC</span>; Wirkungsgrad η</li>
+        <li>Schaltskizze zur <b>MPP-Bestimmung unter STC</b> (Lastwiderstand variieren, U und I messen)</li>
+        <li>Messreihen erstellen, dokumentieren, auswerten; <b>U-I- und P-U-Kennlinie</b> zeichnen, MPP ablesen</li>
+        <li>Reihen- vs. Parallelschaltung von Modulen (Spannung/Strom, Verschattung, Kabelquerschnitt, Verluste)</li>
+      </ul>
+
+      <h3>C) Anlagen &amp; Praxis</h3>
+      <ul>
+        <li>Topologien: <b>Inselanlage</b> vs. <b>netzgekoppelte Anlage</b> mit Überschusseinspeisung</li>
+        <li>Blockschaltbild netzgekoppeltes System: Module, MPPT-Regler, Wechselrichter, Zweirichtungszähler, Netz</li>
+        <li>Reale Planung: Dach-Belegungsplan, max. Leistung in kWp, Komponentenauswahl</li>
+        <li>Jahresertrag aus Globalstrahlung/Nettoertrag berechnen</li>
+        <li><b>Wirtschaftlichkeitsbetrachtung</b>: Investition, jährliche Einsparung, Amortisationszeit, begründete Variantenwahl</li>
+        <li>Leistungsmindernde Einflüsse: Verschattung, Temperatur, <b>Degradation/Alterung</b></li>
+        <li>Politische Agenda BRD: EEG-Einspeisevergütung (Teil-/Volleinspeisung, neg. Börsenpreise)</li>
+      </ul>
+    </section>
+
+    <!-- THEMA 2 -->
+    <section id="t2" class="t2">
+      <h2><span class="num">2</span> Wasserstofftechnologie / Brennstoffzelle</h2>
+      <span class="tag">Kurshalbjahre 13.1 + 13.2 (Verknüpfung im 14. HJ)</span>
+
+      <h3>Grundlagen &amp; Bauteile</h3>
+      <ul>
+        <li>Energieumwandlung am Beispiel <b>Elektrolyseur</b> und <b>Brennstoffzelle</b></li>
+        <li>Aufbau &amp; Funktion einer <b>PEM-Brennstoffzelle</b> (Anode/Kathode, Platinkatalysator, Protonen-Austausch-Membran)</li>
+        <li>Reaktionsgleichungen: Anode <span class="fx">H₂ → 2 H⁺ + 2 e⁻</span>; Kathode <span class="fx">O₂ + 4 H⁺ + 4 e⁻ → 2 H₂O</span>; theor. Zellspannung 1,23 V</li>
+      </ul>
+
+      <h3>Experiment &amp; Auswertung</h3>
+      <ul>
+        <li>Schülerexperiment: Kennlinien-/Kenngrößenbestimmung an EL und BZ</li>
+        <li><b>Faraday-Gesetze</b> zur Wirkungsgradermittlung von EL und BZ</li>
+        <li>Wirkungsgradketten bewerten; Einordnung in aktuellen Stand der Technik</li>
+        <li>Messdaten auswerten: <span class="fx">P = U·I</span>, P_MPP eines BZ-Moduls, Stack-Dimensionierung (Reihenschaltung)</li>
+      </ul>
+
+      <h3>Systeme &amp; Bewertung</h3>
+      <ul>
+        <li><b>Wasserstoff-Energiekreislauf</b> vs. Kohlenstoff-Energiewirtschaft (Flussdiagramm, geschlossener vs. offener Kreislauf)</li>
+        <li>Autarke <b>EH2B-Inselanlage</b>: Zusammenspiel PV–EL–H₂-Speicher–BZ–Batterie–Wechselrichter; kritische Energiesituationen</li>
+        <li>Diskussion „Grüner Wasserstoff" – Pro/Kontra (Verfügbarkeit, Infrastruktur, Effizienz, Wirtschaftlichkeit)</li>
+      </ul>
+    </section>
+
+    <!-- THEMA 3 -->
+    <section id="t3" class="t3">
+      <h2><span class="num">3</span> Kernphysik &amp; Strahlenschutz</h2>
+      <span class="tag">Kurshalbjahr 13.2</span>
+
+      <h3>Radioaktivität &amp; Kernumwandlung</h3>
+      <ul>
+        <li><b>α-, β-, γ-Strahlung</b>: Eigenschaften, Reichweite, Abschirmung, Energiespektren</li>
+        <li><b>Zerfallsgleichungen</b> und Zerfallsschema aufstellen; Anwendung der <b>Karlsruher Nuklidkarte</b> (Zerfallskanäle, Tochternuklide)</li>
+        <li>Wechselwirkung von Strahlung mit Materie; Schwächungsgesetz, Zehntelwertsdicke</li>
+      </ul>
+
+      <h3>Aktivität &amp; Dosis</h3>
+      <ul>
+        <li><b>Zerfallsgesetz</b>, Aktivität, spezifische Aktivität, Halbwertszeit; <span class="fx">A(t) = A₀·e^(−λt)</span> (asymptotisch → nie exakt 0)</li>
+        <li><b>Äquivalentdosis &amp; Dosisleistung</b>: <span class="fx">Ḣ = Γ·A/r²</span>; Abschätzung Ortsdosis / Jahresdosis</li>
+        <li>Biologische Wirkung: deterministische vs. stochastische Schäden</li>
+      </ul>
+
+      <h3>Schutz &amp; Bewertung</h3>
+      <ul>
+        <li>Strahlenschutz: <b>6-A-Prinzip / ALARA</b>, StrlSchG/StrlSchV, Grenzwerte (Bevölkerung 1 mSv/a; beruflich 20 mSv/a)</li>
+        <li>Umschlossene vs. offene Quellen; vorrangig relevante Strahlungsart bewerten</li>
+        <li>Grenzwertbewertung/Gefährdungsabschätzung (Bergung, ALARA)</li>
+      </ul>
+    </section>
+
+    <!-- THEMA 4 -->
+    <section id="t4" class="t4">
+      <h2><span class="num">4</span> Übergreifende methodische Kompetenzen</h2>
+      <span class="tag">In allen Themenbereichen wichtig</span>
+      <ul>
+        <li><b>Diagramme erstellen &amp; auswerten</b> (Millimeterpapier): sinnvolle Skalierung, Achsenbeschriftung mit Einheiten, Kurven sauber eintragen, Punkte markieren/ablesen</li>
+        <li>Messdaten tabellarisch aufbereiten und rechnerisch verarbeiten (CAS: TI Nspire CX CAS)</li>
+        <li><b>NRW-Operatoren</b> korrekt umsetzen (beschreiben, erläutern, ermitteln, begründen, diskutieren, beurteilen)</li>
+        <li>AFB-gerechtes Antworten (Reproduktion / Anwendung / Transfer &amp; Bewertung) – Gewichtung ca. <b>30 : 40 : 30</b></li>
+        <li>Fachsprache &amp; SI-Einheiten; Tafelwerk (Cornelsen) sicher nutzen</li>
+        <li>Sach- und fachgerechtes Bewerten/Stellungnehmen (Energie-/Umweltbezug)</li>
+      </ul>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  Umweltschutztechnik 14NC · Lore-Lorentz-Schule Berufskolleg der Stadt Düsseldorf
+</footer>
+</body>
+</html>
